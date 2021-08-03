@@ -41,6 +41,7 @@
 
 #include "lq-collections.h"
 
+
 #pragma region Local Static Function Declarations
 static uint16_t findJsonBlockLength(const char *blockStart, const char *jsonEnd, char blockOpen, char blockClose);
 #pragma endregion
@@ -68,7 +69,7 @@ keyValueDict_t lq_createQryStrDictionary(char *dictSrc, size_t qsSize)
     char *delimAt;
     char *endAt = dictSrc + result.length;
 
-    for (size_t i = 0; i < KEYVALUE_DICT_CNT; i++)              // 1st pass; get names + values
+    for (size_t i = 0; i < lqCollections__maxKeyValueDictCnt; i++)          // 1st pass; get names + values
     {
         delimAt = memchr(dictSrc, '&', endAt - dictSrc);
         delimAt = (delimAt == NULL) ? endAt : delimAt;
@@ -118,36 +119,6 @@ void lq_getQryStrDictionaryValue(const char *key, keyValueDict_t dict, char *val
             break;
         }
     }
-}
-
-
-/**
- *  \brief Scans the source string for fromChr and replaces with toChr. Usefull for substitution of special char in query strings.
- * 
- *  \param [in\out] srcStr - Char pointer to the c-string containing required substitutions 
- *  \param [in] fromChr - Char value to replace in src 
- *  \param [in] toChr - Char value to put in place of fromChr 
- * 
- *  \return Number of substitutions made
-*/
-uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr)
-{
-    char *opPtr = srcStr;
-    uint16_t replacements = 0;
-
-    if (fromChr == 0 || toChr == 0 || fromChr == toChr)
-        return 0;
-
-    while(*opPtr != 0)
-    {
-        if (*opPtr == fromChr)
-        {
-            *opPtr = toChr;
-            replacements++;
-        }
-        opPtr++;
-    }
-    return replacements;
 }
 
 

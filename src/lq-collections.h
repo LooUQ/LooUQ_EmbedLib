@@ -31,7 +31,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define KEYVALUE_DICT_CNT 15
+enum {
+    lqCollections__maxKeyValueDictCnt = 15
+};
 
 /** 
  *  \brief Struct exposing action's parameters collection (names and values as c-strings).
@@ -45,10 +47,10 @@
 */
 typedef struct keyValueDict_tag
 {
-    uint8_t count;                      ///< During parsing, how many properties (name/value pairs) were mapped.
-    uint16_t length;                    ///< Underlying char array original length, use if copy needed to free source
-    char *keys[KEYVALUE_DICT_CNT];       ///< Array of property keys.
-    char *values[KEYVALUE_DICT_CNT];     ///< Array of property values (as c-strings). Application is responsible for any type conversion.
+    uint8_t count;                                      ///< During parsing, how many properties (name/value pairs) were mapped.
+    uint16_t length;                                    ///< Underlying char array original length, use if copy needed to free source
+    char *keys[lqCollections__maxKeyValueDictCnt];      ///< Array of property keys.
+    char *values[lqCollections__maxKeyValueDictCnt];    ///< Array of property values (as c-strings). Application is responsible for any type conversion.
 } keyValueDict_t;
 
 
@@ -86,14 +88,9 @@ extern "C"
 // Query String Dictionary
 keyValueDict_t lq_createQryStrDictionary(char *dictSrc, size_t qsSize);
 void lq_getQryStrDictionaryValue(const char *key, keyValueDict_t dict, char *value, uint8_t valSz);
-uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr);
-
 
 // JSON (body) Documents
 lqJsonPropValue_t lq_getJsonPropValue(const char *jsonSrc, const char *propName);
-
-// // String Tokenizer
-// char *lq_strToken(char *source, int delimiter, char *token, uint8_t tokenMax);
 
 
 #ifdef __cplusplus
