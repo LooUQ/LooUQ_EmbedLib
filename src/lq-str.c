@@ -1,7 +1,7 @@
 #include "lq-str.h"
 
 
-char *lq_strnStr(char *haystack, char *needle, size_t length)
+char *lq_strnstr(char *haystack, char *needle, size_t length)
 {
     size_t needle_length = strlen(needle);
     size_t i;
@@ -53,7 +53,7 @@ uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr)
  *  \param src [in] - Input text string to URL decode.
  *  \param len [in] - Length of input text string.
 */
-void lq_strDecodeEscapes(char *src, int len)
+uint16_t lq_strUrlDecode(char *src, int len)
 {
     char subTable[] = " !\"#$%&'()*+,-./";
     uint8_t srcChar;
@@ -82,6 +82,7 @@ void lq_strDecodeEscapes(char *src, int len)
         dest++;
     }
     src[dest + 1] = '\0';
+    return dest;
 }
 
 

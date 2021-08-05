@@ -37,9 +37,9 @@ extern "C"
 {
 #endif // __cplusplus
 
-char *lq_strnStr(char *haystack, char *needle, size_t length);
+char *lq_strnstr(char *haystack, char *needle, size_t length);
 uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr);
-void lq_strDecodeEscapes(char *src, int len);
+uint16_t lq_strUrlDecode(char *src, int len);
 
 // // String Tokenizer
 // char *lq_strToken(char *source, int delimiter, char *token, uint8_t tokenMax);
