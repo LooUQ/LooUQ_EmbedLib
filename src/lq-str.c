@@ -53,7 +53,7 @@ uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr)
  *  \param src [in] - Input text string to URL decode.
  *  \param len [in] - Length of input text string.
 */
-uint16_t lq_strUrlDecode(char *src, int len)
+uint16_t lq_strUriDecode(char *src, int len)
 {
     char subTable[] = " !\"#$%&'()*+,-./";
     uint8_t srcChar;
@@ -81,7 +81,7 @@ uint16_t lq_strUrlDecode(char *src, int len)
         
         dest++;
     }
-    src[dest + 1] = '\0';
+    src[dest] = '\0';
     return dest;
 }
 

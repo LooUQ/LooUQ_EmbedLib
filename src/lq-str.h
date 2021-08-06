@@ -39,7 +39,7 @@ extern "C"
 
 char *lq_strnstr(char *haystack, char *needle, size_t length);
 uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr);
-uint16_t lq_strUrlDecode(char *src, int len);
+uint16_t lq_strUriDecode(char *src, int len);
 
 // // String Tokenizer
 // char *lq_strToken(char *source, int delimiter, char *token, uint8_t tokenMax);
