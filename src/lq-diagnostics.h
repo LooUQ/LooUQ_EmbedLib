@@ -2,15 +2,14 @@
 // LTEmC ASSERT Implementation derived from Interrupt article at https://interrupt.memfault.com/blog/asserts-in-embedded-systems#common-usages-of-asserts
 
 
-#ifndef __LQ_ASSERT_H__
-#define __LQ_ASSERT_H__
+#ifndef __LQ_DIAGNOSTICS_H__
+#define __LQ_DIAGNOSTICS_H__
 
 #include <lq-types.h>
 
 enum 
 {
-    assert__assertControlMagic = 0xAC,
-    assert__diagnosticsMagic = 0xDD
+    assert__diagnosticsMagic = 0xD1AC
 };
 
 #define GET_LR() __builtin_return_address(0)
@@ -54,26 +53,25 @@ enum
 
 
 
-typedef enum lqDiagnosticRCause_tag
+typedef enum diagRcause_tag
 {
-    lqDiagResetCause_powerOn = 1,
-    lqDiagResetCause_pwrCore = 2,
-    lqDiagResetCause_pwrPeriph = 4,
-    lqDiagResetCause_nvm = 8,
-    lqDiagResetCause_external = 16,
-    lqDiagResetCause_watchdog = 32,
-    lqDiagResetCause_system = 64,
-    lqDiagResetCause_backup = 128
-} lqDiagnosticRCause_t;
+    diagRcause_powerOn = 1,
+    diagRcause_pwrCore = 2,
+    diagRcause_pwrPeriph = 4,
+    diagRcause_nvm = 8,
+    diagRcause_external = 16,
+    diagRcause_watchdog = 32,
+    diagRcause_system = 64,
+    diagRcause_backup = 128
+} diagRcause_t;
 
 
-typedef struct lqDiagnosticInfo_tag
+typedef struct diagnosticInfo_tag
 {
-    uint8_t diagMagic;
+    uint16_t diagMagic;
+    diagRcause_t rcause;                // cause of last reset
     uint8_t notifType;                  // code from application notification callback
     char notifMsg[20];                  // message from application notification callback
-    uint8_t rptStatus;                  // indication that the diagnostics info has been reported to host\cloud
-    lqDiagnosticRCause_t rCause;        // cause of last reset
 
     /* ASSERT capture info */
     uint32_t pc;
@@ -82,9 +80,9 @@ typedef struct lqDiagnosticInfo_tag
     uint8_t fileId;
  
     /* Application communications state info */
-    int16_t protoState;                 // indications: TCP/UDP/SSL connected, MQTT state, etc.
+    int16_t commState;                  // indications: TCP/UDP/SSL connected, MQTT state, etc.
     int16_t ntwkState;                  // indications: LTE PDP, etc.
-    int16_t sgnlState;                  // indications: rssi, etc.
+    int16_t signalState;                // indications: rssi, etc.
 
     /* Hardfault capture */
     uint16_t ufsr;
@@ -95,15 +93,15 @@ typedef struct lqDiagnosticInfo_tag
     uint32_t r12;
     uint32_t return_address;
     uint32_t xpsr;
-} lqDiagnosticInfo_t;
+} diagnosticInfo_t;
 
 
-typedef struct assertControl_tag 
+typedef struct diagnosticControl_tag 
 {
-    uint8_t assertMagic;
-    lqDiagnosticInfo_t diagnosticInfo;
     appNotifyFunc_t notifyCB;
-} assertControl_t;
+    uint8_t notifyCbChk;
+    diagnosticInfo_t diagnosticInfo;
+} diagnosticControl_t;
 
 
 #ifdef __cplusplus
@@ -111,10 +109,9 @@ extern "C"
 {
 #endif // __cplusplus
 
-void assert_registerNotifCallback(appNotifyFunc_t notifyCallback);
-lqDiagnosticInfo_t *assert_getDiagInfoPtr();
-
-void assert_init(lqDiagnosticInfo_t *diagInfo, appNotifyFunc_t notifCB);
+void lqDiag_registerNotifCallback(appNotifyFunc_t notifyCallback);
+void lqDiag_setResetCause(uint8_t resetcause);
+diagnosticInfo_t *lqDiag_getDiagnosticsInfo();
 
 void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line);
 void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt); 
@@ -124,4 +121,4 @@ void assert_brk();
 }
 #endif // !__cplusplus
 
-#endif  /* !__LQ_ASSERT_H__ */
+#endif  /* !__LQ_DIAGNOSTICS_H__ */

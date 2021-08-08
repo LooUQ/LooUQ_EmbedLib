@@ -92,6 +92,11 @@ void lq_getQryStrDictionaryValue(const char *key, keyValueDict_t dict, char *val
 // JSON (body) Documents
 lqJsonPropValue_t lq_getJsonPropValue(const char *jsonSrc, const char *propName);
 
+// MOVED to LQ-DeviceCommon
+// char *lqc_getActionParamValue(const char *paramName, keyValueDict_t actnParams);
+// lqcJsonProp_t lqc_getJsonProp(const char *jsonSrc, const char *propName);
+// keyValueDict_t lqc_parseQueryStringDict(char *dictSrc);
+
 
 #ifdef __cplusplus
 }

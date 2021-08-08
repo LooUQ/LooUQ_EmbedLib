@@ -152,28 +152,31 @@ typedef uint16_t fdictKey_t;
  * timeout is expected to reset the system.
 */
 
-typedef enum lqNotificationType_tag
+typedef enum lqNotifType__tag
 {
-    lqNotificationType_info = 0,
+    lqNotifType__info = 0,
 
     // your extensions here, LTEmC codes at 0xD0 through 0xFF
 
-    lqNotificationType__LQCLOUD = 0xC0,             // LQCloud
-    lqNotificationType__LQCLOUD_ = 0xCF,            // end-block 
+    lqNotifType__LQCLOUD = 0xC0,                // LQCloud
+    lqNotifType_lqcloud_connect = 0xC1,
+    lqNotifType_lqcloud_disconnect = 0xC2,
+    lqNotifType__LQCLOUD_ = 0xCF,               // end-block 
 
-    lqNotificationType__LQDEVICE = 0xD0,            // LooUQ devices
-    lqNotificationType_lqDevice_hwFault,
-    lqNotificationType_lqDevice_ntwkFault,
-    lqNotificationType_lqDevice_streamFault,
-    lqNotificationType_lqDevice_recvOverflow,
-    lqNotificationType_lqDevice_xmitOverflow,
-    lqNotificationType__LQDEVICE_ = 0xDF,           // end-block
+    lqNotifType__LQDEVICE = 0xD0,               // LooUQ devices
+    lqNotifType_lqDevice_hwFault,
+    lqNotifType_lqDevice_ntwkFault,
+    lqNotifType_lqDevice_streamFault,
+    lqNotifType_lqDevice_recvOverflow,
+    lqNotifType_lqDevice_xmitOverflow,
+    lqNotifType__LQDEVICE_ = 0xDF,              // end-block
 
-    lqNotificationType_assertWarning = 0xFD,        // code warnings\errors\faults
-    lqNotificationType__CATASTROPHIC = 0xFE,
-    lqNotificationType_assertFailed = 0xFE,
-    lqNotificationType_hardFault = 0xFF
-} lqNotificationType_t;
+    lqNotifType_assertWarning = 0xFD,          // code warnings\errors\faults
+
+    lqNotifType__CATASTROPHIC = 0xFE,
+    lqNotifType_assertFailed = 0xFE,
+    lqNotifType_hardFault = 0xFF
+} lqNotifType__t;
 
 
 typedef void (*appNotifyFunc_t)(uint8_t notifType, const char *notifMsg);
