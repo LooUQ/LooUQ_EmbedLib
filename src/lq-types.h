@@ -154,7 +154,7 @@ typedef uint16_t fdictKey_t;
 
 typedef enum lqNotifType__tag
 {
-    lqNotifType__info = 0,
+    lqNotifType_info = 0,
 
     // your extensions here, LTEmC codes at 0xD0 through 0xFF
 
