@@ -1,0 +1,242 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\GregTerrell\\AppData\\Local\\Arduino15\\packages\\adafruit\\hardware\\samd\\1.7.2\\cores\\arduino"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\GregTerrell\\AppData\\Local\\Arduino15\\packages\\adafruit\\hardware\\samd\\1.7.2\\variants\\feather_m0_express"
+  },
+  {
+    "Sourcefile": "c:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\examples\\BasicWriteRead\\.build\\sketch\\basicWriteRead.ino.cpp",
+    "Include": "jlinkRtt.h",
+    "Includepath": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\JLinkRTT\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\examples\\BasicWriteRead\\.build\\sketch\\basicWriteRead.ino.cpp",
+    "Include": "lq-types.h",
+    "Includepath": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-Common\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\examples\\BasicWriteRead\\.build\\sketch\\basicWriteRead.ino.cpp",
+    "Include": "lqc-types.h",
+    "Includepath": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LQCloud\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\examples\\BasicWriteRead\\.build\\sketch\\basicWriteRead.ino.cpp",
+    "Include": "SPI.h",
+    "Includepath": "C:\\Users\\GregTerrell\\AppData\\Local\\Arduino15\\packages\\adafruit\\hardware\\samd\\1.7.2\\libraries\\SPI"
+  },
+  {
+    "Sourcefile": "c:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\examples\\BasicWriteRead\\.build\\sketch\\basicWriteRead.ino.cpp",
+    "Include": "Adafruit_ZeroDMA.h",
+    "Includepath": "C:\\Users\\GregTerrell\\AppData\\Local\\Arduino15\\packages\\adafruit\\hardware\\samd\\1.7.2\\libraries\\Adafruit_ZeroDMA"
+  },
+  {
+    "Sourcefile": "c:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\examples\\BasicWriteRead\\.build\\sketch\\basicWriteRead.ino.cpp",
+    "Include": "Adafruit_SPIFlashBase.h",
+    "Includepath": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\Adafruit_SPIFlash\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\examples\\BasicWriteRead\\.build\\sketch\\basicWriteRead.ino.cpp",
+    "Include": "lq-flashDictionary.h",
+    "Includepath": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\examples\\BasicWriteRead\\.build\\sketch\\basicWriteRead.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\JLinkRTT\\src\\RTT_Syscalls_GCC.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\JLinkRTT\\src\\SEGGER_RTT.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\JLinkRTT\\src\\SEGGER_RTT_printf.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\JLinkRTT\\src\\jlinkRtt.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\JLinkRTT\\src\\rttPrint.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-Common\\src\\lq-collections.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-Common\\src\\lq-wrkTime.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LQCloud\\src\\lqc-actions.c",
+    "Include": "ltemc.h",
+    "Includepath": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LQCloud\\src\\lqc-actions.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LQCloud\\src\\lqc-alerts.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LQCloud\\src\\lqc-azure.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LQCloud\\src\\lqc-telemetry.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LQCloud\\src\\lqcloud.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\AppData\\Local\\Arduino15\\packages\\adafruit\\hardware\\samd\\1.7.2\\libraries\\SPI\\SPI.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\AppData\\Local\\Arduino15\\packages\\adafruit\\hardware\\samd\\1.7.2\\libraries\\Adafruit_ZeroDMA\\Adafruit_ZeroDMA.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\Adafruit_SPIFlash\\src\\Adafruit_SPIFlashBase.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\Adafruit_SPIFlash\\src\\esp32\\Adafruit_FlashTransport_ESP32.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\Adafruit_SPIFlash\\src\\qspi\\Adafruit_FlashTransport_QSPI_NRF.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\Adafruit_SPIFlash\\src\\qspi\\Adafruit_FlashTransport_QSPI_SAMD.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\Adafruit_SPIFlash\\src\\spi\\Adafruit_FlashTransport_SPI.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-FlashDictionary\\src\\lq-flashDictionary.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-atcmd.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-cbuf.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-filesys.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-geo.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-gnss.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-iop.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-mdminfo.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-mqtt.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-network.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-nxp-sc16is.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-quectel-bg.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc-sockets.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\ltemc.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\platform\\arduino-debug.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\platform\\arduino-gpio.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\platform\\arduino-spi.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\GregTerrell\\Documents\\CodeDev\\Arduino\\libraries\\LooUQ-LTEmC\\src\\platform\\arduino-timing.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]

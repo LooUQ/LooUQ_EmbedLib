@@ -7,10 +7,10 @@ diagnosticControl_t g_diagControl  __attribute__ ((section (".noinit")));
 
 uint8_t S_calcNotifyCbChk(uint32_t notifCbAddr)
 {
-    uint8_t result = notifCbAddr & 0xFF;
-    result = result ^ (notifCbAddr >> 8) & 0xFF;
-    result = result ^ (notifCbAddr >> 16) & 0xFF;
-    result = result ^ (notifCbAddr >> 24) & 0xFF;
+    uint8_t result =  notifCbAddr & 0xFF;
+    result = result ^ (notifCbAddr >> 4) & 0xFF;
+    result = result ^ (notifCbAddr >> 12) & 0xFF;
+    result = result ^ (notifCbAddr >> 20) & 0xFF;
     return result;
 }
 
@@ -30,11 +30,24 @@ void lqDiag_registerNotifCallback(appNotifyFunc_t notifyCallback)
 
 void lqDiag_setResetCause(uint8_t resetcause)
 {
-    g_diagControl.diagnosticInfo.rcause = resetcause;
     if (resetcause != diagRcause_watchdog && resetcause != diagRcause_system)           // if non-error reset, clear diagnostics
     {
-        memset(&g_diagControl.diagnosticInfo + 1, 0, sizeof(diagnosticInfo_t) - 1);
+        uint8_t bfSave = g_diagControl.diagnosticInfo.bootFlag;
+        memset(&g_diagControl.diagnosticInfo, 0, sizeof(diagnosticInfo_t));
+        g_diagControl.diagnosticInfo.bootFlag = bfSave;
     }
+    else
+    {
+        g_diagControl.diagnosticInfo.bootFlag += g_diagControl.diagnosticInfo.bootFlag == 0xFF ? 0 : 1;
+    }
+    g_diagControl.diagnosticInfo.rcause = resetcause;
+}
+
+
+void inline lqDiag_setBootSafe()
+{
+    g_diagControl.diagnosticInfo.bootFlag = 0xFF;
+    memset(&g_diagControl.diagnosticInfo, 0, sizeof(diagnosticInfo_t));
 }
 
 
@@ -45,9 +58,29 @@ void lqDiag_setResetCause(uint8_t resetcause)
  */
 diagnosticInfo_t *lqDiag_getDiagnosticsInfo()
 {
-    if (g_diagControl.diagnosticInfo.diagMagic == assert__diagnosticsMagic)
-        return &g_diagControl.diagnosticInfo;
-    return NULL;
+    return &g_diagControl.diagnosticInfo;
+}
+
+
+/**
+ *  \brief Set application level diagnostic information to report to host.
+ */
+void lqDiag_setApplicationDiagnosticsInfo(int16_t commState, int16_t ntwkState, int16_t signalState)
+{
+    g_diagControl.diagnosticInfo.commState = commState;         // indications: TCP/UDP/SSL connected, MQTT state, etc.
+    g_diagControl.diagnosticInfo.ntwkState = ntwkState;         // indications: LTE PDP, etc.
+    g_diagControl.diagnosticInfo.signalState = signalState;     // indications: rssi, etc.
+}
+
+
+/**
+ *  \brief Set application notification information to report to host.
+ */
+void lqDiag_setApplicationMessage(uint8_t notifCode, const char *notifMsg)
+{
+    g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
+    g_diagControl.diagnosticInfo.notifCode = notifCode;
+    memcpy(g_diagControl.diagnosticInfo.notifMsg, notifMsg, 20);
 }
 
 
@@ -75,14 +108,12 @@ void lqDiag_clearDiagnosticInfo()
  */
 void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line)
 {
-    if (g_diagControl.diagnosticInfo.diagMagic != assert__diagnosticsMagic)
-    {
-        g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
-        g_diagControl.diagnosticInfo.pc = pc;
-        g_diagControl.diagnosticInfo.lr = lr;
-        g_diagControl.diagnosticInfo.line = line;
-        g_diagControl.diagnosticInfo.fileId = fileId;
-    }
+    g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
+    g_diagControl.diagnosticInfo.pc = pc;
+    g_diagControl.diagnosticInfo.lr = lr;
+    g_diagControl.diagnosticInfo.line = line;
+    g_diagControl.diagnosticInfo.fileId = fileId;
+
     if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCbChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
     {
         char notifyMsg[40];
@@ -121,25 +152,22 @@ inline void assert_brk()
  #pragma endregion
 
 
-void lqDiag_setFaultNotif(uint16_t notifCd, const char *notifMsg)
+void lqDiag_setProtoState(int16_t pstate)
 {
-    g_diagControl.diagnosticInfo.notifType = notifCd;
-    memcpy(g_diagControl.diagnosticInfo.notifMsg, notifMsg, 20);
-}
-
-
-void lqDiag_setApplPState(int16_t pstate)
-{
+    g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
     g_diagControl.diagnosticInfo.commState = pstate;
 }
 
 
-void lqDiag_setNtwkPState(int16_t pstate)
+void lqDiag_setNtwkState(int16_t pstate)
 {
+    g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
     g_diagControl.diagnosticInfo.ntwkState = pstate;
 }
 
-void lqDiag_setPhysPState(int16_t pstate)
+
+void lqDiag_setSignalState(int16_t pstate)
 {
+    g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
     g_diagControl.diagnosticInfo.signalState = pstate;
 }

@@ -55,6 +55,7 @@ enum
 
 typedef enum diagRcause_tag
 {
+    diagRcause_serviced = 0,
     diagRcause_powerOn = 1,
     diagRcause_pwrCore = 2,
     diagRcause_pwrPeriph = 4,
@@ -70,7 +71,8 @@ typedef struct diagnosticInfo_tag
 {
     uint16_t diagMagic;
     diagRcause_t rcause;                // cause of last reset
-    uint8_t notifType;                  // code from application notification callback
+    uint8_t bootFlag;                   // boot-loop detection 
+    uint8_t notifCode;                  // code from application notification callback
     char notifMsg[20];                  // message from application notification callback
 
     /* ASSERT capture info */
@@ -112,6 +114,11 @@ extern "C"
 void lqDiag_registerNotifCallback(appNotifyFunc_t notifyCallback);
 void lqDiag_setResetCause(uint8_t resetcause);
 diagnosticInfo_t *lqDiag_getDiagnosticsInfo();
+
+void lqDiag_setApplicationMessage(uint8_t notifCode, const char *notifMsg);
+void lqDiag_setProtoState(int16_t pstate);
+void lqDiag_setNtwkState(int16_t pstate);
+void lqDiag_setSignalState(int16_t pstate);
 
 void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line);
 void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt); 

@@ -28,11 +28,6 @@
 #ifndef __LQ_TYPES_H__
 #define __LQ_TYPES_H__
 
-
-// #include <stdint.h>
-// #include <stdlib.h>
-// #include <stdbool.h>
-
 #ifdef __cplusplus
 #include <cstdint>
 #include <cstdlib>
@@ -131,8 +126,11 @@ typedef uint16_t resultCode_t;
 #define PERIOD_FROM_SECONDS(period)  (period * 1000)
 #define PERIOD_FROM_MINUTES(period)  (period * 1000 * 60)
 
-#define LOOUQ_MAGIC 0x452b
-#define LOOUQ_FLASHDICTKEY__LQCDEVICE 201
+enum 
+{
+    LOOUQ_MAGIC = 0x452b,
+    LOOUQ_FLASHDICTKEY__LQCDEVICE = 201
+};
 
 typedef uint16_t magicFlag_t;
 typedef uint16_t fdictKey_t;
