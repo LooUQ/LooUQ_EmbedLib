@@ -1,3 +1,4 @@
+#include <sam.h>
 #include <lq-types.h>
 #include <lq-diagnostics.h>
 #include <stdio.h>
@@ -144,12 +145,15 @@ void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt)
     }
 }
 
-
 inline void assert_brk()
 {
-    __asm__("BKPT 9");
+    if (WDT->CTRL.bit.ENABLE == 1)
+        while (true) {}
+    else
+        __asm__("BKPT 9");
 }
- #pragma endregion
+
+#pragma endregion
 
 
 void lqDiag_setProtoState(int16_t pstate)

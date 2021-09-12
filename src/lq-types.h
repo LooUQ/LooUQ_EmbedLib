@@ -162,11 +162,11 @@ typedef enum lqNotifType__tag
     lqNotifType__LQCLOUD_ = 0xCF,               // end-block 
 
     lqNotifType__LQDEVICE = 0xD0,               // LooUQ devices
-    lqNotifType_lqDevice_hwFault,
-    lqNotifType_lqDevice_ntwkFault,
-    lqNotifType_lqDevice_streamFault,
-    lqNotifType_lqDevice_recvOverflow,
     lqNotifType_lqDevice_xmitOverflow,
+    lqNotifType_lqDevice_recvOverflow,
+    lqNotifType_lqDevice_streamFault,
+    lqNotifType_lqDevice_ntwkFault,
+    lqNotifType_lqDevice_hwFault,
     lqNotifType__LQDEVICE_ = 0xDF,              // end-block
 
     lqNotifType_assertWarning = 0xFD,          // code warnings\errors\faults
