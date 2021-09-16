@@ -9,8 +9,13 @@
 
 enum 
 {
-    assert__diagnosticsMagic = 0xD1AC
+    assert__diagnosticsMagic = 0xD1AC,
+
+    diag__notifMsgSz = 20,
+    diag__hwVerSz = 40,
+    diag__swVerSz = 12
 };
+
 
 #define GET_LR() __builtin_return_address(0)
 // This is ARM and GCC specific syntax
@@ -28,11 +33,11 @@ enum
 
 //#define NO_ASSERTS
 #ifndef NO_ASSERTS
-#define ASSERT(exp, fileId)                                 \
-    do {                                                    \
-        if (!(exp)) {                                       \
-            PROCESS_ASSERT(fileId, __LINE__);               \
-        }                                                   \
+#define ASSERT(exp, fileId)                                     \
+    do {                                                        \
+        if (!(exp)) {                                           \
+            PROCESS_ASSERT(fileId, __LINE__);                   \
+        }                                                       \
     } while (0)
 #else
 #define ASSERT(exp, fileId)  (0)
@@ -41,11 +46,11 @@ enum
 
 //#define NO_ASSERTWARNINGS
 #ifndef NO_ASSERTWARNINGS && NO_ASSERT
-#define ASSERT_W(exp, fileId, faultTxt)                     \
-    do {                                                    \
-        if (!(exp)) {                                       \ 
-            assert_warning(fileId, __LINE__, faultTxt);     \
-        }                                                   \
+#define ASSERT_W(exp, fileId, faultTxt)                         \
+    do {                                                        \
+        if (!(exp)) {                                           \ 
+            assert_warning(fileId, __LINE__, faultTxt);         \
+        }                                                       \
     } while (0);    
 #else
 #define ASSERT_W(exp, faultTxt)  (0)
@@ -74,6 +79,8 @@ typedef struct diagnosticInfo_tag
     uint8_t bootFlag;                   // boot-loop detection 
     uint8_t notifCode;                  // code from application notification callback
     char notifMsg[20];                  // message from application notification callback
+    char hwVersion[40];                 // device HW version that may\may not be recorded
+    char swVersion[12];                 // embedded app version that may\may not be recorded
 
     /* ASSERT capture info */
     uint32_t pc;
@@ -100,8 +107,8 @@ typedef struct diagnosticInfo_tag
 
 typedef struct diagnosticControl_tag 
 {
-    appNotifyFunc_t notifyCB;
-    uint8_t notifyCbChk;
+    eventNotifFunc_t notifCB;
+    uint8_t notifCBChk;
     diagnosticInfo_t diagnosticInfo;
 } diagnosticControl_t;
 
@@ -111,7 +118,7 @@ extern "C"
 {
 #endif // __cplusplus
 
-void lqDiag_registerNotifCallback(appNotifyFunc_t notifyCallback);
+void lqDiag_registerNotifCallback(eventNotifFunc_t notifCallback);
 void lqDiag_setResetCause(uint8_t resetcause);
 diagnosticInfo_t *lqDiag_getDiagnosticsInfo();
 
@@ -119,6 +126,8 @@ void lqDiag_setApplicationMessage(uint8_t notifCode, const char *notifMsg);
 void lqDiag_setProtoState(int16_t pstate);
 void lqDiag_setNtwkState(int16_t pstate);
 void lqDiag_setSignalState(int16_t pstate);
+const char *lqDiag_setHwVersion(const char *hwVersion);
+const char *lqDiag_setSwVersion(const char *swVersion);
 
 void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line);
 void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt); 

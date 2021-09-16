@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "lqcloud.h": "c",
-        "lq-infoblock.h": "c"
-    },
-    "C_Cpp.intelliSenseEngineFallback": "Disabled"
-}

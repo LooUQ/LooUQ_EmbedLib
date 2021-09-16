@@ -137,7 +137,7 @@ typedef uint16_t fdictKey_t;
 
 
 
-/* LooUQ standard notification callback codes.
+/* LooUQ standard event notification callback codes.
  * Notification callbacks are the standardize mechanism for LooUQ libraries to update the embedded application of 
  * events or issues. The notification callback function is registered by the application at startup, the signature
  * is shown below. 
@@ -150,34 +150,45 @@ typedef uint16_t fdictKey_t;
  * timeout is expected to reset the system.
 */
 
+/**
+ *	\brief LooUQ notification codes.
+ */
 typedef enum lqNotifType__tag
 {
     lqNotifType_info = 0,
 
-    // your extensions here, LTEmC codes at 0xD0 through 0xFF
+    // your extensions here
+    
+    // LooUQ reserves 0xD0 through 0xFF
+    lqNotifType__LOOUQ = 0xD0,                  // LooUQ Reserved: LTEmC, LQCloud, etc.
+    lqNotifType__INFO = 0xD0,
+    lqNotifType_connect = 0xD0,
 
-    lqNotifType__LQCLOUD = 0xC0,                // LQCloud
-    lqNotifType_lqcloud_connect = 0xC1,
-    lqNotifType_lqcloud_disconnect = 0xC2,
-    lqNotifType__LQCLOUD_ = 0xCF,               // end-block 
+    lqNotifType__WARNING = 0xE0,
+    lqNotifType_disconnect = 0xE0,              // device or platform disconnected
+    lqNotifType_dataFault = 0xE1,               // data corruption likely
+    lqNotifType_assertWarning = 0xEE,           // code warnings\errors\faults
+    lqNotifType_warning = 0xEF,                 // generalized recoverable error
 
-    lqNotifType__LQDEVICE = 0xD0,               // LooUQ devices
-    lqNotifType_lqDevice_xmitOverflow,
-    lqNotifType_lqDevice_recvOverflow,
-    lqNotifType_lqDevice_streamFault,
-    lqNotifType_lqDevice_ntwkFault,
-    lqNotifType_lqDevice_hwFault,
-    lqNotifType__LQDEVICE_ = 0xDF,              // end-block
-
-    lqNotifType_assertWarning = 0xFD,          // code warnings\errors\faults
-
-    lqNotifType__CATASTROPHIC = 0xFE,
+    lqNotifType__CATASTROPHIC = 0xF0,
     lqNotifType_assertFailed = 0xFE,
     lqNotifType_hardFault = 0xFF
 } lqNotifType__t;
 
 
-typedef void (*appNotifyFunc_t)(uint8_t notifType, const char *notifMsg);
+/**
+ *	\brief LooUQ assemblies.
+ *  LooUQ reserves C0 and above for internal use.
+ */
+typedef enum lqNotifAssm_tag
+{
+    lqNotifAssm_ltemc = 0xC0,
+    lqNotifAssm_lqcloud = 0xC1
+} lqNotifAssm_t;
+
+/*
+*/
+typedef void (*eventNotifFunc_t)(uint8_t notifType, uint8_t notifAssm, uint8_t notifInst, const char *notifMsg);
 
 
 #endif  /* !__LQ_TYPES_H__ */

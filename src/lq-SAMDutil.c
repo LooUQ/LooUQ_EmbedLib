@@ -31,7 +31,7 @@
 #include <sam.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "lq-SAMDcore.h"
+#include "lq-SAMDutil.h"
 
 
 bool wdInitialized = false;

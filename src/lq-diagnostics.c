@@ -3,6 +3,9 @@
 #include <lq-diagnostics.h>
 #include <stdio.h>
 
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+
 diagnosticControl_t g_diagControl  __attribute__ ((section (".noinit")));
 
 
@@ -21,11 +24,11 @@ uint8_t S_calcNotifyCbChk(uint32_t notifCbAddr)
  * 
  *  \param notifyCallback Function pointer to the application's event notification callback function, which may or may not return.
  */
-void lqDiag_registerNotifCallback(appNotifyFunc_t notifyCallback)
+void lqDiag_registerNotifCallback(eventNotifFunc_t eventNotifCallback)
 {
     //g_diagControl.assertMagic = assert__assertControlMagic;
-    g_diagControl.notifyCB = notifyCallback;
-    g_diagControl.notifyCbChk = S_calcNotifyCbChk((int32_t)notifyCallback);
+    g_diagControl.notifCB = eventNotifCallback;
+    g_diagControl.notifCBChk = S_calcNotifyCbChk((int32_t)eventNotifCallback);
 }
 
 
@@ -81,7 +84,7 @@ void lqDiag_setApplicationMessage(uint8_t notifCode, const char *notifMsg)
 {
     g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
     g_diagControl.diagnosticInfo.notifCode = notifCode;
-    memcpy(g_diagControl.diagnosticInfo.notifMsg, notifMsg, 20);
+    memcpy(g_diagControl.diagnosticInfo.notifMsg, notifMsg, diag__notifMsgSz);
 }
 
 
@@ -115,11 +118,13 @@ void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line)
     g_diagControl.diagnosticInfo.line = line;
     g_diagControl.diagnosticInfo.fileId = fileId;
 
-    if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCbChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
+    if (g_diagControl.notifCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.notifCB))
     {
         char notifyMsg[40];
         snprintf(notifyMsg, sizeof(notifyMsg), "ASSERT f:%d,l:%d-pc=%d,lr=%d", fileId, line, pc, lr);
-        g_diagControl.notifyCB(lqNotifType_assertFailed, notifyMsg);
+
+        uint8_t assm = (uint8_t)(fileId & 0xFF00) >> 8;
+        g_diagControl.notifCB(lqNotifType_assertFailed, assm, 0, notifyMsg);
     }
     assert_brk();                                                               // stop here if notify callback returned
 }
@@ -137,11 +142,12 @@ void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line)
  */
 void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt)
 {
-    if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCbChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
+    if (g_diagControl.notifCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.notifCB))
     {
         char notifyMsg[80];
         snprintf(notifyMsg, sizeof(notifyMsg), "WARN f:%X,l:%d-%s\r", fileId, line, faultTxt);
-        g_diagControl.notifyCB(lqNotifType_assertWarning, notifyMsg);
+        uint8_t assm = (uint8_t)(fileId & 0xFF00) >> 8;
+        g_diagControl.notifCB(lqNotifType_assertWarning, assm, 0, notifyMsg);
     }
 }
 
@@ -174,4 +180,21 @@ void lqDiag_setSignalState(int16_t pstate)
 {
     g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
     g_diagControl.diagnosticInfo.signalState = pstate;
+}
+
+
+const char *lqDiag_setHwVersion(const char *hwVersion)
+{
+    // no magic set, this is informational and not an error
+
+    memcpy(g_diagControl.diagnosticInfo.hwVersion, hwVersion, diag__hwVerSz);
+    return hwVersion;
+}
+
+
+const char *lqDiag_setSwVersion(const char *swVersion)
+{
+    // no magic set, this is informational and not an error
+    memcpy(g_diagControl.diagnosticInfo.swVersion, swVersion, diag__swVerSz);
+    return swVersion;
 }
