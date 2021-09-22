@@ -121,7 +121,7 @@ void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line)
     if (g_diagControl.notifCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.notifCB))
     {
         char notifyMsg[40];
-        snprintf(notifyMsg, sizeof(notifyMsg), "ASSERT f:%d,l:%d-pc=%d,lr=%d", fileId, line, pc, lr);
+        snprintf(notifyMsg, sizeof(notifyMsg), "ASSERT f:%d,l:%d,pc=%d,lr=%d", fileId, line, pc, lr);
 
         uint8_t assm = (uint8_t)(fileId & 0xFF00) >> 8;
         g_diagControl.notifCB(lqNotifType_assertFailed, assm, 0, notifyMsg);

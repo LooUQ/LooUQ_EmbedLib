@@ -162,15 +162,26 @@ typedef enum lqNotifType__tag
     // LooUQ reserves 0xD0 through 0xFF
     lqNotifType__LOOUQ = 0xD0,                  // LooUQ Reserved: LTEmC, LQCloud, etc.
     lqNotifType__INFO = 0xD0,
+    lqNotifTypeI_connect = 0xD0,
+
     lqNotifType_connect = 0xD0,
 
+
     lqNotifType__WARNING = 0xE0,
+    lqNotifTypeW_disconnect = 0xE0,
+    lqNotifTypeW_dataFault = 0xE1,               // data corruption likely
+    lqNotifTypeW_assertWarning = 0xEE,           // code warnings\errors\faults
+
     lqNotifType_disconnect = 0xE0,              // device or platform disconnected
     lqNotifType_dataFault = 0xE1,               // data corruption likely
     lqNotifType_assertWarning = 0xEE,           // code warnings\errors\faults
     lqNotifType_warning = 0xEF,                 // generalized recoverable error
 
+
     lqNotifType__CATASTROPHIC = 0xF0,
+    lqNotifTypeC_assertFailed = 0xFE,
+    lqNotifTypeC_hardFault = 0xFF,
+
     lqNotifType_assertFailed = 0xFE,
     lqNotifType_hardFault = 0xFF
 } lqNotifType__t;
