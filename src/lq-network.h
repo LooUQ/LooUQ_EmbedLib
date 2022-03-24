@@ -1,9 +1,9 @@
 /******************************************************************************
- *  \file ltemc-mqtt.h
+ *  \file lq-network.h
  *  \author Greg Terrell
  *  \license MIT License
  *
- *  Copyright (c) 2021 LooUQ Incorporated.
+ *  Copyright (c) 2022 LooUQ Incorporated.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -22,31 +22,38 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  ******************************************************************************
- * C string helper functions
+ * Common network (cell, LoRa, etc.) network structures
  *****************************************************************************/
 
-#ifndef __LQ_STR_H__
-#define __LQ_STR_H__
+#ifndef _LQ_NETWORK_H_
+#define _LQ_NETWORK_H_
 
-#include <stddef.h>
-#include <stdint.h>
+// #include <stddef.h>
+// #include <stdint.h>
 
+#define MDMINFO_IMEI_SZ = 15
+#define MDMINFO_ICCID_SZ = 20
+#define MDMINFO_FWVER_SZ = 40
+#define MDMINFO_MFGINFO_SZ 40
 
-#ifdef __cplusplus
-extern "C"
+/** 
+ *  \brief Struct holding information about the physical BGx module.
+*/
+typedef struct modemInfo_tag
 {
-#endif // __cplusplus
-
-char *lq_strnstr(const char *haystack, const char *needle, size_t length);
-uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr);
-uint16_t lq_strUriDecode(char *src, int len);
-
-// // String Tokenizer
-// char *lq_strToken(char *source, int delimiter, char *token, uint8_t tokenMax);
+	char imei[15 + 1];          /// IMEI (15 digits) International Mobile Equipment Identity, set in the BGx itself at manufacture.
+	char iccid[2 + 1];          /// ICCID (20 digits) Integrated Circuit Card ID. Set in the SIM card at manufacture.
+	char mfgmodel[20 + 1];      /// The Quectel model number of the BGx device.
+	char fwver[40 + 1];         /// Firmware version of the BGx device.
+    char swver[12 + 1];         /// software driver version
+} modemInfo_t;
 
 
-#ifdef __cplusplus
-}
-#endif // !__cplusplus
+// #ifdef __cplusplus
+// extern "C" {
+// #endif
+// #ifdef __cplusplus
+// }
+// #endif
 
-#endif  /* !__LQ_STR_H__ */
+#endif  //!_LQ_NETWORK_H_

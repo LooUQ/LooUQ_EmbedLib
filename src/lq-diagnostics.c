@@ -8,6 +8,31 @@
 
 diagnosticControl_t g_diagControl  __attribute__ ((section (".noinit")));
 
+/* For the diagControl to be preserved across reboots, it has to be protected from Loader initialization
+ * The .noinit section assignment is the 1st step. The loader file (.ld extension) used to flash the 
+ * MCU memory has to have a matching definion of the section. The LooUQ location for this section is immediately
+ * following the .bss section (and before the .heap section). The .noinit loader section is in RAM, so it will 
+ * not survive a power cycle, but does survive a reset.
+ *
+ * The linker scripts are included with every update to hardware packages in Arduino framework systems and the linker
+ * script is unique for each MCU target. Example path for Adafruit Feather-M0-Express below.
+ * 
+ * >> C:\Users\GregTerrell\AppData\Local\Arduino15\packages\adafruit\hardware\samd\1.7.5\variants\feather_m0_express\linker_scripts\gcc
+ * 
+    // .bss section defined here
+
+    .noinit (NOLOAD):
+    {
+		. = ALIGN(4);
+        *(.noinit*)
+        . = ALIGN(4);
+    } > RAM
+
+    // .heap section defined here
+
+    
+*/
+
 
 uint8_t S_calcNotifyCbChk(uint32_t notifCbAddr)
 {
@@ -24,33 +49,34 @@ uint8_t S_calcNotifyCbChk(uint32_t notifCbAddr)
  * 
  *  \param notifyCallback Function pointer to the application's event notification callback function, which may or may not return.
  */
-void lqDiag_registerNotifCallback(eventNotifFunc_t eventNotifCallback)
+void lqDiag_registerEventCallback(appEventCallback_func appEventCallback)
 {
     //g_diagControl.assertMagic = assert__assertControlMagic;
-    g_diagControl.notifCB = eventNotifCallback;
-    g_diagControl.notifCBChk = S_calcNotifyCbChk((int32_t)eventNotifCallback);
+    g_diagControl.eventCB = appEventCallback;
+    g_diagControl.notifCBChk = S_calcNotifyCbChk((int32_t)appEventCallback);
 }
 
 
 void lqDiag_setResetCause(uint8_t resetcause)
 {
-    if (resetcause != diagRcause_watchdog && resetcause != diagRcause_system)           // if non-error reset, clear diagnostics
-    {
-        uint8_t bfSave = g_diagControl.diagnosticInfo.bootFlag;
-        memset(&g_diagControl.diagnosticInfo, 0, sizeof(diagnosticInfo_t));
-        g_diagControl.diagnosticInfo.bootFlag = bfSave;
-    }
-    else
-    {
-        g_diagControl.diagnosticInfo.bootFlag += g_diagControl.diagnosticInfo.bootFlag == 0xFF ? 0 : 1;
-    }
     g_diagControl.diagnosticInfo.rcause = resetcause;
+    uint8_t boots = g_diagControl.diagnosticInfo.bootLoops + g_diagControl.diagnosticInfo.bootLoops == diag__bootSafe ? 0 : 1;   // no boot INC if bootSafe
+
+    if (resetcause == diagRcause_watchdog || resetcause == diagRcause_system)
+    {
+        g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;          // diagnostics reportable start
+    }
+    else                                                                            // if non-reportable reset, clear diagnostics except bootLoops detection
+    {
+        memset(&g_diagControl.diagnosticInfo, 0, sizeof(diagnosticInfo_t));
+        g_diagControl.diagnosticInfo.bootLoops = boots;
+    }
 }
 
 
 void inline lqDiag_setBootSafe()
 {
-    g_diagControl.diagnosticInfo.bootFlag = 0xFF;
+    g_diagControl.diagnosticInfo.bootLoops = diag__bootSafe;
     memset(&g_diagControl.diagnosticInfo, 0, sizeof(diagnosticInfo_t));
 }
 
@@ -118,13 +144,13 @@ void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line)
     g_diagControl.diagnosticInfo.line = line;
     g_diagControl.diagnosticInfo.fileId = fileId;
 
-    if (g_diagControl.notifCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.notifCB))
+    if (g_diagControl.eventCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.eventCB))
     {
         char notifyMsg[40];
         snprintf(notifyMsg, sizeof(notifyMsg), "ASSERT f:%d,l:%d,pc=%d,lr=%d", fileId, line, pc, lr);
 
         uint8_t assm = (uint8_t)(fileId & 0xFF00) >> 8;
-        g_diagControl.notifCB(lqNotifType_assertFailed, assm, 0, notifyMsg);
+        g_diagControl.eventCB(appEvent_fault_assertFailed, notifyMsg);
     }
     assert_brk();                                                               // stop here if notify callback returned
 }
@@ -142,12 +168,12 @@ void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line)
  */
 void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt)
 {
-    if (g_diagControl.notifCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.notifCB))
+    if (g_diagControl.eventCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.eventCB))
     {
         char notifyMsg[80];
         snprintf(notifyMsg, sizeof(notifyMsg), "WARN f:%X,l:%d-%s\r", fileId, line, faultTxt);
         uint8_t assm = (uint8_t)(fileId & 0xFF00) >> 8;
-        g_diagControl.notifCB(lqNotifType_assertWarning, assm, 0, notifyMsg);
+        g_diagControl.eventCB(appEvent_warn_wassertFailed, notifyMsg);
     }
 }
 

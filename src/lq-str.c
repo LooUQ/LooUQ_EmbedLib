@@ -29,15 +29,29 @@
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-char *lq_strnstr(char *haystack, char *needle, size_t length)
+/**
+ *  \brief Constrained string search, only check haystack for length characters. Allows for deterministic searching non-NULL terminated char sequences.
+ * 
+ *  \param [in] haystack Pointer to a char array that may/may not be NULL terminated 
+ *  \param [in] needle The char sequence to search for, needs to be an NULL terminated C-string
+ *  \param [in] maxSearch Maximum number of chars to search for needle 
+ * 
+ *  \return Number of substitutions made
+*/
+
+char *lq_strnstr(const char *haystack, const char *needle, size_t maxSearch)
 {
-    size_t needle_length = MIN(length, strlen(needle));
-    size_t i;
-    for (i = 0; i < length; i++) {
-        if (i + needle_length > length) {                           // once needle is longer that compare, can't match
+    size_t needleSz = strlen(needle);
+    if (needleSz > maxSearch)
+        return NULL;
+
+    for (size_t i = 0; i < maxSearch; i++) {
+        if (i + needleSz > maxSearch)                          // once needle is longer that compare, can't match
+        {
             return NULL;
         }
-        if (strncmp(&haystack[i], needle, needle_length) == 0) {    // now simple compare at index
+        if (strncmp(&haystack[i], needle, needleSz) == 0)      // now simple compare at index
+        {
             return &haystack[i];
         }
     }

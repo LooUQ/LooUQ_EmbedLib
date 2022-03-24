@@ -128,8 +128,10 @@ typedef uint16_t resultCode_t;
 
 enum 
 {
-    LOOUQ_MAGIC = 0x452b,
-    LOOUQ_FLASHDICTKEY__LQCDEVICE = 201
+    LOOUQ_MAGICFLAG = 0x452b,
+    LOOUQ_FLASHDICTKEY__LQCDEVICE = 201,
+
+    UNR_RESULT_RESPONSE_SZ = 25
 };
 
 typedef uint16_t magicFlag_t;
@@ -150,56 +152,103 @@ typedef uint16_t fdictKey_t;
  * timeout is expected to reset the system.
 */
 
-/**
- *	\brief LooUQ notification codes.
- */
-typedef enum lqNotifType__tag
+// typedef enum appNotif_tag
+// {
+//     appNotif_info = 200,
+
+//     appNotif_ntwk_canSleep,
+//     appNotif_ntwk_connected,
+//     appNotif_ntwk_disconnected,
+//     appNotif_ntwk_sendFailDiscard,
+//     appNotif_ntwk_sendFailQueued,
+//     appNotif_ntwk_sendFault,
+//     appNotif_ntwk_recvFault,
+
+//     /*  Warnings/Faults
+//      --------------------------------------------------- */
+//     appNotif__WARNINGS = 240,
+//     appNotif_wassertFailed = 240,        /// code warnings failed (like an assertion, but your call on recovery)
+
+//     appNotif__FAULTS = 248,              /// serious problems: recommended that only simple diagnostic logging be attempted, system is likely unstable
+//     appNotif_assertFailed = 248,         /// code assertion failed, automatically initiated by LooUQ lq_diagnostics subsystem
+//     appNotif_hardFault = 255             /// potential IRQ hardFault signal redirect to UNR handler for logging
+// } appNotif_t;
+
+
+// typedef enum appReqst_tag
+// {
+//     // appReqst_ntwk_getState = 200,
+//     // appReqst_ntwk_connect,
+//     // appReqst_ntwk_disconnect,
+//     // appReqst_ntwk_softReset,
+//     // appReqst_ntwk_hardReset,
+
+//     // appReqst_ntwk_getSignal,            /// returns RSSI or equivalent
+//     // appReqst_ntwk_getType,              /// returns: network carrier (if applicable) and type
+
+//     appReqst_session_getState = 210,
+//     appReqst_session_connect,
+//     appReqst_session_disconnect,
+//     appReqst_session_reset,
+
+//     appReqst_env_getPwr = 220,
+//     appReqst_env_getBatt,
+//     appReqst_env_getMem,
+
+//     appReqst_diags_getStatus = 250,
+//     appReqst_diags_getReport,
+// } appReqst_t;
+
+
+typedef enum appEvents_tag
 {
-    lqNotifType_info = 0,
+    appEvent_info = 200,
 
-    // your extensions here
-    
-    // LooUQ reserves 0xD0 through 0xFF
-    lqNotifType__LOOUQ = 0xD0,                  // LooUQ Reserved: LTEmC, LQCloud, etc.
-    lqNotifType__INFO = 0xD0,
-    lqNotifTypeI_connect = 0xD0,
+    appEvent_env_getPwr = 210,
+    appEvent_env_getBatt,
+    appEvent_env_getMem,
 
-    lqNotifType_connect = 0xD0,
+    appEvent_ntwk_connected,
+    appEvent_ntwk_disconnected,
 
+    appEvent_msg_sendDiscard,
+    appEvent_msg_sendQueued,
 
-    lqNotifType__WARNING = 0xE0,
-    lqNotifTypeW_disconnect = 0xE0,
-    lqNotifTypeW_dataFault = 0xE1,               // data corruption likely
-    lqNotifTypeW_assertWarning = 0xEE,           // code warnings\errors\faults
+    appEvent_prto_sendFault,
+    appEvent_prto_recvFault,
 
-    lqNotifType_disconnect = 0xE0,              // device or platform disconnected
-    lqNotifType_dataFault = 0xE1,               // data corruption likely
-    lqNotifType_assertWarning = 0xEE,           // code warnings\errors\faults
-    lqNotifType_warning = 0xEF,                 // generalized recoverable error
+    /*  Warnings/Faults
+     --------------------------------------------------- */
+    appEvent__WARNINGS = 240,
+    appEvent_warn_wassertFailed = 240,  /// code warnings failed (like an assertion, but your call on recovery)
 
-
-    lqNotifType__CATASTROPHIC = 0xF0,
-    lqNotifTypeC_assertFailed = 0xFE,
-    lqNotifTypeC_hardFault = 0xFF,
-
-    lqNotifType_assertFailed = 0xFE,
-    lqNotifType_hardFault = 0xFF
-} lqNotifType__t;
+    appEvent__FAULTS = 248,             /// serious problems: recommended that only simple diagnostic logging be attempted, system is likely unstable
+    appEvent_fault_assertFailed,        /// code assertion failed, automatically initiated by LooUQ lq_diagnostics subsystem
+    appEvent_fault_codeFault,           /// unrecoverable code fault detected
+    appEvent_fault_hardFault = 255      /// potential IRQ hardFault signal redirect to UNR handler for logging
+} appEvents_t;
 
 
-/**
- *	\brief LooUQ assemblies.
- *  LooUQ reserves C0 and above for internal use.
- */
-typedef enum lqNotifAssm_tag
+
+typedef struct appEventResponse_tag
 {
-    lqNotifAssm_ltemc = 0xC0,
-    lqNotifAssm_lqcloud = 0xC1
-} lqNotifAssm_t;
+    uint8_t requestCode;
+    uint16_t resultCode;
+    char response[UNR_RESULT_RESPONSE_SZ];
+} appEventResponse_t;
 
-/*
-*/
-typedef void (*eventNotifFunc_t)(uint8_t notifType, uint8_t notifAssm, uint8_t notifInst, const char *notifMsg);
+
+
+/*  Application Callbacks
+ =============================================================================================== */
+
+/* callback to notify application of an event, events can be simple notifications or a notification that information is needed
+ * --------------------------------------------------------------------------------------------- */
+typedef void (*appEventCallback_func)(uint8_t notifCode, const char *message);      /// application event notification and action/info request callback
+
+/* callback to allow for app background processingfor extended duration operations to allow for 
+ * --------------------------------------------------------------------------------------------- */
+typedef void (*yield_func)();
 
 
 #endif  /* !__LQ_TYPES_H__ */

@@ -48,7 +48,8 @@ typedef unsigned long millisTime_t, millisDuration_t;   // aka uint32_t
 typedef struct wrkTime_tag
 {
     millisTime_t period;            ///< Time period in milliseconds 
-    millisTime_t lastAtMillis;      ///< Tick (system millis()) when the workSchedule timer last signaled in workSched_doNow()
+    millisTime_t lastMillis;        ///< Tick (system millis()) when the workSchedule timer last signaled in workSched_doNow()
+    millisTime_t elapsedAtPaused;   ///< Duration (within interval period) when timer was paused, used to calc partial period on resume
     uint8_t enabled;                ///< Reset on timer sched objects, when doNow() (ie: timer is queried) following experation.
 } wrkTime_t;
 
@@ -61,8 +62,13 @@ extern "C"
 
 
 wrkTime_t wrkTime_create(unsigned long intervalMillis);
+
 void wrkTime_start(wrkTime_t *schedObj);
 void wrkTime_stop(wrkTime_t *schedObj);
+void wrkTime_reset(wrkTime_t *schedObj, unsigned long intervalMillis);
+void wrkTime_pause(wrkTime_t *schedObj);
+void wrkTime_resume(wrkTime_t *schedObj);
+
 bool wrkTime_isRunning(wrkTime_t *schedObj);
 bool wrkTime_doNow(wrkTime_t *schedObj);
 bool wrkTime_isElapsed(millisTime_t startTime, millisDuration_t reqdDuration);

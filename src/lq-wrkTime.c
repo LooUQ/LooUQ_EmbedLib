@@ -55,32 +55,73 @@ wrkTime_t wrkTime_create(unsigned long intervalMillis)
     wrkTime_t schedObj;
     schedObj.enabled = true;
     schedObj.period = intervalMillis;
-    schedObj.lastAtMillis = MILLIS();
+    schedObj.lastMillis = MILLIS();
+    schedObj.elapsedAtPaused = 0;
     return schedObj;
 }
 
 
 /**
- *	\brief Reset a workSchedule object's internal timekeeping to now. If invoked mid-interval, sets the next event to a full-interval duration.
+ *	\brief Start a workSchedule object's internal timekeeping to now. If invoked mid-interval, resets the next event to a full-interval duration.
  * 
- *  \param schedObj [in] - workSchedule object (struct) to reset.
+ *  \param schedObj [in] - workSchedule object (struct) to start.
  */
 void wrkTime_start(wrkTime_t *schedObj)
 {
     schedObj->enabled = true;
-    schedObj->lastAtMillis = MILLIS();
+    schedObj->lastMillis = MILLIS();
 }
 
 
 /**
- *	\brief Reset a workSchedule object's internal timekeeping to now. If invoked mid-interval, sets the next event to a full-interval duration.
+ *	\brief Stop a workSchedule object's internal timekeeping and clears interval.
  * 
- *  \param schedObj [in] - workSchedule object (struct) to reset.
+ *  \param schedObj [in] - workSchedule object (struct) to stop.
  */
 void wrkTime_stop(wrkTime_t *schedObj)
 {
     schedObj->enabled = false;
-    schedObj->lastAtMillis = 0;
+    schedObj->lastMillis = 0;
+}
+
+
+/**
+ *	\brief Resets a workSchedule object's internal timekeeping to begin a full-interval duration.
+ * 
+ *  \param schedObj [in] - workSchedule object (struct) to reset.
+ */
+void wrkTime_reset(wrkTime_t *schedObj, unsigned long intervalMillis)
+{
+    if (intervalMillis > 0)
+    {
+        schedObj->period = intervalMillis;
+    }
+    schedObj->lastMillis = MILLIS();
+}
+
+
+/**
+ *	\brief Pauses a workSchedule object's internal timekeeping temporarily.
+ * 
+ *  \param schedObj [in] - workSchedule object (struct) to pause.
+ */
+void wrkTime_pause(wrkTime_t *schedObj)
+{
+    schedObj->enabled = false;
+    schedObj->elapsedAtPaused = MILLIS() - schedObj->lastMillis;
+}
+
+
+/**
+ *	\brief Resumes a paused workSchedule object's internal timekeeping.
+ * 
+ *  \param schedObj [in] - workSchedule object (struct) to resume.
+ */
+void wrkTime_resume(wrkTime_t *schedObj)
+{
+    schedObj->enabled = true;
+    schedObj->lastMillis = MILLIS() - schedObj->elapsedAtPaused;
+    schedObj->elapsedAtPaused = 0;
 }
 
 
@@ -107,10 +148,9 @@ bool wrkTime_doNow(wrkTime_t *schedObj)
     if (schedObj->enabled)
     {
         unsigned long now = MILLIS();
-        if (now - schedObj->lastAtMillis > schedObj->period)
+        if (now - schedObj->lastMillis > schedObj->period)
         {
-            // schedObj->enabled = (schedObj->schedType != wrkTimeType_timer);
-            schedObj->lastAtMillis = now;
+            schedObj->lastMillis = now;
             return true;
         }
     }

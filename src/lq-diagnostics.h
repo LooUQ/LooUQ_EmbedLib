@@ -9,11 +9,13 @@
 
 enum 
 {
-    assert__diagnosticsMagic = 0xD1AC,
+    assert__diagnosticsMagic = 0x186F,                      // Kepler's first find
 
     diag__notifMsgSz = 20,
     diag__hwVerSz = 40,
-    diag__swVerSz = 12
+    diag__swVerSz = 12,
+
+    diag__bootSafe = 0xFF
 };
 
 
@@ -76,7 +78,7 @@ typedef struct diagnosticInfo_tag
 {
     uint16_t diagMagic;
     diagRcause_t rcause;                // cause of last reset
-    uint8_t bootFlag;                   // boot-loop detection 
+    uint8_t bootLoops;                  // boot-loop detection
     uint8_t notifCode;                  // code from application notification callback
     char notifMsg[20];                  // message from application notification callback
     char hwVersion[40];                 // device HW version that may\may not be recorded
@@ -86,7 +88,7 @@ typedef struct diagnosticInfo_tag
     uint32_t pc;
     uint32_t lr;
     uint32_t line;
-    uint8_t fileId;
+    uint32_t fileId;
  
     /* Application communications state info */
     int16_t commState;                  // indications: TCP/UDP/SSL connected, MQTT state, etc.
@@ -107,7 +109,7 @@ typedef struct diagnosticInfo_tag
 
 typedef struct diagnosticControl_tag 
 {
-    eventNotifFunc_t notifCB;
+    appEventCallback_func eventCB;
     uint8_t notifCBChk;
     diagnosticInfo_t diagnosticInfo;
 } diagnosticControl_t;
@@ -118,20 +120,28 @@ extern "C"
 {
 #endif // __cplusplus
 
-void lqDiag_registerNotifCallback(eventNotifFunc_t notifCallback);
+void lqDiag_registerEventCallback(appEventCallback_func notifCallback);
 void lqDiag_setResetCause(uint8_t resetcause);
 diagnosticInfo_t *lqDiag_getDiagnosticsInfo();
 
 void lqDiag_setApplicationMessage(uint8_t notifCode, const char *notifMsg);
+
 void lqDiag_setProtoState(int16_t pstate);
+
 void lqDiag_setNtwkState(int16_t pstate);
+
 void lqDiag_setSignalState(int16_t pstate);
+
 const char *lqDiag_setHwVersion(const char *hwVersion);
+
 const char *lqDiag_setSwVersion(const char *swVersion);
+
+void lqDiag_setBootSafe();
 
 void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line);
 void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt); 
 void assert_brk();
+
 
 #ifdef __cplusplus
 }
