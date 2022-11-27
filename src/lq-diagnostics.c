@@ -171,7 +171,7 @@ void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt)
     if (g_diagControl.eventCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.eventCB))
     {
         char notifyMsg[80];
-        snprintf(notifyMsg, sizeof(notifyMsg), "WARN f:%X,l:%d-%s\r", fileId, line, faultTxt);
+        snprintf(notifyMsg, sizeof(notifyMsg), "f:%d,l:%d -%s\r", fileId, line, faultTxt);
         uint8_t assm = (uint8_t)(fileId & 0xFF00) >> 8;
         g_diagControl.eventCB(appEvent_warn_wassertFailed, notifyMsg);
     }

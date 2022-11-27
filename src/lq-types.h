@@ -3,7 +3,7 @@
  *  \author Greg Terrell
  *  \license MIT License
  *
- *  Copyright (c) 2021 LooUQ Incorporated.
+ *  Copyright (c) 2021-2022 LooUQ Incorporated.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -81,14 +81,14 @@ enum lqTypes__resultCodes
 
     resultCode__internalError = 500,
     resultCode__unavailable = 503,
-    resultCode__gtwyTimeout = 504,              ///< signals for a background (doWork) process timeout
+    resultCode__gtwyTimeout = 504,              /// signals for a background (doWork) process timeout
 
     // convenience values for processing result values
+    resultCode__pending = 0,                    /// Value returned from response parsers indicating a pattern match has not yet been detected
     resultCode__unknown = 0,
     resultCode__anyError = 400,
     resultCode__successMax = 299,
     resultCode__bgxErrorsBase = 500
-    // resultCode__pending = 0xFFFF                ///< Value returned from response parsers indicating a pattern match has not yet been detected
 };
 #endif
 
@@ -108,7 +108,7 @@ enum lqTypes__resultCodes
 
 #define RESULT_CODE_ERROR         500
 #define RESULT_CODE_UNAVAILABLE   503
-#define RESULT_CODE_GTWYTIMEOUT   504               ///< signals for a background (doWork) process timeout
+#define RESULT_CODE_GTWYTIMEOUT   504               /// signals for a background (doWork) process timeout
 
 #define RESULT_CODE_ERRORS        400
 #define RESULT_CODE_SUCCESSRANGE   99
@@ -126,16 +126,21 @@ typedef uint16_t resultCode_t;
 #define PERIOD_FROM_SECONDS(period)  (period * 1000)
 #define PERIOD_FROM_MINUTES(period)  (period * 1000 * 60)
 
-enum 
-{
-    LOOUQ_MAGICFLAG = 0x452b,
-    LOOUQ_FLASHDICTKEY__LQCDEVICE = 201,
+#define LQC_PROVISIONING_MAGICFLAG "LQCP"
+#define LQC_DEVICECONFIG_PACKAGEID "LQCC"
 
-    UNR_RESULT_RESPONSE_SZ = 25
+#define CHAR_PROPSIZE(SZ) (SZ + 1)
+#define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
+#define STRCMP(X, Y) (strcmp(X, Y) == 0)
+#define STRNCMP(X, Y, N) (strncmp(X, Y, N) == 0)
+
+enum LooUQ_constants
+{
+    APPEVENT_MESSAGE_SZ = 25
 };
 
-typedef uint16_t magicFlag_t;
-typedef uint16_t fdictKey_t;
+//typedef uint16_t magicFlag_t;
+//typedef uint16_t fdictKey_t;
 
 
 
@@ -152,53 +157,6 @@ typedef uint16_t fdictKey_t;
  * timeout is expected to reset the system.
 */
 
-// typedef enum appNotif_tag
-// {
-//     appNotif_info = 200,
-
-//     appNotif_ntwk_canSleep,
-//     appNotif_ntwk_connected,
-//     appNotif_ntwk_disconnected,
-//     appNotif_ntwk_sendFailDiscard,
-//     appNotif_ntwk_sendFailQueued,
-//     appNotif_ntwk_sendFault,
-//     appNotif_ntwk_recvFault,
-
-//     /*  Warnings/Faults
-//      --------------------------------------------------- */
-//     appNotif__WARNINGS = 240,
-//     appNotif_wassertFailed = 240,        /// code warnings failed (like an assertion, but your call on recovery)
-
-//     appNotif__FAULTS = 248,              /// serious problems: recommended that only simple diagnostic logging be attempted, system is likely unstable
-//     appNotif_assertFailed = 248,         /// code assertion failed, automatically initiated by LooUQ lq_diagnostics subsystem
-//     appNotif_hardFault = 255             /// potential IRQ hardFault signal redirect to UNR handler for logging
-// } appNotif_t;
-
-
-// typedef enum appReqst_tag
-// {
-//     // appReqst_ntwk_getState = 200,
-//     // appReqst_ntwk_connect,
-//     // appReqst_ntwk_disconnect,
-//     // appReqst_ntwk_softReset,
-//     // appReqst_ntwk_hardReset,
-
-//     // appReqst_ntwk_getSignal,            /// returns RSSI or equivalent
-//     // appReqst_ntwk_getType,              /// returns: network carrier (if applicable) and type
-
-//     appReqst_session_getState = 210,
-//     appReqst_session_connect,
-//     appReqst_session_disconnect,
-//     appReqst_session_reset,
-
-//     appReqst_env_getPwr = 220,
-//     appReqst_env_getBatt,
-//     appReqst_env_getMem,
-
-//     appReqst_diags_getStatus = 250,
-//     appReqst_diags_getReport,
-// } appReqst_t;
-
 
 typedef enum appEvents_tag
 {
@@ -214,8 +172,8 @@ typedef enum appEvents_tag
     appEvent_msg_sendDiscard,
     appEvent_msg_sendQueued,
 
-    appEvent_prto_sendFault,
-    appEvent_prto_recvFault,
+    appEvent_proto_sendFault,
+    appEvent_proto_recvFault,
 
     /*  Warnings/Faults
      --------------------------------------------------- */
@@ -223,10 +181,21 @@ typedef enum appEvents_tag
     appEvent_warn_wassertFailed = 240,  /// code warnings failed (like an assertion, but your call on recovery)
 
     appEvent__FAULTS = 248,             /// serious problems: recommended that only simple diagnostic logging be attempted, system is likely unstable
+    appEvent_fault_softLogic,           /// soft logical state failure, possible recovery via subsystem initialization
+    appEvent_fault_hardLogic,           /// hard/hardware state failure, possible recovery via hardware reset/power
     appEvent_fault_assertFailed,        /// code assertion failed, automatically initiated by LooUQ lq_diagnostics subsystem
     appEvent_fault_codeFault,           /// unrecoverable code fault detected
     appEvent_fault_hardFault = 255      /// potential IRQ hardFault signal redirect to UNR handler for logging
 } appEvents_t;
+
+typedef enum resetAction_tag
+{
+    skipIfOn,
+    swReset,
+    hwReset,
+    powerReset,
+} resetAction_t;
+
 
 
 
@@ -234,7 +203,7 @@ typedef struct appEventResponse_tag
 {
     uint8_t requestCode;
     uint16_t resultCode;
-    char response[UNR_RESULT_RESPONSE_SZ];
+    char message[APPEVENT_MESSAGE_SZ];
 } appEventResponse_t;
 
 
@@ -245,6 +214,7 @@ typedef struct appEventResponse_tag
 /* callback to notify application of an event, events can be simple notifications or a notification that information is needed
  * --------------------------------------------------------------------------------------------- */
 typedef void (*appEventCallback_func)(uint8_t notifCode, const char *message);      /// application event notification and action/info request callback
+
 
 /* callback to allow for app background processingfor extended duration operations to allow for 
  * --------------------------------------------------------------------------------------------- */
