@@ -129,7 +129,7 @@ typedef uint16_t resultCode_t;
 #define LQC_PROVISIONING_MAGICFLAG "LQCP"
 #define LQC_DEVICECONFIG_PACKAGEID "LQCC"
 
-#define CHAR_PROPSIZE(SZ) (SZ + 1)
+#define SET_PROPLEN(SZ) (SZ + 1)
 #define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
 #define STRCMP(X, Y) (strcmp(X, Y) == 0)
 #define STRNCMP(X, Y, N) (strncmp(X, Y, N) == 0)
@@ -138,10 +138,6 @@ enum LooUQ_constants
 {
     APPEVENT_MESSAGE_SZ = 25
 };
-
-//typedef uint16_t magicFlag_t;
-//typedef uint16_t fdictKey_t;
-
 
 
 /* LooUQ standard event notification callback codes.
@@ -165,8 +161,9 @@ typedef enum appEvents_tag
     appEvent_env_getPwr = 210,
     appEvent_env_getBatt,
     appEvent_env_getMem,
+    appEvent_env_getSignal,
 
-    appEvent_ntwk_connected,
+    appEvent_ntwk_connected = 220,
     appEvent_ntwk_disconnected,
 
     appEvent_msg_sendDiscard,
@@ -190,13 +187,70 @@ typedef enum appEvents_tag
 
 typedef enum resetAction_tag
 {
-    skipIfOn,
-    swReset,
-    hwReset,
-    powerReset,
+    resetAction_skipIfOn,
+    resetAction_swReset,
+    resetAction_hwReset,
+    resetAction_powerReset
 } resetAction_t;
 
 
+/** 
+ *  @brief Typed numeric constants for stream peers subsystem (sockets, mqtt, http)
+ */
+enum streams__constants
+{
+    streams__ctrlMagic = 0x186F,
+    host__urlSz = 100
+};
+
+
+/** 
+ *  @brief Enum of protocols available on the modem (bit-mask). 
+ *  @details All of the protocols are CLIENTS, while the BGx line of modules support server mode the network carriers generally don't
+ */
+typedef enum protocol_tag
+{
+    protocol_tcp = 0x00,                ///< TCP client
+    protocol_udp = 0x01,                ///< UDP client
+    protocol_ssl = 0x02,                ///< SSL client.
+    protocol_socket = 0x03,             ///< special test value, < compare includes any of the above IP socket protocols
+
+    protocol_mqtt = 0x10,               ///< MQTT messaging client
+    protocol_http = 0x11,               ///< HTTP client
+
+    protocol_void = 0xFF                ///< No protocol, used in code to generally signal a null condition.
+} protocol_t;
+
+
+/** 
+ *  @brief Enum of the available dataCntxt indexes for BGx (only SSL/TLS capable contexts are supported).
+ */
+typedef enum dataCntxt_tag
+{
+    dataCntxt_0 = 0,
+    dataCntxt_1 = 1,
+    dataCntxt_2 = 2,
+    dataCntxt_3 = 3,
+    dataCntxt_4 = 4,
+    dataCntxt_5 = 5,
+    dataCntxt__cnt = 6,
+    dataCntxt__none = 0xFF
+} dataCntxt_t;
+
+
+
+/** 
+ *  @brief Base struct containing common properties required of a stream control
+ */
+typedef struct streamCtrl_tag
+{
+    uint16_t ctrlMagic;                                     /// magic flag to validate incoming requests 
+    dataCntxt_t dataCntxt;                                  /// Data context where this control operates (only SSL/TLS contexts 1-6)
+    protocol_t protocol;                                    /// Socket's protocol : UDP/TCP/SSL.
+    bool useTls;                                            /// flag indicating SSL/TLS applied to stream
+    char hostUrl[SET_PROPLEN(host__urlSz)];                 /// URL or IP address of host
+    uint16_t hostPort;                                      /// IP port number host is listening on (allows for 65535/0)
+} streamCtrl_t;
 
 
 typedef struct appEventResponse_tag

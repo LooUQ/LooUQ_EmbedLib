@@ -1,5 +1,5 @@
 /******************************************************************************
- *  \file ltemc-mqtt.h
+ *  \file lq-str.h
  *  \author Greg Terrell
  *  \license MIT License
  *
