@@ -1,6 +1,33 @@
-// Many thanks to the team at Memfault.com
-// LTEmC ASSERT Implementation derived from Interrupt article at https://interrupt.memfault.com/blog/asserts-in-embedded-systems#common-usages-of-asserts
-
+/******************************************************************************
+ *  \file lq-diagnostics.c
+ *  \author Greg Terrell
+ *  \license MIT License
+ *
+ *  Copyright (c) 2021-2022 LooUQ Incorporated.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED
+ * "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+ * LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ ******************************************************************************
+ * Many thanks to the team at Memfault.com!
+ * LTEmC ASSERT Implementation derived from Interrupt article at 
+ * 
+ * https://interrupt.memfault.com/blog/asserts-in-embedded-systems#common-usages-of-asserts
+ * 
+ *****************************************************************************/
 
 #ifndef __LQ_DIAGNOSTICS_H__
 #define __LQ_DIAGNOSTICS_H__
@@ -10,6 +37,7 @@
 enum 
 {
     assert__diagnosticsMagic = 0x186F,                      // Kepler's first find
+    assert__fileTagSz = 5,
 
     diag__notifMsgSz = 20,
     diag__hwVerSz = 40,
@@ -19,39 +47,63 @@ enum
 };
 
 
+// default product and source file macro values if the parent did not define them
+#ifndef PRODUCT
+#define PRODUCT "UP"
+#endif
+#ifndef SRCFILE
+#define SRCFILE __FILE__
+#endif 
+// combine
+#define SRCFILE_TAG PRODUCT SRCFILE                                 // create product/src file tag for ASSERT identification
+
 #define GET_LR() __builtin_return_address(0)
+
 // This is ARM and GCC specific syntax
 #define GET_PC(_a) __asm volatile ("mov %0, pc" : "=r" (_a))
 
-
-#define PROCESS_ASSERT(fileId, lineNm)                      \
-  do {                                                      \
-    void *pc;                                               \
-    GET_PC(pc);                                             \
-    const void *lr = GET_LR();                              \
-    assert_invoke(pc, lr, fileId, lineNm);                  \
-  } while (0)
+// #define PROCESS_ASSERT(lineNm)                                   \
+//   do {                                                           \
+//     void *pc;                                                    \
+//     GET_PC(pc);                                                  \
+//     const void *lr = GET_LR();                                   \
+//     assert_invoke(pc, lr, SRCFILE_TAG, lineNm);                  \
+//   } while (0)
+// //#define NO_ASSERTS
+// #ifndef NO_ASSERTS
+// #define ASSERT(exp)                                              \
+//     do {                                                         \
+//         if (!(exp)) {                                            \
+//             PROCESS_ASSERT(__LINE__);                            \
+//         }                                                        \
+//     } while (0)
+// #else
+// #define ASSERT(exp)  (0)
+// #endif
 
 
 //#define NO_ASSERTS
 #ifndef NO_ASSERTS
-#define ASSERT(exp, fileId)                                     \
+#define ASSERT(exp)                                             \
     do {                                                        \
         if (!(exp)) {                                           \
-            PROCESS_ASSERT(fileId, __LINE__);                   \
+            void *pc;                                           \
+            GET_PC(pc);                                         \
+            const void *lr = GET_LR();                          \
+            assert_invoke(SRCFILE_TAG, __LINE__, pc, lr);       \
         }                                                       \
     } while (0)
 #else
-#define ASSERT(exp, fileId)  (0)
+#define ASSERT(exp)  (0)
 #endif
 
 
 //#define NO_ASSERTWARNINGS
 #ifndef NO_ASSERTWARNINGS && NO_ASSERT
-#define ASSERT_W(exp, fileId, faultTxt)                         \
+#define ASSERT_W(exp, faultTxt)                                 \
     do {                                                        \
         if (!(exp)) {                                           \ 
-            assert_warning(fileId, __LINE__, faultTxt);         \
+            assertW_invoke(SRCFILE_TAG, __LINE__, faultTxt);    \
         }                                                       \
     } while (0);    
 #else
@@ -78,7 +130,7 @@ typedef struct diagnosticInfo_tag
 {
     uint16_t diagMagic;
     diagRcause_t rcause;                // cause of last reset
-    uint8_t bootLoops;                  // boot-loop detection
+    uint8_t boots;                      // boot-loop detection
     uint8_t notifCode;                  // code from application notification callback
     char notifMsg[20];                  // message from application notification callback
     char hwVersion[40];                 // device HW version that may\may not be recorded
@@ -88,7 +140,7 @@ typedef struct diagnosticInfo_tag
     uint32_t pc;
     uint32_t lr;
     uint32_t line;
-    uint32_t fileId;
+    char fileTag[assert__fileTagSz];    // NOTE: not /0 terminated
  
     /* Application communications state info */
     int16_t commState;                  // indications: TCP/UDP/SSL connected, MQTT state, etc.
@@ -109,8 +161,8 @@ typedef struct diagnosticInfo_tag
 
 typedef struct diagnosticControl_tag 
 {
-    appEventCallback_func eventCB;
-    uint8_t notifCBChk;
+    applEvntNotify_func notifyCB;
+    uint8_t notifyCBChk;
     diagnosticInfo_t diagnosticInfo;
 } diagnosticControl_t;
 
@@ -120,9 +172,9 @@ extern "C"
 {
 #endif // __cplusplus
 
-void lqDiag_registerEventCallback(appEventCallback_func notifCallback);
+void lqDiag_setNotifyCallback(applEvntNotify_func notifCallback);
 void lqDiag_setResetCause(uint8_t resetcause);
-diagnosticInfo_t *lqDiag_getDiagnosticsInfo();
+diagnosticInfo_t *lqDiag_getDiagnosticsBlock();
 
 void lqDiag_setApplicationMessage(uint8_t notifCode, const char *notifMsg);
 
@@ -138,8 +190,8 @@ const char *lqDiag_setSwVersion(const char *swVersion);
 
 void lqDiag_setBootSafe();
 
-void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line);
-void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt); 
+void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr);
+void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt); 
 void assert_brk();
 
 

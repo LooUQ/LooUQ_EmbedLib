@@ -49,35 +49,35 @@ uint8_t S_calcNotifyCbChk(uint32_t notifCbAddr)
  * 
  *  \param notifyCallback Function pointer to the application's event notification callback function, which may or may not return.
  */
-void lqDiag_registerEventCallback(appEventCallback_func appEventCallback)
+void lqDiag_setNotifyCallback(applEvntNotify_func applNotifyCallback)
 {
     //g_diagControl.assertMagic = assert__assertControlMagic;
-    g_diagControl.eventCB = appEventCallback;
-    g_diagControl.notifCBChk = S_calcNotifyCbChk((int32_t)appEventCallback);
+    g_diagControl.notifyCB = applNotifyCallback;
+    g_diagControl.notifyCBChk = S_calcNotifyCbChk((int32_t)applNotifyCallback);      // since this is in a non-initialized block, calc a validation check
 }
 
 
 void lqDiag_setResetCause(uint8_t resetcause)
 {
     g_diagControl.diagnosticInfo.rcause = resetcause;
-    uint8_t boots = g_diagControl.diagnosticInfo.bootLoops + g_diagControl.diagnosticInfo.bootLoops == diag__bootSafe ? 0 : 1;   // no boot INC if bootSafe
+    g_diagControl.diagnosticInfo.boots += diag__bootSafe ? 0 : 1;   // no boot INC if bootSafe
 
-    if (resetcause == diagRcause_watchdog || resetcause == diagRcause_system)
+    //if (resetcause == diagRcause_watchdog || resetcause == diagRcause_system)
+    if (resetcause == diagRcause_watchdog)
     {
         g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;          // diagnostics reportable start
     }
     else                                                                            // if non-reportable reset, clear diagnostics except bootLoops detection
     {
         memset(&g_diagControl.diagnosticInfo, 0, sizeof(diagnosticInfo_t));
-        g_diagControl.diagnosticInfo.bootLoops = boots;
     }
 }
 
 
 void inline lqDiag_setBootSafe()
 {
-    g_diagControl.diagnosticInfo.bootLoops = diag__bootSafe;
     memset(&g_diagControl.diagnosticInfo, 0, sizeof(diagnosticInfo_t));
+    g_diagControl.diagnosticInfo.boots = diag__bootSafe;
 }
 
 
@@ -86,7 +86,7 @@ void inline lqDiag_setBootSafe()
  * 
  *  \returns Pointer to the diagnostics information block, or NULL if no valid diagnostics available.
  */
-diagnosticInfo_t *lqDiag_getDiagnosticsInfo()
+diagnosticInfo_t *lqDiag_getDiagnosticsBlock()
 {
     return &g_diagControl.diagnosticInfo;
 }
@@ -136,21 +136,19 @@ void lqDiag_clearDiagnosticInfo()
  *  \param fileIn [in] The numeric ID of the file containing the triggered ASSERT_W()
  *  \param line [in] The line number of the ASSERT_W() triggering the invoke.
  */
-void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line)
+void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
 {
     g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
     g_diagControl.diagnosticInfo.pc = pc;
     g_diagControl.diagnosticInfo.lr = lr;
     g_diagControl.diagnosticInfo.line = line;
-    g_diagControl.diagnosticInfo.fileId = fileId;
+    memcpy(g_diagControl.diagnosticInfo.fileTag, fileTag, assert__fileTagSz);
 
-    if (g_diagControl.eventCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.eventCB))
+    if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCBChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
     {
         char notifyMsg[40];
-        snprintf(notifyMsg, sizeof(notifyMsg), "ASSERT f:%d,l:%d,pc=%d,lr=%d", fileId, line, pc, lr);
-
-        uint8_t assm = (uint8_t)(fileId & 0xFF00) >> 8;
-        g_diagControl.eventCB(appEvent_fault_assertFailed, notifyMsg);
+        snprintf(notifyMsg, sizeof(notifyMsg), "ASSERT f:%s,l:%d,pc=%d,lr=%d", fileTag, line, pc, lr);
+        g_diagControl.notifyCB(appEvent_fault_assertFailed, notifyMsg);
     }
     assert_brk();                                                               // stop here if notify callback returned
 }
@@ -166,14 +164,14 @@ void assert_invoke(void *pc, const void *lr, uint16_t fileId, uint16_t line)
  *  \param line [in] The line number of the ASSERT_W() triggering the invoke.
  *  \param faultTxt [in] Error message
  */
-void assert_warning(uint16_t fileId, uint16_t line, const char *faultTxt)
+void assertW_invoke(const char *fileTag, uint16_t line, const char *faultTxt)
 {
-    if (g_diagControl.eventCB != NULL && g_diagControl.notifCBChk == S_calcNotifyCbChk(g_diagControl.eventCB))
+    if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCBChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
     {
         char notifyMsg[80];
-        snprintf(notifyMsg, sizeof(notifyMsg), "f:%d,l:%d -%s\r", fileId, line, faultTxt);
-        uint8_t assm = (uint8_t)(fileId & 0xFF00) >> 8;
-        g_diagControl.eventCB(appEvent_warn_wassertFailed, notifyMsg);
+        snprintf(notifyMsg, sizeof(notifyMsg), "f:%s,l:%d -%s\r", fileTag, line, faultTxt);
+        //uint8_t assm = (uint8_t)(fileTag & 0xFF00) >> 8;
+        g_diagControl.notifyCB(appEvent_warn_wassertFailed, notifyMsg);
     }
 }
 

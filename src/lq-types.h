@@ -57,6 +57,10 @@
 #endif
 
 
+#define PROVISION_MAGIC "LQCP"
+#define PROVISION_LQCCONFIG "LQCC"
+
+
 // to allow for BGxx error codes starting at 900 to be passed back to application
 // ltem1c uses macros and the action_result_t typedef
 
@@ -194,63 +198,55 @@ typedef enum resetAction_tag
 } resetAction_t;
 
 
-/** 
- *  @brief Typed numeric constants for stream peers subsystem (sockets, mqtt, http)
- */
-enum streams__constants
-{
-    streams__ctrlMagic = 0x186F,
-    host__urlSz = 100
-};
+
+// /** 
+//  *  @brief Enum of protocols available on the modem (bit-mask). 
+//  *  @details All of the protocols are CLIENTS, while the BGx line of modules support server mode the network carriers generally don't
+//  */
+// typedef enum protocol_tag
+// {
+//     protocol_tcp = 0x00,                ///< TCP client
+//     protocol_udp = 0x01,                ///< UDP client
+//     protocol_ssl = 0x02,                ///< SSL client.
+//     protocol_socket = 0x03,             ///< special test value, < compare includes any of the above IP socket protocols
+
+//     protocol_mqtt = 0x10,               ///< MQTT messaging client
+//     protocol_http = 0x11,               ///< HTTP client
+
+//     protocol_void = 0xFF                ///< No protocol, used in code to generally signal a null condition.
+// } protocol_t;
 
 
-/** 
- *  @brief Enum of protocols available on the modem (bit-mask). 
- *  @details All of the protocols are CLIENTS, while the BGx line of modules support server mode the network carriers generally don't
- */
-typedef enum protocol_tag
-{
-    protocol_tcp = 0x00,                ///< TCP client
-    protocol_udp = 0x01,                ///< UDP client
-    protocol_ssl = 0x02,                ///< SSL client.
-    protocol_socket = 0x03,             ///< special test value, < compare includes any of the above IP socket protocols
-
-    protocol_mqtt = 0x10,               ///< MQTT messaging client
-    protocol_http = 0x11,               ///< HTTP client
-
-    protocol_void = 0xFF                ///< No protocol, used in code to generally signal a null condition.
-} protocol_t;
-
-
-/** 
- *  @brief Enum of the available dataCntxt indexes for BGx (only SSL/TLS capable contexts are supported).
- */
-typedef enum dataCntxt_tag
-{
-    dataCntxt_0 = 0,
-    dataCntxt_1 = 1,
-    dataCntxt_2 = 2,
-    dataCntxt_3 = 3,
-    dataCntxt_4 = 4,
-    dataCntxt_5 = 5,
-    dataCntxt__cnt = 6,
-    dataCntxt__none = 0xFF
-} dataCntxt_t;
+// /** 
+//  *  @brief Enum of the available dataCntxt indexes for BGx (only SSL/TLS capable contexts are supported).
+//  */
+// typedef enum dataCntxt_tag
+// {
+//     dataCntxt_0 = 0,
+//     dataCntxt_1 = 1,
+//     dataCntxt_2 = 2,
+//     dataCntxt_3 = 3,
+//     dataCntxt_4 = 4,
+//     dataCntxt_5 = 5,
+//     dataCntxt__cnt = 6,
+//     dataCntxt__none = 0xFF
+// } dataCntxt_t;
 
 
 
-/** 
- *  @brief Base struct containing common properties required of a stream control
- */
-typedef struct streamCtrl_tag
-{
-    uint16_t ctrlMagic;                                     /// magic flag to validate incoming requests 
-    dataCntxt_t dataCntxt;                                  /// Data context where this control operates (only SSL/TLS contexts 1-6)
-    protocol_t protocol;                                    /// Socket's protocol : UDP/TCP/SSL.
-    bool useTls;                                            /// flag indicating SSL/TLS applied to stream
-    char hostUrl[SET_PROPLEN(host__urlSz)];                 /// URL or IP address of host
-    uint16_t hostPort;                                      /// IP port number host is listening on (allows for 65535/0)
-} streamCtrl_t;
+// /** 
+//  *  @brief Base struct containing common properties required of a stream control
+//  */
+// typedef struct streamCtrl_tag
+// {
+//     uint16_t ctrlMagic;                                     /// magic flag to validate incoming requests 
+//     dataCntxt_t dataCntxt;                                  /// Data context where this control operates (only SSL/TLS contexts 1-6)
+//     char streamType[streams__typeCodeSz];
+//     // protocol_t protocol;                                    /// Socket's protocol : UDP/TCP/SSL.
+//     bool useTls;                                            /// flag indicating SSL/TLS applied to stream
+//     char hostUrl[SET_PROPLEN(host__urlSz)];                 /// URL or IP address of host
+//     uint16_t hostPort;                                      /// IP port number host is listening on (allows for 65535/0)
+// } streamCtrl_t;
 
 
 typedef struct appEventResponse_tag
@@ -262,13 +258,16 @@ typedef struct appEventResponse_tag
 
 
 
-/*  Application Callbacks
+/*  Callbacks into application
  =============================================================================================== */
 
 /* callback to notify application of an event, events can be simple notifications or a notification that information is needed
  * --------------------------------------------------------------------------------------------- */
-typedef void (*appEventCallback_func)(uint8_t notifCode, const char *message);      /// application event notification and action/info request callback
+typedef void (*applEvntNotify_func)(const char *eventTag, const char *eventMsg);      /// application event notification and action/info request callback
 
+/* callback to request environment information from appl
+ * --------------------------------------------------------------------------------------------- */
+typedef const char *(*applInfoRequest_func)(const char *requestTag);
 
 /* callback to allow for app background processingfor extended duration operations to allow for 
  * --------------------------------------------------------------------------------------------- */
