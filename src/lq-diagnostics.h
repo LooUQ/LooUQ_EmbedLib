@@ -49,10 +49,10 @@ enum
 
 // default product and source file macro values if the parent did not define them
 #ifndef PRODUCT
-#define PRODUCT "UP"
+#define PRODUCT "LQ"
 #endif
 #ifndef SRCFILE
-#define SRCFILE __FILE__
+#define SRCFILE "???"
 #endif 
 // combine
 #define SRCFILE_TAG PRODUCT SRCFILE                                 // create product/src file tag for ASSERT identification
@@ -161,7 +161,7 @@ typedef struct diagnosticInfo_tag
 
 typedef struct diagnosticControl_tag 
 {
-    applEvntNotify_func notifyCB;
+    appEvntNotify_func notifyCB;
     uint8_t notifyCBChk;
     diagnosticInfo_t diagnosticInfo;
 } diagnosticControl_t;
@@ -172,7 +172,7 @@ extern "C"
 {
 #endif // __cplusplus
 
-void lqDiag_setNotifyCallback(applEvntNotify_func notifCallback);
+void lqDiag_setNotifyCallback(appEvntNotify_func notifCallback);
 void lqDiag_setResetCause(uint8_t resetcause);
 diagnosticInfo_t *lqDiag_getDiagnosticsBlock();
 

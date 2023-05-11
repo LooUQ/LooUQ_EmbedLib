@@ -22,9 +22,9 @@ static arduino_spi_t arduino_spi_settings;
 
 
 /**
- *	\brief Initialize and configure SPI resource.
+ *	@brief Initialize and configure SPI resource.
  *
- *  \param chipSelLine [in] - GPIO for CS 
+ *  @param chipSelLine [in] - GPIO for CS 
  *  \return SPI device
  */
 void *spi_create(uint8_t chipSelLine)
@@ -51,7 +51,7 @@ void *spi_create(uint8_t chipSelLine)
 
 
 /**
- *	\brief Start SPI facility.
+ *	@brief Start SPI facility.
  */
 void spi_start(void *spi)
 {
@@ -64,7 +64,7 @@ void spi_start(void *spi)
 
 
 /**
- *	\brief Shutdown SPI facility.
+ *	@brief Shutdown SPI facility.
  */
 void spi_stop(void *spi)
 {
@@ -73,7 +73,7 @@ void spi_stop(void *spi)
 
 
 /**
- *	\brief Gaurd SPI resource from recursive interrupts.
+ *	@brief Gaurd SPI resource from recursive interrupts.
  */
 void spi_usingInterrupt(void *spi, int8_t irqNumber)
 {
@@ -82,7 +82,7 @@ void spi_usingInterrupt(void *spi, int8_t irqNumber)
 
 
 /**
- *	\brief Gaurd SPI resource from recursive interrupts.
+ *	@brief Gaurd SPI resource from recursive interrupts.
  */
 void spi_notUsingInterrupt(void *spi, int8_t irqNumber)
 {
@@ -92,10 +92,10 @@ void spi_notUsingInterrupt(void *spi, int8_t irqNumber)
 
 
 /**
- *	\brief Transfer a byte to the NXP bridge.
+ *	@brief Transfer a byte to the NXP bridge.
  *
- *	\param spi [in] - The SPI device for communications.
- *  \param data [in/out] - The word to transfer to the NXP bridge.
+ *	@param spi [in] - The SPI device for communications.
+ *  @param data [in/out] - The word to transfer to the NXP bridge.
  * 
  *  \returns A 16-bit word received during the transfer.
  */
@@ -116,10 +116,10 @@ uint8_t spi_transferByte(void *spi, uint8_t data)
 
 
 /**
- *	\brief Transfer a word (16-bits) to the NXP bridge.
+ *	@brief Transfer a word (16-bits) to the NXP bridge.
  *
- *	\param spi [in] - The SPI device for communications.
- *  \param data [in/out] - The word to transfer to the NXP bridge.
+ *	@param spi [in] - The SPI device for communications.
+ *  @param data [in/out] - The word to transfer to the NXP bridge.
  * 
  *  \returns A 16-bit word received during the transfer.
  */
@@ -152,24 +152,58 @@ uint16_t spi_transferWord(void *spi, uint16_t data)
 
 
 /**
- *	\brief Transfer a buffer to the NXP bridge.
+ *	@brief Transfer a buffer to the SPI device.
  *
- *	\param spi [in] - The SPI device for communications.
- *  \param regAddrByte [in] - Bridge register address specifying the I/O to perform.
- *  \param buf [in/out] - The character pointer to the buffer to transfer to/from.
- *  \param xfer_len [in] - The number of characters to transfer.
+ *	@param spi [in] The SPI device for communications.
+ *  @param addressByte [in] Optional address byte sent before buffer, can specify specifics of the I/O being initiated.
+ *  @param buf [in/out] - The character pointer to the buffer to transfer to/from.
+ *  @param xfer_len [in] - The number of characters to transfer.
  */
-void spi_transferBuffer(void *spi, uint8_t regAddrByte, void* buf, size_t xfer_len)
+void spi_transferBuffer(void *spi, uint8_t addressByte, void* buf, size_t xfer_len)
 {
     spi_t *spiPtr = (spi_t*)spi;
 
     digitalWrite(spiPtr->csPin, LOW);
     SPI.beginTransaction(arduino_spi_settings.nxpSettings);
 
-    SPI.transfer(regAddrByte);
+    SPI.transfer(addressByte);
     SPI.transfer(buf, xfer_len);
 
     digitalWrite(spiPtr->csPin, HIGH);
     SPI.endTransaction();
 }
 
+void spi_writeBuffer(void *spi, uint8_t addressByte, void* buf, size_t xfer_len)
+{   
+    spi_t *spiPtr = (spi_t*)spi;
+
+    digitalWrite(spiPtr->csPin, LOW);
+    SPI.beginTransaction(arduino_spi_settings.nxpSettings);
+
+    SPI.transfer(addressByte);
+    for (uint16_t i = 0; i < xfer_len; i++)
+    {
+        SPI.transfer(*((uint8_t*)buf + i));
+    }
+
+    digitalWrite(spiPtr->csPin, HIGH);
+    SPI.endTransaction();
+}
+
+
+void spi_readBuffer(void *spi, uint8_t addressByte, void* buf, size_t xfer_len)
+{
+    spi_t *spiPtr = (spi_t*)spi;
+
+    digitalWrite(spiPtr->csPin, LOW);
+    SPI.beginTransaction(arduino_spi_settings.nxpSettings);
+
+    SPI.transfer(addressByte);
+    for (uint16_t i = 0; i < xfer_len; i++)
+    {
+        *((uint8_t*)(buf + i)) = SPI.transfer(0xFF);
+    }
+
+    digitalWrite(spiPtr->csPin, HIGH);
+    SPI.endTransaction();
+}

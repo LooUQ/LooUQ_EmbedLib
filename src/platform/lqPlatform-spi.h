@@ -26,7 +26,6 @@
 #define __LQPLATFORM_spi_H__
 
 #include <stdint.h>
-#include <stddef.h>
 
 #define SPI_NO_IRQ_PROTECTION -1
 
@@ -87,7 +86,10 @@ void spi_notUsingInterrupt(void *spi, int8_t irqNumber);
 uint8_t spi_transferByte(void *spi, uint8_t writeVal);
 uint16_t spi_transferWord(void *spi, uint16_t writeVal);
 
-void spi_transferBuffer(void *spi, uint8_t regAddrByte, void* buf, size_t xfer_len);
+void spi_transferBuffer(void *spi, uint8_t addressByte, void* buf, size_t xfer_len);
+
+void spi_writeBuffer(void *spi, uint8_t addressByte, void* buf, size_t xfer_len);
+void* spi_readBuffer(void *spi, uint8_t addressByte, size_t xfer_len);
 
 #ifdef __cplusplus
 }

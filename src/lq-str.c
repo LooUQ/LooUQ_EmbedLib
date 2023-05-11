@@ -31,14 +31,7 @@
 
 /**
  *  \brief Constrained string search, only check haystack for length characters. Allows for deterministic searching non-NULL terminated char sequences.
- * 
- *  \param [in] haystack Pointer to a char array that may/may not be NULL terminated 
- *  \param [in] needle The char sequence to search for, needs to be an NULL terminated C-string
- *  \param [in] maxSearch Maximum number of chars to search for needle 
- * 
- *  \return Number of substitutions made
 */
-
 char *lq_strnstr(const char *haystack, const char *needle, size_t maxSearch)
 {
     size_t needleSz = strlen(needle);
@@ -61,12 +54,6 @@ char *lq_strnstr(const char *haystack, const char *needle, size_t maxSearch)
 
 /**
  *  \brief Scans the source string for fromChr and replaces with toChr. Usefull for substitution of special char in query strings.
- * 
- *  \param [in\out] srcStr - Char pointer to the c-string containing required substitutions 
- *  \param [in] fromChr - Char value to replace in src 
- *  \param [in] toChr - Char value to put in place of fromChr 
- * 
- *  \return Number of substitutions made
 */
 uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr)
 {
@@ -91,9 +78,6 @@ uint16_t lq_strReplace(char *srcStr, char fromChr, char toChr)
 
 /**
  *  \brief Performs URL escape removal for special char (%20-%2F) without malloc.
- * 
- *  \param src [in] - Input text string to URL decode.
- *  \param len [in] - Length of input text string.
 */
 uint16_t lq_strUriDecode(char *src, int len)
 {
@@ -130,15 +114,8 @@ uint16_t lq_strUriDecode(char *src, int len)
 
 /**
  *  \brief Scans a C-String (char array) for the next delimeted token and null terminates it.
- * 
- *  \param source [in] - Original char array to scan.
- *  \param delimeter [in] - Character separating tokens (passed as integer value).
- *  \param tokenBuf [out] - Pointer to where token should be copied to.
- *  \param tokenBufSz [in] - Size of buffer to receive token.
- * 
- *  \return Pointer to the location in the source string immediately following the token.
 */
-static char *lq_strGrabToken(char *source, int delimiter, char *tokenBuf, uint8_t tokenBufSz) 
+char *lq_strGrabToken(char *source, int delimiter, char *tokenBuf, uint8_t tokenBufSz) 
 {
     char *delimAt;
     if (source == NULL)
@@ -152,4 +129,87 @@ static char *lq_strGrabToken(char *source, int delimiter, char *tokenBuf, uint8_
     memset(tokenBuf, 0, tokenBufSz);
     memcpy(tokenBuf, source, MIN(tokenSz, tokenBufSz-1));
     return delimAt + 1;
+}
+
+
+char* lq_strFindField(char fldType, char* source)
+{
+    char *responsePtr = source;
+
+    if (fldType < 61)                                               // handle mixed case field type specifier
+        fldType += 0x20;
+
+    if (fldType == '-')                                             // alpha-numeric
+    {
+        while (*responsePtr != '\0')
+        {
+            if ('0' < *responsePtr && *responsePtr < '9' ||
+                'a' < *responsePtr && *responsePtr < 'z' ||
+                'A' < *responsePtr && *responsePtr < 'Z')
+                break;
+            responsePtr++;
+        }
+    }
+    else if (fldType == 'n')                                        // numeric
+    {
+        while (*responsePtr != '\0')
+        {
+            if ('0' < *responsePtr && *responsePtr < '9')
+                break;
+            responsePtr++;
+        }
+    }
+    else if (fldType == 'h')                                        // hex-digits
+    {
+        while (*responsePtr != '\0')
+        {
+            if ('0' < *responsePtr && *responsePtr < '9' ||
+                'a' < *responsePtr && *responsePtr < 'f' ||
+                'A' < *responsePtr && *responsePtr < 'F')
+                break;
+            responsePtr++;
+        }
+    }
+    else if (fldType == 'a')                                        // alpha
+    {
+        while (*responsePtr != '\0')
+        {
+            if ('a' < *responsePtr && *responsePtr < 'z' ||
+                'A' < *responsePtr && *responsePtr < 'Z')
+                break;
+            responsePtr++;
+        }
+    }
+    else if (fldType == 'u')                                        // upper-case alpha
+    {
+        while (*responsePtr != '\0')
+        {
+            if ('A' < *responsePtr && *responsePtr < 'Z')
+                break;
+            responsePtr++;
+        }
+    }
+    else if (fldType == 'l')                                       // lower-case alpha
+    {
+        while (*responsePtr != '\0')
+        {
+            if ('a' < *responsePtr && *responsePtr < 'z')
+                break;
+            responsePtr++;
+        }
+    }
+    else if (fldType == '*')                                        // printable
+    {
+        while (*responsePtr != '\0')
+        {
+            if ((char)0x20 < *responsePtr && *responsePtr < (char)0x7f)
+                break;
+            responsePtr++;
+        }
+    }
+    
+    else 
+        ASSERT(0);
+
+    return responsePtr;
 }

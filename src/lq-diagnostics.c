@@ -49,7 +49,7 @@ uint8_t S_calcNotifyCbChk(uint32_t notifCbAddr)
  * 
  *  \param notifyCallback Function pointer to the application's event notification callback function, which may or may not return.
  */
-void lqDiag_setNotifyCallback(applEvntNotify_func applNotifyCallback)
+void lqDiag_setNotifyCallback(appEvntNotify_func applNotifyCallback)
 {
     //g_diagControl.assertMagic = assert__assertControlMagic;
     g_diagControl.notifyCB = applNotifyCallback;

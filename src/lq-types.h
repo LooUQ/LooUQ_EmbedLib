@@ -33,8 +33,8 @@
 #include <cstdlib>
 #include <cstdbool>
 #else
+#include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #endif // __cplusplus
 
@@ -81,7 +81,8 @@ enum lqTypes__resultCodes
     resultCode__gone = 410,
     resultCode__preConditionFailed = 412,
     resultCode__tooManyRequests = 429,
-    resultCode__cancelled = 499,
+    resultCode__cancelled = 498,
+    resultCode__cmError = 499,
 
     resultCode__internalError = 500,
     resultCode__unavailable = 503,
@@ -134,6 +135,7 @@ typedef uint16_t resultCode_t;
 #define LQC_DEVICECONFIG_PACKAGEID "LQCC"
 
 #define SET_PROPLEN(SZ) (SZ + 1)
+#define PROPLEN(SZ) (SZ + 1)
 #define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
 #define STRCMP(X, Y) (strcmp(X, Y) == 0)
 #define STRNCMP(X, Y, N) (strncmp(X, Y, N) == 0)
@@ -198,57 +200,6 @@ typedef enum resetAction_tag
 } resetAction_t;
 
 
-
-// /** 
-//  *  @brief Enum of protocols available on the modem (bit-mask). 
-//  *  @details All of the protocols are CLIENTS, while the BGx line of modules support server mode the network carriers generally don't
-//  */
-// typedef enum protocol_tag
-// {
-//     protocol_tcp = 0x00,                ///< TCP client
-//     protocol_udp = 0x01,                ///< UDP client
-//     protocol_ssl = 0x02,                ///< SSL client.
-//     protocol_socket = 0x03,             ///< special test value, < compare includes any of the above IP socket protocols
-
-//     protocol_mqtt = 0x10,               ///< MQTT messaging client
-//     protocol_http = 0x11,               ///< HTTP client
-
-//     protocol_void = 0xFF                ///< No protocol, used in code to generally signal a null condition.
-// } protocol_t;
-
-
-// /** 
-//  *  @brief Enum of the available dataCntxt indexes for BGx (only SSL/TLS capable contexts are supported).
-//  */
-// typedef enum dataCntxt_tag
-// {
-//     dataCntxt_0 = 0,
-//     dataCntxt_1 = 1,
-//     dataCntxt_2 = 2,
-//     dataCntxt_3 = 3,
-//     dataCntxt_4 = 4,
-//     dataCntxt_5 = 5,
-//     dataCntxt__cnt = 6,
-//     dataCntxt__none = 0xFF
-// } dataCntxt_t;
-
-
-
-// /** 
-//  *  @brief Base struct containing common properties required of a stream control
-//  */
-// typedef struct streamCtrl_tag
-// {
-//     uint16_t ctrlMagic;                                     /// magic flag to validate incoming requests 
-//     dataCntxt_t dataCntxt;                                  /// Data context where this control operates (only SSL/TLS contexts 1-6)
-//     char streamType[streams__typeCodeSz];
-//     // protocol_t protocol;                                    /// Socket's protocol : UDP/TCP/SSL.
-//     bool useTls;                                            /// flag indicating SSL/TLS applied to stream
-//     char hostUrl[SET_PROPLEN(host__urlSz)];                 /// URL or IP address of host
-//     uint16_t hostPort;                                      /// IP port number host is listening on (allows for 65535/0)
-// } streamCtrl_t;
-
-
 typedef struct appEventResponse_tag
 {
     uint8_t requestCode;
@@ -263,11 +214,13 @@ typedef struct appEventResponse_tag
 
 /* callback to notify application of an event, events can be simple notifications or a notification that information is needed
  * --------------------------------------------------------------------------------------------- */
-typedef void (*applEvntNotify_func)(const char *eventTag, const char *eventMsg);      /// application event notification and action/info request callback
+typedef void (*appEvntNotify_func)(appEvents_t eventType, const char *notifyMsg);                  /// application event notification and action/info request callback
+
 
 /* callback to request environment information from appl
  * --------------------------------------------------------------------------------------------- */
-typedef const char *(*applInfoRequest_func)(const char *requestTag);
+typedef const char *(*appInfoRequest_func)(const char *requestTag);
+
 
 /* callback to allow for app background processingfor extended duration operations to allow for 
  * --------------------------------------------------------------------------------------------- */

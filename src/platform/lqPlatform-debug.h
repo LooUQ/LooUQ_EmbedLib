@@ -29,28 +29,28 @@
 #define DBGBUFFER_SZ 120
 
 #ifdef _DEBUG 
-    #ifndef DBCCOLOR_dflt
-    #define DBGCOLOR_dflt 13
-    #define DBGCOLOR_info 15
-    #define DBGCOLOR_warn 17
-    #define DBGCOLOR_error 16
+    // #ifndef DBCCOLOR_dflt
+    // #define DBGCOLOR_dflt 13
+    // #define DBGCOLOR_info 15
+    // #define DBGCOLOR_warn 17
+    // #define DBGCOLOR_error 16
 
-    #define DBGCOLOR_cyan 10
-    #define DBGCOLOR_magenta 11
-    #define DBGCOLOR_white 12
-    #define DBGCOLOR_gray 13
-    #define DBGCOLOR_blue 14
-    #define DBGCOLOR_green 15
-    #define DBGCOLOR_red 16
-    #define DBGCOLOR_yellow 17
+    // #define DBGCOLOR_cyan 10
+    // #define DBGCOLOR_magenta 11
+    // #define DBGCOLOR_white 12
+    // #define DBGCOLOR_gray 13
+    // #define DBGCOLOR_blue 14
+    // #define DBGCOLOR_green 15
+    // #define DBGCOLOR_red 16
+    // #define DBGCOLOR_yellow 17
 
-    #define DBGCOLOR_dCyan 20
-    #define DBGCOLOR_dMagenta 21
-    #define DBGCOLOR_dBlue 24
-    #define DBGCOLOR_dGreen 25
-    #define DBGCOLOR_dRed 26
-    #define DBGCOLOR_dYellow 27
-    #endif
+    // #define DBGCOLOR_dCyan 20
+    // #define DBGCOLOR_dMagenta 21
+    // #define DBGCOLOR_dBlue 24
+    // #define DBGCOLOR_dGreen 25
+    // #define DBGCOLOR_dRed 26
+    // #define DBGCOLOR_dYellow 27
+    // #endif
 
     #ifndef PRINTF
     #define PRINTF(c_, f_, ...) dbg_print((f_), ##__VA_ARGS__)

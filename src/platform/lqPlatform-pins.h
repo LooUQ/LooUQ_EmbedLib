@@ -48,7 +48,8 @@ const ltemPinConfig_t ltem_pinConfig =
     statusPin : 6,                  ///< HIGH indicates ON
     powerkeyPin : 11,               ///< toggle HIGH to change state
     resetPin : 10,                  ///< reset active HIGH
-    ringUrcPin : 0,                 
+    ringUrcPin : 0,             
+    connected : 0,    
     wakePin : 0
 };
 #endif
@@ -77,6 +78,7 @@ const ltemPinConfig_t ltem_pinConfig =
     powerkeyPin : 10,               /// toggle HIGH to change state
     resetPin : 11,                  /// reset active HIGH
     ringUrcPin : 0,                 
+    connected : 0,
     wakePin : 0
 };
 #define LQLTE_MODULE BG77
@@ -91,6 +93,7 @@ const ltemPinConfig_t ltem_pinConfig =
     powerkeyPin : 11,
     resetPin : 19,
     ringUrcPin : 5,
+    connected : 0,
     wakePin : 10
 };
 #endif
