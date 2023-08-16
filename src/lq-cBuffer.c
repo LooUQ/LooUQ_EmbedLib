@@ -40,7 +40,7 @@
 #endif
 
 #include "lq-cBuffer.h"
-#include "lq-diagnostics.h"
+#include "lqdiag.h"
 
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))

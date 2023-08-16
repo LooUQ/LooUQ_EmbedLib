@@ -28,6 +28,8 @@
  * SAMD chip function support 
  *****************************************************************************/
 
+#ifdef SAMD
+
 #include <sam.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -326,3 +328,6 @@ static void S_initialize_wdt()
 
     wdInitialized = true;
 }
+
+#endif
+

@@ -28,18 +28,24 @@
 #ifndef __LQ_TYPES_H__
 #define __LQ_TYPES_H__
 
-#ifdef __cplusplus
-#include <cstdint>
-#include <cstdlib>
-#include <cstdbool>
-#else
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#endif // __cplusplus
+
+// #ifdef __cplusplus
+// #include <cstdint>
+// #include <cstdlib>
+// #include <cstdbool>
+// #else
+// #include <stddef.h>
+// #include <stdint.h>
+// #include <stdbool.h>
+// #endif // __cplusplus
 
 
 #ifndef ASCII_sOK
+#define ASCII_sOK "OK\r\n"
+
 #define ASCII_cCR '\r'
 #define ASCII_sCR "\r"
 #define ASCII_cCOMMA ','
@@ -50,7 +56,6 @@
 #define ASCII_cHYPHEN (char)0x2D
 #define ASCII_sCTRLZ "\032"
 #define ASCII_sCRLF "\r\n"
-#define ASCII_sOK "OK\r\n"
 #define ASCII_sMQTTTERM "\"\r\n"
 #define ASCII_szCRLF 2
 #define NOT_NULL 1
@@ -69,6 +74,7 @@
 enum lqTypes__resultCodes
 {
     resultCode__success = 200,
+    resultCode__accepted = 202,
     resultCode__previouslyOpened = 208,
 
     resultCode__badRequest = 400,
@@ -98,34 +104,34 @@ enum lqTypes__resultCodes
 #endif
 
 
-#ifndef RESULT_CODE_SUCCESS
-#define RESULT_CODE_SUCCESS       200
-#define RESULT_CODE_ALREADYRPTD   208
+// #ifndef RESULT_CODE_SUCCESS
+// #define RESULT_CODE_SUCCESS       200
+// #define RESULT_CODE_ALREADYRPTD   208
 
-#define RESULT_CODE_BADREQUEST    400
-#define RESULT_CODE_FORBIDDEN     403
-#define RESULT_CODE_NOTFOUND      404
-#define RESULT_CODE_TIMEOUT       408
-#define RESULT_CODE_CONFLICT      409
-#define RESULT_CODE_GONE          410
-#define RESULT_CODE_PRECONDFAILED 412
-#define RESULT_CODE_CANCELLED     499
+// #define RESULT_CODE_BADREQUEST    400
+// #define RESULT_CODE_FORBIDDEN     403
+// #define RESULT_CODE_NOTFOUND      404
+// #define RESULT_CODE_TIMEOUT       408
+// #define RESULT_CODE_CONFLICT      409
+// #define RESULT_CODE_GONE          410
+// #define RESULT_CODE_PRECONDFAILED 412
+// #define RESULT_CODE_CANCELLED     499
 
-#define RESULT_CODE_ERROR         500
-#define RESULT_CODE_UNAVAILABLE   503
-#define RESULT_CODE_GTWYTIMEOUT   504               /// signals for a background (doWork) process timeout
+// #define RESULT_CODE_ERROR         500
+// #define RESULT_CODE_UNAVAILABLE   503
+// #define RESULT_CODE_GTWYTIMEOUT   504               /// signals for a background (doWork) process timeout
 
-#define RESULT_CODE_ERRORS        400
-#define RESULT_CODE_SUCCESSRANGE   99
-#define RESULT_CODE_SUCCESSMAX    299
-#define RESULT_CODE_BGXERRORS     500
-#define RESULT_CODE_CUSTOMERRORS  600
+// #define RESULT_CODE_ERRORS        400
+// #define RESULT_CODE_SUCCESSRANGE   99
+// #define RESULT_CODE_SUCCESSMAX    299
+// #define RESULT_CODE_BGXERRORS     500
+// #define RESULT_CODE_CUSTOMERRORS  600
 
-#define RESULT_CODE_PENDING       0xFFFF            ///< Value returned from response parsers indicating a pattern match has not yet been detected
+// #define RESULT_CODE_PENDING       0xFFFF            ///< Value returned from response parsers indicating a pattern match has not yet been detected
+// #endif
 
 // action_result_t should be populated with RESULT_CODE_x constant values or an errorCode (uint >= 400)
 typedef uint16_t resultCode_t;
-#endif
 
 
 #define PERIOD_FROM_SECONDS(period)  (period * 1000)
@@ -135,7 +141,7 @@ typedef uint16_t resultCode_t;
 #define LQC_DEVICECONFIG_PACKAGEID "LQCC"
 
 #define SET_PROPLEN(SZ) (SZ + 1)
-#define PROPLEN(SZ) (SZ + 1)
+#define PROPSZ(SZ) (SZ + 1)
 #define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
 #define STRCMP(X, Y) (strcmp(X, Y) == 0)
 #define STRNCMP(X, Y, N) (strncmp(X, Y, N) == 0)
@@ -160,7 +166,7 @@ enum LooUQ_constants
 */
 
 
-typedef enum appEvents_tag
+typedef enum appEvent_tag
 {
     appEvent_info = 200,
 
@@ -189,7 +195,8 @@ typedef enum appEvents_tag
     appEvent_fault_assertFailed,        /// code assertion failed, automatically initiated by LooUQ lq_diagnostics subsystem
     appEvent_fault_codeFault,           /// unrecoverable code fault detected
     appEvent_fault_hardFault = 255      /// potential IRQ hardFault signal redirect to UNR handler for logging
-} appEvents_t;
+} appEvent_t;
+
 
 typedef enum resetAction_tag
 {
@@ -214,12 +221,18 @@ typedef struct appEventResponse_tag
 
 /* callback to notify application of an event, events can be simple notifications or a notification that information is needed
  * --------------------------------------------------------------------------------------------- */
-typedef void (*appEvntNotify_func)(appEvents_t eventType, const char *notifyMsg);                  /// application event notification and action/info request callback
+typedef void (*appEvntNotify_func)(appEvent_t eventType, const char *notifyMsg);                  /// application event notification and action/info request callback
 
 
-/* callback to request environment information from appl
+/* callback to request environment information from app
  * --------------------------------------------------------------------------------------------- */
-typedef const char *(*appInfoRequest_func)(const char *requestTag);
+
+/**
+ * @brief Callback into app to request environment information
+ * 
+ * @returns A signed 32b integer with the value requested.
+ */
+typedef int32_t (*appInfoRequest_func)(uint8_t infoRqst);
 
 
 /* callback to allow for app background processingfor extended duration operations to allow for 
