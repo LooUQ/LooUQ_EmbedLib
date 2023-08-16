@@ -1,2 +1,2 @@
-# LooUQ-DeviceCommon
+# LooUQ-EmbedLib
  Shared support functions used across LooUQ libraries
