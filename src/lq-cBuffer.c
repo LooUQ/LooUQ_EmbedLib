@@ -25,23 +25,13 @@
  * LooUQ circular buffer implementation for device streaming
  *****************************************************************************/
 
-#define _DEBUG 2                        // set to non-zero value for PRINTF debugging output, 
-// debugging output options             // LTEm1c will satisfy PRINTF references with empty definition if not already resolved
-#if _DEBUG > 0
-    asm(".global _printf_float");       // forces build to link in float support for printf
-    #if _DEBUG == 1
-    #define SERIAL_DBG 1                // enable serial port output using devl host platform serial, 1=wait for port
-    #elif _DEBUG >= 2
-    #include <jlinkRtt.h>               // output debug PRINTF macros to J-Link RTT channel
-    #define PRINTF(c_,f_,__VA_ARGS__...) do { rtt_printf(c_, (f_), ## __VA_ARGS__); } while(0)
-    #endif
-#else
-#define PRINTF(c_, f_, ...) ;
-#endif
+#define SRCFILE "CBF"                       // create SRCFILE (3 char) MACRO for lq-diagnostics ASSERT
+#define ENABLE_DIAGPRINT                    // expand DPRINT into debug output
+//#define ENABLE_DIAGPRINT_VERBOSE            // expand DPRINT and DPRINT_V into debug output
+#define ENABLE_ASSERT
+#include <lqdiag.h>
 
 #include "lq-cBuffer.h"
-#include "lqdiag.h"
-
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -414,10 +404,10 @@ uint16_t cbffr_find(cBuffer_t *cbffr, const char *pNeedle, int16_t searchOffset,
         }
         else
         {
-            searchPtr = cbffr->buffer;                                  // moving to left side
             matchedCnt = 0;                                             // any match from right side is orphaned, start over
         }
     }
+    searchPtr = cbffr->buffer;                                          // moving to left side
 
     /* Continue searching left-side (wrap point to head)
      */

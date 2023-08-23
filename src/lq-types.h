@@ -28,19 +28,19 @@
 #ifndef __LQ_TYPES_H__
 #define __LQ_TYPES_H__
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-
-// #ifdef __cplusplus
-// #include <cstdint>
-// #include <cstdlib>
-// #include <cstdbool>
-// #else
 // #include <stddef.h>
 // #include <stdint.h>
 // #include <stdbool.h>
-// #endif // __cplusplus
+
+#ifdef __cplusplus
+#include <cstdint>
+#include <cstdlib>
+#include <cstdbool>
+#else
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#endif // __cplusplus
 
 
 #ifndef ASCII_sOK

@@ -25,20 +25,11 @@
  * LooUQ LQCloud Client Collections Utilities
  *****************************************************************************/
 
-#define _DEBUG 0                        // set to non-zero value for PRINTF debugging output, 
-// debugging output options             // LTEm1c will satisfy PRINTF references with empty definition if not already resolved
-#if defined(_DEBUG)
-    asm(".global _printf_float");       // forces build to link in float support for printf
-    #if _DEBUG == 2
-    #include <jlinkRtt.h>               // output debug PRINTF macros to J-Link RTT channel
-    #define PRINTF(c_,f_,__VA_ARGS__...) do { rtt_printf(c_, (f_), ## __VA_ARGS__); } while(0)
-    #else
-    #define SERIAL_DBG _DEBUG           // enable serial port output using devl host platform serial, _DEBUG 0=start immediately, 1=wait for port
-    #endif
-#else
-#define PRINTF(c_, f_, ...) ;
-#endif
-
+#define SRCFILE "COL"                       // create SRCFILE (3 char) MACRO for lq-diagnostics ASSERT
+#define ENABLE_DIAGPRINT                    // expand DPRINT into debug output
+//#define ENABLE_DIAGPRINT_VERBOSE            // expand DPRINT and DPRINT_V into debug output
+#define ENABLE_ASSERT
+#include <lqdiag.h>
 
 #include "lq-collections.h"
 

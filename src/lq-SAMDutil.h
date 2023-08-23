@@ -42,6 +42,8 @@ void lqSAMD_wdReset();
 
 uint16_t lqSAMD_sleep(uint16_t maxPeriodMS);
 
+uint32_t lqSAMD_getMemAvailable();
+
 
 #ifdef __cplusplus
 }

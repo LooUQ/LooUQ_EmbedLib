@@ -28,7 +28,7 @@
  * SAMD chip function support 
  *****************************************************************************/
 
-#ifdef SAMD
+#ifdef ARDUINO_ARCH_SAMD
 
 #include <sam.h>
 #include <stdbool.h>
@@ -328,6 +328,31 @@ static void S_initialize_wdt()
 
     wdInitialized = true;
 }
+
+
+/* Check free memory (stack-heap) 
+ * - Remove if not needed for production
+--------------------------------------------------------------------------------- */
+
+// #ifdef __arm__
+// // should use uinstd.h to define sbrk but Due causes a conflict
+// extern "C" char* sbrk(int incr);
+// #else  // __ARM__
+// extern char *__brkval;
+// #endif  // __arm__
+
+// uint32_t lqSAMD_getMemAvailable();
+// {
+//     char top;
+//     #ifdef __arm__
+//     return &top - ((char*)sbrk(0));
+//     #elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+//     return &top - __brkval;
+//     #else  // __arm__
+//     return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+//     #endif  // __arm__
+// }
+
 
 #endif
 
