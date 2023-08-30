@@ -23,22 +23,21 @@
  *
  *****************************************************************************/
 
-#ifndef __LTEMC_CBUF_H__
-#define __LTEMC_CBUF_H__
+#ifndef __LTEMC_CBUFFER_H__
+#define __LTEMC_CBUFFER_H__
 
 #include "ltemc-types.h"
 
 /** 
  *  @brief Circular buffer for use in the transmit functions.
 */
-typedef struct cbuf_tag
+typedef struct cbuffer_tag
 {
     uint8_t * buffer;       /// The internal char buffer storing the text
     int head;               /// Integer offset to the position where the next char will be added (pushed).
     int tail;               /// Integer offset to the consumer position, where the next request will be sourced.
     int maxlen;             /// The total size of the buffer. 
-} cbuf_t;
-
+} cbuffer_t;
 
 
 
@@ -53,7 +52,7 @@ extern "C"
  *  @param data [in] - Character to add to buffer.
  *  @return true (1) if added, 0 if not added to buffer. 
 */
-uint8_t cbuf_push(cbuf_t *c, uint8_t data);
+uint8_t cbffr_push(cbuffer_t *c, uint8_t data);
 
 
 /**
@@ -62,11 +61,11 @@ uint8_t cbuf_push(cbuf_t *c, uint8_t data);
  *  @param data [in] - Pointer where to place popped character.
  *  @return true (1) if popped, 0 if not returned. 
 */
-uint8_t cbuf_pop(cbuf_t *c, uint8_t *data);
+uint8_t cbffr_pop(cbuffer_t *c, uint8_t *data);
 
 
 #ifdef __cplusplus
 }
 #endif // !__cplusplus
 
-#endif  /* !__LTEMC_CBUF_H__ */
+#endif  /* !__LTEMC_CBUFFER_H__ */

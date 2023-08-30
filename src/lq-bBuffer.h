@@ -32,7 +32,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef struct cBuffer_tag
+typedef struct bBuffer_tag
 {
     char *buffer;
     char *bufferEnd;
@@ -40,12 +40,12 @@ typedef struct cBuffer_tag
     volatile char *tail;
     volatile char *rbHead;                  /// pushBlock: rollback head pointer
     volatile char *pTail;                   /// popBlock: pending tail pointer
-} cBuffer_t;
+} bBuffer_t;
 
 
-#define CBFFR_NOFIND_VAL 0xFFFF
-#define CBFFR_FOUND(x) (x != CBFFR_NOFIND_VAL)
-#define CBFFR_NOTFOUND(x) (x == CBFFR_NOFIND_VAL)
+#define BBFFR_NOFIND_VAL 0xFFFF
+#define BBFFR_FOUND(x) (x != BBFFR_NOFIND_VAL)
+#define BBFFR_NOTFOUND(x) (x == BBFFR_NOFIND_VAL)
 
 
 #ifdef __cplusplus
@@ -60,7 +60,7 @@ extern "C"
  * @param rawBuffer 
  * @param bufferSz 
  */
-void cbffr_init(cBuffer_t *cbffr, char * rawBuffer, uint16_t bufferSz);
+void bbffr_init(bBuffer_t *cbffr, char * rawBuffer, uint16_t bufferSz);
 
 
 /**
@@ -68,7 +68,7 @@ void cbffr_init(cBuffer_t *cbffr, char * rawBuffer, uint16_t bufferSz);
  * 
  * @param cbffr The buffer to operate on.
  */
-void cbffr_reset(cBuffer_t *cbffr);
+void bbffr_reset(bBuffer_t *cbffr);
 
 
 /**
@@ -77,7 +77,7 @@ void cbffr_reset(cBuffer_t *cbffr);
  * @param cbffr The buffer to report on.
  * @return The number of characters in the buffer.
  */
-uint16_t cbffr_getCapacity(cBuffer_t *cbffr);
+uint16_t bbffr_getCapacity(bBuffer_t *cbffr);
 
 
 /**
@@ -86,7 +86,7 @@ uint16_t cbffr_getCapacity(cBuffer_t *cbffr);
  * @param cbffr The buffer to report on.
  * @return The number of characters in the buffer.
  */
-uint16_t cbffr_getOccupied(cBuffer_t *cbffr);
+uint16_t bbffr_getOccupied(bBuffer_t *cbffr);
 
 
 /**
@@ -95,7 +95,7 @@ uint16_t cbffr_getOccupied(cBuffer_t *cbffr);
  * @param cbffr The buffer to report on.
  * @return The number of free bytes in the buffer.
  */
-uint16_t cbffr_getVacant(cBuffer_t *cbffr);
+uint16_t bbffr_getVacant(bBuffer_t *cbffr);
 
 
 /**
@@ -105,7 +105,7 @@ uint16_t cbffr_getVacant(cBuffer_t *cbffr);
  * @param cbffr The buffer to report on.
  * @param macros Pointer to character buffer to fill with internal MACRO values info.
  */
-void cbffr_GETMACROS(cBuffer_t *cbffr, char *macros);
+void bbffr_GETMACROS(bBuffer_t *cbffr, char *macros);
 
 
 /* Operate on Buffer 
@@ -120,7 +120,7 @@ void cbffr_GETMACROS(cBuffer_t *cbffr, char *macros);
  * @return true Buffer was updated with src characters. Only returns true if the full size of src can be accepted.
  * @return Number of characters "pushed"; the lesser of available and requestSz.
  */
-uint16_t cbffr_push(cBuffer_t *cbffr, const char *src, uint16_t requestSz);
+uint16_t bbffr_push(bBuffer_t *cbffr, const char *src, uint16_t requestSz);
 
 
 /**
@@ -131,7 +131,7 @@ uint16_t cbffr_push(cBuffer_t *cbffr, const char *src, uint16_t requestSz);
  * @param requestSz [in] Requested (contiguous) space in buffer.
  * @return Number of characters available to be pushed; the lesser of contiguous vacant and requestSz.
  */
-uint16_t cbffr_pushBlock(cBuffer_t *cbffr, char **copyTo, uint16_t requestSz);
+uint16_t bbffr_pushBlock(bBuffer_t *cbffr, char **copyTo, uint16_t requestSz);
 
 
 /**
@@ -141,7 +141,7 @@ uint16_t cbffr_pushBlock(cBuffer_t *cbffr, char **copyTo, uint16_t requestSz);
  * @param cbffr [in] The buffer to be operated on.
  * @param commit [in] Commit pending push block (true) or roll-back pending push (false).
  */
-void cbffr_pushBlockFinalize(cBuffer_t *cbffr, bool commit);
+void bbffr_pushBlockFinalize(bBuffer_t *cbffr, bool commit);
 
 
 /**
@@ -152,19 +152,19 @@ void cbffr_pushBlockFinalize(cBuffer_t *cbffr, bool commit);
  * @param requestSz Number of chars requested from the buffer.
  * @return Number of characters "popped"; the lesser of available and requestSz.
  */
-uint16_t cbffr_pop(cBuffer_t *cbffr, char *dest, uint16_t requestSz);
+uint16_t bbffr_pop(bBuffer_t *cbffr, char *dest, uint16_t requestSz);
 
 
 /**
  * @brief Allocate a POP of chars from buffer at buffer-tail. Number of chars accounted for will be the lesser of available and requestSz.
- * @note The buffer space returned is gaurded against overwrite until  cbffr_popFinalize() function is invoked; which can be commit or rollback.
+ * @note The buffer space returned is gaurded against overwrite until  bbffr_popFinalize() function is invoked; which can be commit or rollback.
  * 
  * @param cbffr [in] The buffer sourcing the characters.
  * @param copyFrom [out] Dbl-pointer to memory location where popped chars are TO BE copied from.
  * @param requestSz [in] Number of chars requested from the buffer.
  * @return Number of characters available to be popped; the lesser of occupied and requestSz.
  */
-uint16_t cbffr_popBlock(cBuffer_t *cbffr, char **copyFrom, uint16_t requestSz);
+uint16_t bbffr_popBlock(bBuffer_t *cbffr, char **copyFrom, uint16_t requestSz);
 
 
 /**
@@ -174,7 +174,7 @@ uint16_t cbffr_popBlock(cBuffer_t *cbffr, char **copyFrom, uint16_t requestSz);
  * @param cbffr [in] The buffer to be operated on.
  * @param commit [in] Commit pending pop block (true) or roll-back pending pop (false).
  */
-void cbffr_popBlockFinalize(cBuffer_t *cbffr, bool commit);
+void bbffr_popBlockFinalize(bBuffer_t *cbffr, bool commit);
 
 
 // /**
@@ -186,7 +186,7 @@ void cbffr_popBlockFinalize(cBuffer_t *cbffr, bool commit);
 //  * @param leaveSz Number of chars to leave in buffer after pop, if buffer has less than leaveSz no chars are popped.
 //  * @return Number of characters "popped"; the lesser of (available - leaveSz) and requestSz.
 //  */
-// uint16_t cbffr_popLeave(cBuffer_t *cbffr, char *dest, uint16_t requestSz, uint16_t leaveSz);
+// uint16_t bbffr_popLeave(bBuffer_t *cbffr, char *dest, uint16_t requestSz, uint16_t leaveSz);
 
 
 /**
@@ -197,7 +197,7 @@ void cbffr_popBlockFinalize(cBuffer_t *cbffr, bool commit);
  * @param requestSz Number of chars requested from the buffer.
  * @return uint16_t Number of characters "peeked" (the lesser of available and requestSz).
  */
-uint16_t cbffr_peek(cBuffer_t *cbffr, char *dest, uint16_t requestSz);
+uint16_t bbffr_peek(bBuffer_t *cbffr, char *dest, uint16_t requestSz);
 
 
 /**
@@ -212,28 +212,28 @@ uint16_t cbffr_peek(cBuffer_t *cbffr, char *dest, uint16_t requestSz);
  * @param setTail If true, the buffer tail is advanced to the first character of found needle.
  * @return Offset from buffer TAIL to the position of the needle within the buffer. If no find returns CBFFR_NOFIND (UINT16_MAX: 0xFFFF)
  */
-uint16_t cbffr_find(cBuffer_t *cbffr, const char *needle, int16_t searchOffset, uint16_t searchWindowSz, bool setTail);
+uint16_t bbffr_find(bBuffer_t *cbffr, const char *needle, int16_t searchOffset, uint16_t searchWindowSz, bool setTail);
 
 
 /**
  * @brief Advances the buffer's tail (outgoing) by the requested number of chars.
- * @details Typically used after a call to cbffr_getTailBlock() to set cbffr tail to match an outside buffer in operation
- * or to skip a number of chars after a cbffr_find()
+ * @details Typically used after a call to bbffr_getTailBlock() to set cbffr tail to match an outside buffer in operation
+ * or to skip a number of chars after a bbffr_find()
  * 
  * @param cbffr The buffer to be operated on.
  * @param skipCnt The number of chars to advance the tail.
  */
-void cbffr_skipTail(cBuffer_t *cbffr, uint16_t skipCnt);
+void bbffr_skipTail(bBuffer_t *cbffr, uint16_t skipCnt);
 
 
 /**
  * @brief Advances the buffer's head (incoming) by the requested number of chars.
- * @details Typically used after a call to cbffr_getHeadBlock() to set cbffr head to match an outside buffer in operation.
+ * @details Typically used after a call to bbffr_getHeadBlock() to set cbffr head to match an outside buffer in operation.
  * 
  * @param cbffr The buffer to be operated on.
  * @param skipCnt The number of chars to advance the head.
  */
-void cbffr_skipHead(cBuffer_t *cbffr, uint16_t skipCnt);
+void bbffr_skipHead(bBuffer_t *cbffr, uint16_t skipCnt);
 
 
 // /**
@@ -244,7 +244,7 @@ void cbffr_skipHead(cBuffer_t *cbffr, uint16_t skipCnt);
 //  * @param length [in/out] Pointer to integer length variable with the contiguous length of buffer between tail and head/buffer-end (wrap).
 //  * @param popTail [in] Bool directing the call to act like a pop: advancing tail (true) or a idempotent get (false).
 //  */
-// void cbffr_getTailBlock(cBuffer_t *cbffr, char **tail, uint16_t *length, bool popTail);
+// void bbffr_getTailBlock(bBuffer_t *cbffr, char **tail, uint16_t *length, bool popTail);
 
 
 // /**
@@ -255,14 +255,14 @@ void cbffr_skipHead(cBuffer_t *cbffr, uint16_t skipCnt);
 //  * @param length [in/out] Pointer to integer length variable with the contiguous length of buffer between tail and head/buffer-end (wrap).
 //  * @param pushHead [in] Bool directing the call to act like a push: advancing head (true) or a idempotent get (false).
 //  */
-// void cbffr_getHeadBlock(cBuffer_t *cbffr, char **head, uint16_t *length);
+// void bbffr_getHeadBlock(bBuffer_t *cbffr, char **head, uint16_t *length);
 
 
-// bool cbffr_startTransaction(cBuffer_t *cbffr);
+// bool bbffr_startTransaction(bBuffer_t *cbffr);
 
-// void cbffr_commitTransaction(cBuffer_t *cbffr);
+// void bbffr_commitTransaction(bBuffer_t *cbffr);
 
-// void cbffr_rollbackTransaction(cBuffer_t *cbffr);
+// void bbffr_rollbackTransaction(bBuffer_t *cbffr);
 
 #ifdef __cplusplus
 }

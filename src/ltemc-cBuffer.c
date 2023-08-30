@@ -23,12 +23,12 @@
  *
  *****************************************************************************/
 
-#include "ltemc-cbuf.h"
+#include "ltemc-cbuffer.h"
 
 /**
  *  @brief Pushes a character on to stack buffer.
 */
-uint8_t cbuf_push(cbuf_t *bufStruct, uint8_t data)
+uint8_t cbffr_push(cbuffer_t *bufStruct, uint8_t data)
 {
     int next = (bufStruct->head + 1) % bufStruct->maxlen;   // updt control
     // if (next >= bufStruct->maxlen)
@@ -45,7 +45,7 @@ uint8_t cbuf_push(cbuf_t *bufStruct, uint8_t data)
 /**
  *  @brief Pops a character from stack buffer.
 */
-uint8_t cbuf_pop(cbuf_t *bufStruct, uint8_t *data)
+uint8_t cbffr_pop(cbuffer_t *bufStruct, uint8_t *data)
 {
     if (bufStruct->head == bufStruct->tail)                 // if the head == tail, we don't have any data
         return 0;
