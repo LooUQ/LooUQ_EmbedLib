@@ -103,48 +103,31 @@ enum lqTypes__resultCodes
 };
 #endif
 
-
-// #ifndef RESULT_CODE_SUCCESS
-// #define RESULT_CODE_SUCCESS       200
-// #define RESULT_CODE_ALREADYRPTD   208
-
-// #define RESULT_CODE_BADREQUEST    400
-// #define RESULT_CODE_FORBIDDEN     403
-// #define RESULT_CODE_NOTFOUND      404
-// #define RESULT_CODE_TIMEOUT       408
-// #define RESULT_CODE_CONFLICT      409
-// #define RESULT_CODE_GONE          410
-// #define RESULT_CODE_PRECONDFAILED 412
-// #define RESULT_CODE_CANCELLED     499
-
-// #define RESULT_CODE_ERROR         500
-// #define RESULT_CODE_UNAVAILABLE   503
-// #define RESULT_CODE_GTWYTIMEOUT   504               /// signals for a background (doWork) process timeout
-
-// #define RESULT_CODE_ERRORS        400
-// #define RESULT_CODE_SUCCESSRANGE   99
-// #define RESULT_CODE_SUCCESSMAX    299
-// #define RESULT_CODE_BGXERRORS     500
-// #define RESULT_CODE_CUSTOMERRORS  600
-
-// #define RESULT_CODE_PENDING       0xFFFF            ///< Value returned from response parsers indicating a pattern match has not yet been detected
-// #endif
-
 // action_result_t should be populated with RESULT_CODE_x constant values or an errorCode (uint >= 400)
 typedef uint16_t resultCode_t;
 
-
-#define PERIOD_FROM_SECONDS(period)  (period * 1000)
-#define PERIOD_FROM_MINUTES(period)  (period * 1000 * 60)
+/* LooUQ Common Macros
+ =============================================================================================== */
+ 
+#define SECONDS_PERIOD(period) (period * 1000)
+#define MINUTES_PERIOD(period) (period * 1000 * 60)
+#define IS_ELAPSED(start, timeout) ((start == 0) ? 0 : pMillis() - start > timeout)
+#define ELAPSED_DURATION(start) ((start == 0) ? 0 : pMillis() - start)
 
 #define LQC_PROVISIONING_MAGICFLAG "LQCP"
 #define LQC_DEVICECONFIG_PACKAGEID "LQCC"
 
-#define SET_PROPLEN(SZ) (SZ + 1)
 #define PROPSZ(SZ) (SZ + 1)
 #define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
 #define STRCMP(X, Y) (strcmp(X, Y) == 0)
 #define STRNCMP(X, Y, N) (strncmp(X, Y, N) == 0)
+
+// obsolete - delete when reference fully removed
+#define PERIOD_FROM_SECONDS(period)  (period * 1000)
+#define PERIOD_FROM_MINUTES(period)  (period * 1000 * 60)
+#define SET_PROPLEN(SZ) (SZ + 1)
+
+
 
 enum LooUQ_constants
 {
