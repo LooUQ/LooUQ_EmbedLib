@@ -34,8 +34,8 @@
 
 typedef struct bBuffer_tag
 {
-    char *buffer;
-    char *bufferEnd;
+    volatile char *buffer;
+    volatile char *bufferEnd;
     volatile char *head;
     volatile char *tail;
     volatile char *rbHead;                  /// pushBlock: rollback head pointer

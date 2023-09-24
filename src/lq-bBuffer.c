@@ -36,10 +36,10 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-#define BBFFR_WRAPPED (cbffr->head < cbffr->tail)
-#define BBFFR_RIGHTEDGE ((BBFFR_WRAPPED) ? cbffr->bufferEnd : cbffr->head)
-#define BBFFR_SIZE (cbffr->bufferEnd - cbffr->buffer)
-#define BBFFR_OCCUPIED ((cbffr->head >= cbffr->tail) ? cbffr->head - cbffr->tail : BBFFR_SIZE - (cbffr->tail - cbffr->head)) 
+#define BBFFR_WRAPPED (bbffr->head < bbffr->tail)
+#define BBFFR_RIGHTEDGE ((BBFFR_WRAPPED) ? bbffr->bufferEnd : bbffr->head)
+#define BBFFR_SIZE (bbffr->bufferEnd - bbffr->buffer)
+#define BBFFR_OCCUPIED ((bbffr->head >= bbffr->tail) ? bbffr->head - bbffr->tail : BBFFR_SIZE - (bbffr->tail - bbffr->head)) 
 #define BBFFR_VACANT  (BBFFR_SIZE - BBFFR_OCCUPIED)
 
 
@@ -48,48 +48,50 @@
 #define SRCFILE "CBF"                   // create SRCFILE (3 char) MACRO for lq-diagnostics ASSERT
 
 
-void bbffr_init(bBuffer_t *cbffr, char *rawBuffer, uint16_t bufferSz)
+void bbffr_init(bBuffer_t *bbffr, char *rawBuffer, uint16_t bufferSz)
 {
-    cbffr->buffer = rawBuffer;
-    cbffr->bufferEnd = rawBuffer + bufferSz;
-    cbffr->head = rawBuffer;
-    cbffr->tail = rawBuffer;
-    cbffr->rbHead = NULL;
-    cbffr->pTail = NULL;
+    bbffr->buffer = rawBuffer;
+    bbffr->bufferEnd = rawBuffer + bufferSz;
+    bbffr->head = rawBuffer;
+    bbffr->tail = rawBuffer;
+    bbffr->rbHead = NULL;
+    bbffr->pTail = NULL;
 }
 
 
-void bbffr_reset(bBuffer_t *cbffr)
+void bbffr_reset(bBuffer_t *bbffr)
 {
-    cbffr->head = cbffr->buffer;
-    cbffr->tail = cbffr->buffer;
-    cbffr->rbHead = NULL;
-    cbffr->pTail = NULL;
+    bbffr->head = bbffr->buffer;
+    bbffr->tail = bbffr->buffer;
+    bbffr->rbHead = NULL;
+    bbffr->pTail = NULL;
     // temporary, not technically required just makes diag a little easier
-    memset(cbffr->buffer, 0, BBFFR_SIZE);
+    memset(bbffr->buffer, 0, BBFFR_SIZE);
 }
 
 
-void bbffr_GETMACROS(bBuffer_t *cbffr, char *macros)
+void bbffr_GETMACROS(bBuffer_t *bbffr, char *macros)
 {
     /*
-        #define BBFFR_WRAPPED (cbffr->head < cbffr->tail)
-        #define BBFFR_RIGHTEDGE ((BBFFR_WRAPPED) ? cbffr->bufferEnd : cbffr->head)
-        #define BBFFR_SIZE (cbffr->bufferEnd - cbffr->buffer)
+        #define BBFFR_WRAPPED (bbffr->head < bbffr->tail)
+        #define BBFFR_RIGHTEDGE ((BBFFR_WRAPPED) ? bbffr->bufferEnd : bbffr->head)
+        #define BBFFR_SIZE (bbffr->bufferEnd - bbffr->buffer)
 
         // effective "tail" not to be overritten by head increments. It is the tail or (rollback) pTail 
-        #define BBFFR_VTAIL ((cbffr->bTail == NULL) ? cbffr->tail : cbffr->bTail)
+        #define BBFFR_VTAIL ((bbffr->bTail == NULL) ? bbffr->tail : bbffr->bTail)
 
-        #define BBFFR_OCCUPIED ((cbffr->head >= BBFFR_VTAIL) ? cbffr->head - BBFFR_VTAIL : BBFFR_SIZE - (BBFFR_VTAIL - cbffr->head)) 
-        #define BBFFR_VACANT  ((cbffr->head >= BBFFR_VTAIL) ? BBFFR_SIZE - (cbffr->head - BBFFR_VTAIL) - 1 : BBFFR_VTAIL - cbffr->head - 1) 
+        #define BBFFR_OCCUPIED ((bbffr->head >= BBFFR_VTAIL) ? bbffr->head - BBFFR_VTAIL : BBFFR_SIZE - (BBFFR_VTAIL - bbffr->head)) 
+        #define BBFFR_VACANT  ((bbffr->head >= BBFFR_VTAIL) ? BBFFR_SIZE - (bbffr->head - BBFFR_VTAIL) - 1 : BBFFR_VTAIL - bbffr->head - 1) 
     */
     snprintf(macros, "CBFFR MACROS: size=%d, isWrap=%d, right=%p, occpd=%d, vacnt=%d\r\r", BBFFR_SIZE, BBFFR_WRAPPED, BBFFR_RIGHTEDGE, BBFFR_OCCUPIED, BBFFR_VACANT);
 }
 
 /**
- * @brief Get number of characters occupying the buffer.
+ * @brief Get total capacity of buffer.
+ * @param [in] bbffr pointer to buffer to report on.
+ * @return Buffer capacity in bytes/chars.
  */
-uint16_t bbffr_getCapacity(bBuffer_t *cbffr)
+uint16_t bbffr_getCapacity(bBuffer_t *bbffr)
 {
     return BBFFR_SIZE - 1;
 }
@@ -98,7 +100,7 @@ uint16_t bbffr_getCapacity(bBuffer_t *cbffr)
 /**
  * @brief Get count of characters occupying the buffer.
  */
-uint16_t bbffr_getOccupied(bBuffer_t *cbffr)
+uint16_t bbffr_getOccupied(bBuffer_t *bbffr)
 {
     return BBFFR_OCCUPIED;
 }
@@ -107,7 +109,7 @@ uint16_t bbffr_getOccupied(bBuffer_t *cbffr)
 /**
  * @brief Get count of available space in the buffer.
  */
-uint16_t bbffr_getVacant(bBuffer_t *cbffr)
+uint16_t bbffr_getVacant(bBuffer_t *bbffr)
 {
     return BBFFR_VACANT;
 }
@@ -116,33 +118,33 @@ uint16_t bbffr_getVacant(bBuffer_t *cbffr)
 /* Basic push/pop/find/grab
  ----------------------------------------------------------------------------------------------- */
 
-uint16_t bbffr_push(bBuffer_t *cbffr, const char *src, uint16_t srcSz)
+uint16_t bbffr_push(bBuffer_t *bbffr, const char *src, uint16_t srcSz)
 {
-    ASSERT(cbffr->buffer <= cbffr->head && cbffr->head < cbffr->bufferEnd);
-    ASSERT(cbffr->buffer <= cbffr->tail && cbffr->tail < cbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->tail && bbffr->tail < bbffr->bufferEnd);
 
     uint16_t pushCnt;
     if (BBFFR_WRAPPED)                                                      // WRAPPED: space avail = tail-head-1
     {
-        pushCnt = MIN(srcSz, cbffr->tail - cbffr->head - 1);
-        memcpy(cbffr->head, src, pushCnt);
-        cbffr->head += pushCnt;
+        pushCnt = MIN(srcSz, bbffr->tail - bbffr->head - 1);
+        memcpy(bbffr->head, src, pushCnt);
+        bbffr->head += pushCnt;
     }
     else                                                                    // LINEAR: space avail = (bffrEnd-head) + (tail-bffr-1)
     {
-        pushCnt = MIN(srcSz, cbffr->bufferEnd - cbffr->head - 1);
-        memcpy(cbffr->head, src, pushCnt);                                      // 1st copy: right-side of buffer
-        cbffr->head += pushCnt;
+        pushCnt = MIN(srcSz, bbffr->bufferEnd - bbffr->head - 1);
+        memcpy(bbffr->head, src, pushCnt);                                      // 1st copy: right-side of buffer
+        bbffr->head += pushCnt;
 
         if (pushCnt < srcSz)
         {                                                                       // have not pushed all of srcSz
-            uint16_t leftCnt = MIN(srcSz - pushCnt, cbffr->tail - cbffr->head - 1);
-            memcpy(cbffr->buffer, src, leftCnt);
-            cbffr->head = cbffr->buffer + leftCnt;
+            uint16_t leftCnt = MIN(srcSz - pushCnt, bbffr->tail - bbffr->head - 1);
+            memcpy(bbffr->buffer, src, leftCnt);
+            bbffr->head = bbffr->buffer + leftCnt;
             pushCnt += leftCnt;
         }
     }
-    ASSERT(cbffr->buffer <= cbffr->head && cbffr->head < cbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
     return pushCnt;
 }
 
@@ -150,31 +152,31 @@ uint16_t bbffr_push(bBuffer_t *cbffr, const char *src, uint16_t srcSz)
 /**
  * @brief Get address/length of contiguous block of chars from head (incoming). Distance to tail or buffer-wrap.
  */
-uint16_t bbffr_pushBlock(bBuffer_t *cbffr, char **copyTo, uint16_t requestSz)
+uint16_t bbffr_pushBlock(bBuffer_t *bbffr, char **copyTo, uint16_t requestSz)
 {
-    ASSERT(cbffr->rbHead == 0);
-    ASSERT(cbffr->buffer <= cbffr->head && cbffr->head < cbffr->bufferEnd);
-    ASSERT(cbffr->buffer <= cbffr->tail && cbffr->tail < cbffr->bufferEnd);
+    ASSERT(bbffr->rbHead == 0);
+    ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->tail && bbffr->tail < bbffr->bufferEnd);
 
-    *copyTo = cbffr->head;
-    cbffr->rbHead = cbffr->head;                                             // save current for possible rollback
+    *copyTo = bbffr->head;
+    bbffr->rbHead = bbffr->head;                                             // save current for possible rollback
 
     uint16_t pushCnt;
     if (BBFFR_WRAPPED)                                                      // WRAPPED
     {
-        pushCnt =  MIN(requestSz, (cbffr->tail - cbffr->head) - 1);
-        cbffr->head += pushCnt;
+        pushCnt =  MIN(requestSz, (bbffr->tail - bbffr->head) - 1);
+        bbffr->head += pushCnt;
     }
     else                                                                    // LINEAR
     {
-        pushCnt = MIN(requestSz, cbffr->bufferEnd - cbffr->head);
-        cbffr->head +=  pushCnt;
-        if (cbffr->head == cbffr->bufferEnd)
+        pushCnt = MIN(requestSz, bbffr->bufferEnd - bbffr->head);
+        bbffr->head +=  pushCnt;
+        if (bbffr->head == bbffr->bufferEnd)
         {
-            cbffr->head = cbffr->buffer;
+            bbffr->head = bbffr->buffer;
         }
     }
-    ASSERT(cbffr->buffer <= cbffr->head && cbffr->head < cbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
     return pushCnt;
 }
 
@@ -182,49 +184,49 @@ uint16_t bbffr_pushBlock(bBuffer_t *cbffr, char **copyTo, uint16_t requestSz)
 /**
  * @brief Get commit or rollback pending allocation from pushBlock().
  */
-void bbffr_pushBlockFinalize(bBuffer_t *cbffr, bool commit)
+void bbffr_pushBlockFinalize(bBuffer_t *bbffr, bool commit)
 {
-    if (!commit && cbffr->rbHead != NULL)
-        cbffr->head = cbffr->rbHead;
-    cbffr->rbHead = NULL;
+    if (!commit && bbffr->rbHead != NULL)
+        bbffr->head = bbffr->rbHead;
+    bbffr->rbHead = NULL;
 }
 
 
 /**
  * @brief Pop a number of chars from buffer at buffer-tail. Number of characters "popped" will be the lesser of available and requestSz.
  */
-uint16_t bbffr_pop(bBuffer_t *cbffr, char *dest, uint16_t requestSz)
+uint16_t bbffr_pop(bBuffer_t *bbffr, char *dest, uint16_t requestSz)
 {
-    ASSERT(cbffr->buffer <= cbffr->head && cbffr->head < cbffr->bufferEnd);
-    ASSERT(cbffr->buffer <= cbffr->tail && cbffr->tail < cbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->tail && bbffr->tail < bbffr->bufferEnd);
 
     uint16_t popCnt;
     if (BBFFR_WRAPPED)                                                      // WRAPPED
     {
-        uint16_t popCnt = MIN(requestSz, cbffr->bufferEnd - cbffr->tail);       // get right-side of buffer
-        memcpy(dest, cbffr->tail, popCnt);
+        uint16_t popCnt = MIN(requestSz, bbffr->bufferEnd - bbffr->tail);       // get right-side of buffer
+        memcpy(dest, bbffr->tail, popCnt);
 
-        cbffr->tail += popCnt;
-        if (cbffr->tail == cbffr->bufferEnd)                                    // edge case: pop exhausted right-side, move tail to buffer start
+        bbffr->tail += popCnt;
+        if (bbffr->tail == bbffr->bufferEnd)                                    // edge case: pop exhausted right-side, move tail to buffer start
         {
-            cbffr->tail = cbffr->buffer;
+            bbffr->tail = bbffr->buffer;
         }
 
         if (popCnt < requestSz)                                                 // not complete, now get left-side of buffer
         {
-            uint16_t leftCnt = MIN((requestSz - popCnt), (cbffr->head - cbffr->buffer));
-            memcpy(dest + popCnt, cbffr->buffer, leftCnt);
+            uint16_t leftCnt = MIN((requestSz - popCnt), (bbffr->head - bbffr->buffer));
+            memcpy(dest + popCnt, bbffr->buffer, leftCnt);
             popCnt += leftCnt;
-            cbffr->tail = cbffr->buffer + leftCnt;
+            bbffr->tail = bbffr->buffer + leftCnt;
         }
     }
     else                                                                    // LINEAR
     {
         popCnt = MIN(requestSz, BBFFR_OCCUPIED);
-        memcpy(dest, cbffr->tail, popCnt);
-        cbffr->tail += popCnt;
+        memcpy(dest, bbffr->tail, popCnt);
+        bbffr->tail += popCnt;
     }
-    ASSERT(cbffr->buffer <= cbffr->tail && cbffr->tail < cbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->tail && bbffr->tail < bbffr->bufferEnd);
     return popCnt;
 }
 
@@ -232,36 +234,36 @@ uint16_t bbffr_pop(bBuffer_t *cbffr, char *dest, uint16_t requestSz)
 /**
  * @brief Allocate a POP of chars from buffer at buffer-tail. Number of chars accounted for will be the lesser of available and requestSz.
  */
-uint16_t bbffr_popBlock(bBuffer_t *cbffr, char **copyFrom, uint16_t requestSz)
+uint16_t bbffr_popBlock(bBuffer_t *bbffr, char **copyFrom, uint16_t requestSz)
 {
-    ASSERT(cbffr->pTail == 0);                                                  // pending popBlock already, no nesting popBlock()
-    ASSERT(cbffr->buffer <= cbffr->head && cbffr->head < cbffr->bufferEnd);
-    ASSERT(cbffr->buffer <= cbffr->tail && cbffr->tail < cbffr->bufferEnd);
+    ASSERT(bbffr->pTail == 0);                                                  // pending popBlock already, no nesting popBlock()
+    ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->tail && bbffr->tail < bbffr->bufferEnd);
 
     uint16_t popCnt;
-    *copyFrom = cbffr->tail;                                                    // current tail 
-    cbffr->pTail = cbffr->tail;                                                 // now pop operating on pTail
+    *copyFrom = bbffr->tail;                                                    // current tail 
+    bbffr->pTail = bbffr->tail;                                                 // now pop operating on pTail
 
     // now advance tail in expectation of copy out
     if (BBFFR_WRAPPED)                                                          // ** wrapped
     {
-        popCnt = MIN(requestSz, cbffr->bufferEnd - cbffr->pTail);               // get right-side of buffer
-        cbffr->pTail += popCnt;
-        if (cbffr->pTail == cbffr->bufferEnd)                                   // edge case: pop exhausted right-side, move tail to buffer start
+        popCnt = MIN(requestSz, bbffr->bufferEnd - bbffr->pTail);               // get right-side of buffer
+        bbffr->pTail += popCnt;
+        if (bbffr->pTail == bbffr->bufferEnd)                                   // edge case: pop exhausted right-side, move tail to buffer start
         {
-            cbffr->pTail = cbffr->buffer;
+            bbffr->pTail = bbffr->buffer;
         }
     }
     else                                                                        // ** linear
     {
-        popCnt = MIN(requestSz, cbffr->head - cbffr->pTail);
-        cbffr->pTail += popCnt;
+        popCnt = MIN(requestSz, bbffr->head - bbffr->pTail);
+        bbffr->pTail += popCnt;
     }
     if (popCnt == 0)
     {
-        cbffr->pTail = NULL;
+        bbffr->pTail = NULL;
     }
-    ASSERT(cbffr->buffer <= cbffr->tail && cbffr->tail < cbffr->bufferEnd);
+    ASSERT(bbffr->buffer <= bbffr->tail && bbffr->tail < bbffr->bufferEnd);
     return popCnt;
 }
 
@@ -270,11 +272,11 @@ uint16_t bbffr_popBlock(bBuffer_t *cbffr, char **copyFrom, uint16_t requestSz)
  * @brief Commit or rollback pending allocation from popBlock().
  * @details popBlock() rollback is opposite of pushBlock(), the block operators protect the existing and uncommitted space in the buffer.
  */
-void bbffr_popBlockFinalize(bBuffer_t *cbffr, bool commit)
+void bbffr_popBlockFinalize(bBuffer_t *bbffr, bool commit)
 {
-    if (commit && cbffr->pTail != NULL)
-        cbffr->tail = cbffr->pTail;         // move tail ahead (unprotecting popBlock() copy out space)
-    cbffr->pTail = NULL;
+    if (commit && bbffr->pTail != NULL)
+        bbffr->tail = bbffr->pTail;         // move tail ahead (unprotecting popBlock() copy out space)
+    bbffr->pTail = NULL;
 }
 
 
@@ -282,7 +284,7 @@ void bbffr_popBlockFinalize(bBuffer_t *cbffr, bool commit)
  * @brief Pop a number of chars from buffer at buffer-tail, leaving the leaveSz number of chars in buffer.
  * @details This allows for simplified trailer parsing. Number of characters "popped" will be the lesser of available and requestSz - leaveSz.
  */
-uint16_t bbffr_popLeave(bBuffer_t *cbffr, char *dest, uint16_t requestSz, uint16_t leaveSz)
+uint16_t bbffr_popLeave(bBuffer_t *bbffr, char *dest, uint16_t requestSz, uint16_t leaveSz)
 {
     if (BBFFR_OCCUPIED <= leaveSz)
         return 0;
@@ -290,7 +292,7 @@ uint16_t bbffr_popLeave(bBuffer_t *cbffr, char *dest, uint16_t requestSz, uint16
     {
         uint16_t popSz = 0;
         popSz = MIN((BBFFR_OCCUPIED - leaveSz), requestSz);
-        return bbffr_pop(cbffr, dest, popSz);
+        return bbffr_pop(bbffr, dest, popSz);
     }
 }
 
@@ -299,7 +301,7 @@ uint16_t bbffr_popLeave(bBuffer_t *cbffr, char *dest, uint16_t requestSz, uint16
  * @brief Peeks a number of chars ahead in the buffer starting at buffer-tail. 
  * @details Number of characters "peeked" will be the lesser of available and requestSz.
  */
-uint16_t bbffr_peek(bBuffer_t *cbffr, char *dest, uint16_t requestSz)
+uint16_t bbffr_peek(bBuffer_t *bbffr, char *dest, uint16_t requestSz)
 {
     uint16_t available = BBFFR_OCCUPIED;
     uint16_t peeked;
@@ -307,17 +309,17 @@ uint16_t bbffr_peek(bBuffer_t *cbffr, char *dest, uint16_t requestSz)
     if (!BBFFR_WRAPPED)                                              // ** linear
     {
         peeked = MIN(available, requestSz);
-        memcpy(dest, cbffr->tail, peeked);
+        memcpy(dest, bbffr->tail, peeked);
     }
     else                                                                // ** wrapped
     {
-        peeked = MIN(requestSz, cbffr->bufferEnd - cbffr->tail);            // get right-side of buffer
-        memcpy(dest, cbffr->tail, peeked);
+        peeked = MIN(requestSz, bbffr->bufferEnd - bbffr->tail);            // get right-side of buffer
+        memcpy(dest, bbffr->tail, peeked);
         available -= peeked;                                                // peeked number of chars serviced from request 
 
         if (available > 0)                                                  // get left-side of buffer
         {
-            memcpy(dest + peeked, cbffr->buffer, available);
+            memcpy(dest + peeked, bbffr->buffer, available);
             peeked += available;                                            // add 2nd copy back to report request serviced to caller
         }
     }
@@ -328,7 +330,7 @@ uint16_t bbffr_peek(bBuffer_t *cbffr, char *dest, uint16_t requestSz)
 /**
  * @brief Find needle in the buffer, searching forward from the buffer-tail to buffer-head.
  */
-uint16_t bbffr_find(bBuffer_t *cbffr, const char *pNeedle, int16_t searchOffset, uint16_t searchWindowSz, bool setTail)
+uint16_t bbffr_find(bBuffer_t *bbffr, const char *pNeedle, int16_t searchOffset, uint16_t searchWindowSz, bool setTail)
 {
     uint8_t needleLen = strlen(pNeedle);
     uint8_t matchedCnt = 0;                                     // chars matched, 
@@ -339,28 +341,28 @@ uint16_t bbffr_find(bBuffer_t *cbffr, const char *pNeedle, int16_t searchOffset,
     /* Where to start searching
      */
     if (searchOffset == 0)
-        searchPtr = cbffr->tail;
+        searchPtr = bbffr->tail;
     else
     {
         if (searchOffset > 0)                                               // (+) skip ahead from tail
         {
             if (BBFFR_WRAPPED) {
-                uint16_t rightside = MIN(cbffr->bufferEnd - cbffr->tail, searchOffset);
-                searchPtr = MIN(cbffr->buffer + rightside, cbffr->head);
+                uint16_t rightside = MIN(bbffr->bufferEnd - bbffr->tail, searchOffset);
+                searchPtr = MIN(bbffr->buffer + rightside, bbffr->head);
             }
             else {
-                searchPtr = MIN(cbffr->tail + searchOffset, cbffr->head);
+                searchPtr = MIN(bbffr->tail + searchOffset, bbffr->head);
             }
         }
         else                                                                // (-) skip back from head
         {
             searchOffset *= -1;                                                 // make positive
             if (BBFFR_WRAPPED) {
-                searchPtr = MAX(cbffr->head - searchOffset, cbffr->tail);
+                searchPtr = MAX(bbffr->head - searchOffset, bbffr->tail);
             }
             else {
-                uint16_t leftSide = MAX(cbffr->head - cbffr->buffer, searchOffset);
-                searchPtr = cbffr->bufferEnd - (searchOffset - leftSide);
+                uint16_t leftSide = MAX(bbffr->head - bbffr->buffer, searchOffset);
+                searchPtr = bbffr->bufferEnd - (searchOffset - leftSide);
             }
         }
     }
@@ -375,8 +377,8 @@ uint16_t bbffr_find(bBuffer_t *cbffr, const char *pNeedle, int16_t searchOffset,
             if (rightSideLen == needleLen)                     // found full needle before right-edge
             {
                 if (setTail)
-                    cbffr->tail = searchPtr;
-                return searchPtr - cbffr->tail;                 // return offset from tail
+                    bbffr->tail = searchPtr;
+                return searchPtr - bbffr->tail;                 // return offset from tail
             }
             else
             {
@@ -396,28 +398,28 @@ uint16_t bbffr_find(bBuffer_t *cbffr, const char *pNeedle, int16_t searchOffset,
      */
     if (matchedCnt > 0)                                                 // partial match at right edge
     {
-        if (memcmp(cbffr->buffer, pNeedle + matchedCnt, needleLen - matchedCnt) == 0)
+        if (memcmp(bbffr->buffer, pNeedle + matchedCnt, needleLen - matchedCnt) == 0)
         {
             if (setTail)
-                cbffr->tail = searchPtr;
-            return searchPtr - cbffr->tail;
+                bbffr->tail = searchPtr;
+            return searchPtr - bbffr->tail;
         }
         else
         {
             matchedCnt = 0;                                             // any match from right side is orphaned, start over
         }
     }
-    searchPtr = cbffr->buffer;                                          // moving to left side
+    searchPtr = bbffr->buffer;                                          // moving to left side
 
     /* Continue searching left-side (wrap point to head)
      */
-    while (searchPtr < cbffr->head)
+    while (searchPtr < bbffr->head)
     {
         if (memcmp(searchPtr, pNeedle, needleLen) == 0)
         {   
             if (setTail)
-                cbffr->tail = searchPtr;
-            return (searchPtr - cbffr->buffer) + (cbffr->bufferEnd - cbffr->tail);
+                bbffr->tail = searchPtr;
+            return (searchPtr - bbffr->buffer) + (bbffr->bufferEnd - bbffr->tail);
         }
         searchPtr++;
     }
@@ -428,20 +430,20 @@ uint16_t bbffr_find(bBuffer_t *cbffr, const char *pNeedle, int16_t searchOffset,
 /**
  * @brief Advances the buffer's head (incoming) by the requested number of chars.
  */
-void bbffr_skipHead(bBuffer_t *cbffr, uint16_t skipCnt)
+void bbffr_skipHead(bBuffer_t *bbffr, uint16_t skipCnt)
 {
     if (BBFFR_WRAPPED) {                                                        // ** wrapped
-        cbffr->head = MIN(cbffr->head + skipCnt, cbffr->tail-1);
+        bbffr->head = MIN(bbffr->head + skipCnt, bbffr->tail-1);
     }
     else 
     {                                                                           // ** linear
-        if (cbffr->head + skipCnt < cbffr->bufferEnd)
-            cbffr->head += skipCnt;
-        else if (cbffr->head + skipCnt == cbffr->bufferEnd)
-            cbffr->head = cbffr->buffer;
+        if (bbffr->head + skipCnt < bbffr->bufferEnd)
+            bbffr->head += skipCnt;
+        else if (bbffr->head + skipCnt == bbffr->bufferEnd)
+            bbffr->head = bbffr->buffer;
         else {
-            uint16_t leftSkip = skipCnt - (cbffr->bufferEnd - cbffr->head);
-            cbffr->head = MIN(cbffr->head + leftSkip, cbffr->tail-1);
+            uint16_t leftSkip = skipCnt - (bbffr->bufferEnd - bbffr->head);
+            bbffr->head = MIN(bbffr->head + leftSkip, bbffr->tail-1);
         }
     }
 }
@@ -450,18 +452,18 @@ void bbffr_skipHead(bBuffer_t *cbffr, uint16_t skipCnt)
 /**
  * @brief Advances the buffer's tail (outgoing) by the requested number of chars.
  */
-void bbffr_skipTail(bBuffer_t *cbffr, uint16_t skipCnt)
+void bbffr_skipTail(bBuffer_t *bbffr, uint16_t skipCnt)
 {
     uint16_t skipped;
 
     if (!BBFFR_WRAPPED)                                                         // ** linear
     {
-            cbffr->tail = MIN(cbffr->tail + skipCnt, cbffr->head);
+            bbffr->tail = MIN(bbffr->tail + skipCnt, bbffr->head);
     }
     else                                                                        // ** wrapped
     {
-            skipped = MIN(skipCnt, cbffr->bufferEnd - cbffr->tail);                 // right-side
-            cbffr->tail = MIN(cbffr->buffer + (skipCnt - skipped), cbffr->head);    // consume remaining to skip, up to buffer-head
+            skipped = MIN(skipCnt, bbffr->bufferEnd - bbffr->tail);                 // right-side
+            bbffr->tail = MIN(bbffr->buffer + (skipCnt - skipped), bbffr->head);    // consume remaining to skip, up to buffer-head
     }
 }
 
@@ -469,26 +471,26 @@ void bbffr_skipTail(bBuffer_t *cbffr, uint16_t skipCnt)
 // /* Transaction
 //  ----------------------------------------------------------------------------------------------- */
 
-// bool bbffr_startTransaction(bBuffer_t *cbffr)
+// bool bbffr_startTransaction(bBuffer_t *bbffr)
 // {
-//     if (cbffr->bTail == NULL)
+//     if (bbffr->bTail == NULL)
 //     {
-//         cbffr->bTail = cbffr->tail;
+//         bbffr->bTail = bbffr->tail;
 //         return true;
 //     }
 //     return false;
 // }
 
 
-// void bbffr_commitTransaction(bBuffer_t *cbffr)
+// void bbffr_commitTransaction(bBuffer_t *bbffr)
 // {
-//     cbffr->tail = cbffr->bTail;
-//     cbffr->bTail = NULL;
+//     bbffr->tail = bbffr->bTail;
+//     bbffr->bTail = NULL;
 // }
 
 
-// void bbffr_rollbackTransaction(bBuffer_t *cbffr)
+// void bbffr_rollbackTransaction(bBuffer_t *bbffr)
 // {
-//     cbffr->bTail = NULL;
+//     bbffr->bTail = NULL;
 // }
 

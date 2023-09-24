@@ -75,6 +75,7 @@ enum lqTypes__resultCodes
 {
     resultCode__success = 200,
     resultCode__accepted = 202,
+    resultCode__noContent = 204,
     resultCode__previouslyOpened = 208,
 
     resultCode__badRequest = 400,
