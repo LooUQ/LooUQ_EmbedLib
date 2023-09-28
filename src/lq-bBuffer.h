@@ -43,9 +43,9 @@ typedef struct bBuffer_tag
 } bBuffer_t;
 
 
-#define BBFFR_NOFIND_VAL 0xFFFF
-#define BBFFR_FOUND(x) (x != BBFFR_NOFIND_VAL)
-#define BBFFR_NOTFOUND(x) (x == BBFFR_NOFIND_VAL)
+#define BBFFR_NOTFOUND 0xFFFF
+#define BBFFR_ISFOUND(x) (x != BBFFR_NOTFOUND)
+#define BBFFR_ISNOTFOUND(x) (x == BBFFR_NOTFOUND)
 
 
 #ifdef __cplusplus
