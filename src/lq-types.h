@@ -110,15 +110,16 @@ typedef uint16_t resultCode_t;
 /* LooUQ Common Macros
  =============================================================================================== */
  
-#define SECONDS_PERIOD(period) (period * 1000)
-#define MINUTES_PERIOD(period) (period * 1000 * 60)
+#define SECONDS_2MS(period) (period * 1000)
+#define MINUTES_2MS(period) (period * 1000 * 60)
 #define IS_ELAPSED(start, timeout) ((start == 0) ? 0 : pMillis() - start > timeout)
 #define ELAPSED_DURATION(start) ((start == 0) ? 0 : pMillis() - start)
+#define IS_CYCLE(i,c)  (i % c == 0 && i >= c)
 
 #define LQC_PROVISIONING_MAGICFLAG "LQCP"
 #define LQC_DEVICECONFIG_PACKAGEID "LQCC"
 
-#define PROPSZ(SZ) (SZ + 1)
+#define PSZ(SZ) (SZ + 1)
 #define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
 #define STRCMP(X, Y) (strcmp(X, Y) == 0)
 #define STRNCMP(X, Y, N) (strncmp(X, Y, N) == 0)
