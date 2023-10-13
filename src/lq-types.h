@@ -76,7 +76,7 @@ enum lqTypes__resultCodes
     resultCode__success = 200,
     resultCode__accepted = 202,
     resultCode__noContent = 204,
-    resultCode__previouslyOpened = 208,
+    // resultCode__previouslyOpened = 208,
 
     resultCode__badRequest = 400,
     resultCode__unauthorized = 401,
@@ -110,14 +110,17 @@ typedef uint16_t resultCode_t;
 /* LooUQ Common Macros
  =============================================================================================== */
  
+#define LQC_PROVISIONING_MAGICFLAG "LQCP"
+#define LQC_DEVICECONFIG_PACKAGEID "LQCC"
+
 #define SEC_TO_MS(period) (period * 1000)
 #define MIN_TO_MS(period) (period * 1000 * 60)
 #define IS_ELAPSED(start, timeout) ((start == 0) ? 0 : pMillis() - start > timeout)
 #define ELAPSED_DURATION(start) ((start == 0) ? 0 : pMillis() - start)
 #define IS_CYCLE(i,c)  (i % c == 0 && i >= c)
 
-#define LQC_PROVISIONING_MAGICFLAG "LQCP"
-#define LQC_DEVICECONFIG_PACKAGEID "LQCC"
+#define IS_SUCCESS_RSLT(r)  (r == resultCode__success)
+#define IS_NOTSUCCESS_RSLT(r)  (r != resultCode__success)
 
 #define PSZ(SZ) (SZ + 1)
 #define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
@@ -204,20 +207,25 @@ typedef struct appEventResponse_tag
 /*  Callbacks into application
  =============================================================================================== */
 
+/* yield callback allows host application to be signalled when the LTEm1 is awaiting network events
+ * --------------------------------------------------------------------------------------------- */
+typedef void (*yield_func)();
+
+
 /* callback to notify application of an event, events can be simple notifications or a notification that information is needed
  * --------------------------------------------------------------------------------------------- */
 typedef void (*appEvntNotify_func)(appEvent_t eventType, const char *notifyMsg);                  /// application event notification and action/info request callback
 
 
-/* callback to request environment information from app
- * --------------------------------------------------------------------------------------------- */
+// /* callback to request environment information from app
+//  * --------------------------------------------------------------------------------------------- */
 
-/**
- * @brief Callback into app to request environment information
- * 
- * @returns A signed 32b integer with the value requested.
- */
-typedef int32_t (*appInfoRequest_func)(uint8_t infoRqst);
+// /**
+//  * @brief Callback into app to request environment information
+//  * 
+//  * @returns A int32_t (signed) with the value requested.
+//  */
+// typedef int32_t (*appInfoRequest_func)(uint8_t infoRqst);
 
 
 /* callback to allow for app background processingfor extended duration operations to allow for 
