@@ -1,5 +1,5 @@
 /******************************************************************************
- *  \file lq-cBuffer.c
+ *  \file lq-bBuffer.c
  *  \author Greg Terrell
  *  \license MIT License
  *
