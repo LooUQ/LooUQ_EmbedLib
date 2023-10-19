@@ -392,7 +392,7 @@ uint16_t bbffr_find(bBuffer_t *bbffr, const char *pNeedle, int16_t searchOffset,
     }
 
     if (!BBFFR_WRAPPED)                                                 // if not wrapped, no further opportunity to match
-        return BBFFR_NOFIND_VAL;
+        return BBFFR_NOTFOUND;
 
     /* Handle partial match at right edge, remaining must be at left edge before head
      */
@@ -423,7 +423,7 @@ uint16_t bbffr_find(bBuffer_t *bbffr, const char *pNeedle, int16_t searchOffset,
         }
         searchPtr++;
     }
-    return BBFFR_NOFIND_VAL;
+    return BBFFR_NOTFOUND;
 }
 
 
