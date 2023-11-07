@@ -34,39 +34,45 @@
 
 #include "lq-time.h"
 
-void getTmFromDateTime(const char* dateTime, struct tm* tm)
-{
-    char wrkBffr[5];
-    memset(tm, 0, sizeof(tm));                                  // initialize unused fields in single step
+// void getTmFromDateTime(const char *iso8601, struct tm *tm)
+// {
+//     char wrkBffr[16] = {0};
+//     memset(tm, 0, sizeof(struct tm));                                           // initialize unused fields in single step
 
-    char* delimPtr = (char*)memchr(dateTime, 'T', 10);
-    if (delimPtr != NULL && (delimPtr - dateTime == 6 || delimPtr - dateTime == 8))
-    {
-        uint8_t yearSz = (delimPtr > dateTime + 6) ? 4 : 2;
-        const char* wrkPtr = dateTime;
+//     char *delimPtr = (char *)memchr(iso8601, 'T', 10);
+//     if (delimPtr != NULL && (delimPtr - iso8601 == 6 || delimPtr - iso8601 == 8))
+//     {
+//         // uint8_t yearSz = (delimPtr > iso8601 + 6) ? 4 : 2;
+//         uint8_t copySz = (delimPtr > iso8601 + 6) ? 15 : 13;
+//         memcpy(wrkBffr, iso8601, copySz);                                       // copy input dateTime to destructive work buffer
+//         char* wrkPtr = wrkBffr;
 
-        strncpy(wrkBffr, wrkPtr, yearSz);
-        tm->tm_year = strtol(wrkBffr, NULL, 10);
-        tm->tm_year += (yearSz == 2) ? 2000 : 0;                // if after 2099 this program in not in use
+//         wrkPtr = wrkBffr + copySz - 2;                                          // init wrkPtr start of seconds (to work backwards)
+//         tm->tm_sec = strtol(wrkPtr, NULL, 10);
+//         *wrkPtr = '\0';                                                         // new end-of-string
 
-        wrkPtr += yearSz;
-        strncpy(wrkBffr, wrkPtr, 2);
-        tm->tm_mon = strtol(wrkBffr, NULL, 10);
+//         wrkPtr -= 2;
+//         tm->tm_min = strtol(wrkPtr, NULL, 10);
+//         *wrkPtr = '\0';
 
-        wrkPtr += 2;
-        strncpy(wrkBffr, wrkPtr, 2);
-        tm->tm_mday = strtol(wrkBffr, NULL, 10);
+//         wrkPtr -= 2;
+//         tm->tm_hour = strtol(wrkPtr, NULL, 10);
+//         wrkPtr--;                                                               // skip 'T'
+//         *wrkPtr = '\0';
 
-        wrkPtr += 3;                                            // skip past 'T'
-        strncpy(wrkBffr, wrkPtr, 2);
-        tm->tm_hour = strtol(wrkBffr, NULL, 10);
+//         wrkPtr -= 2;
+//         tm->tm_mday = strtol(wrkPtr, NULL, 10);
+//         *wrkPtr = '\0';
 
-        wrkPtr += 2;
-        strncpy(wrkBffr, wrkPtr, 2);
-        tm->tm_min = strtol(wrkBffr, NULL, 10);
+//         wrkPtr -= 2;
+//         tm->tm_mon = strtol(wrkPtr, NULL, 10);
+//         tm->tm_mon -= 1;                                                        // months since January — [0, 11]
+//         *wrkPtr = '\0';
 
-        wrkPtr += 2;
-        strncpy(wrkBffr, wrkPtr, 2);
-        tm->tm_sec = strtol(wrkBffr, NULL, 10);
-    }
-}
+//         wrkPtr -= 2;
+//         tm->tm_year = strtol(wrkPtr, NULL, 10);
+//         tm->tm_year += 100;                                                     // years since 1900 
+//         return;
+//     }
+//     tm = NULL;
+// }

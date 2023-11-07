@@ -10,7 +10,7 @@ extern "C" {
 
 #include <time.h>
 
-void lqTime_getTmFromDateTime(const char* dateTime, struct tm* tm);
+// void lqTime_getTmFromDateTime(const char* dateTime, struct tm* tm);
 
 #ifdef __cplusplus
 }

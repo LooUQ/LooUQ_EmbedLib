@@ -95,6 +95,8 @@ enum lqTypes__resultCodes
     resultCode__unavailable = 503,
     resultCode__gtwyTimeout = 504,              /// signals for a background (doWork) process timeout
 
+    resultCode__extendedBase = 1000,
+
     // convenience values for processing result values
     resultCode__pending = 0,                    /// Value returned from response parsers indicating a pattern match has not yet been detected
     resultCode__unknown = 0,
@@ -119,8 +121,13 @@ typedef uint16_t resultCode_t;
 #define ELAPSED_DURATION(start) ((start == 0) ? 0 : pMillis() - start)
 #define IS_CYCLE(i,c)  (i % c == 0 && i >= c)
 
-#define IS_SUCCESS_RSLT(r)  (r == resultCode__success)
-#define IS_NOTSUCCESS_RSLT(r)  (r != resultCode__success)
+#define IS_SUCCESS(r)  (r == resultCode__success)
+#define IS_SUCCESS_RSLT(r) ({ _rslt = r; _rslt == resultCode__success; })
+#define IS_NOTSUCCESS(r)  (r != resultCode__success)
+#define IS_NOTSUCCESS_RSLT(r) ({ _rslt = r; _rslt != resultCode__success; })
+
+#define DO_ONCE (0)
+#define DO_FOREVER (1)
 
 #define PSZ(SZ) (SZ + 1)
 #define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
@@ -214,7 +221,12 @@ typedef void (*yield_func)();
 
 /* callback to notify application of an event, events can be simple notifications or a notification that information is needed
  * --------------------------------------------------------------------------------------------- */
-typedef void (*appEvntNotify_func)(appEvent_t eventType, const char *notifyMsg);                  /// application event notification and action/info request callback
+typedef void (*appEvntNotify_func)(appEvent_t eventType, const char *notifyMsg);                        // application event notification and action/info request callback
+
+
+/* callback to application specified diagnostic service with a description of the LTEm location
+ * --------------------------------------------------------------------------------------------- */
+typedef void (*appDiagCallback_func)(const char *diagPointDescription);                                 // application diagnostics callback
 
 
 // /* callback to request environment information from app
