@@ -122,9 +122,12 @@ typedef uint16_t resultCode_t;
 #define IS_CYCLE(i,c)  (i % c == 0 && i >= c)
 
 #define IS_SUCCESS(r)  (r == resultCode__success)
-#define IS_SUCCESS_RSLT(r) ({ _rslt = r; _rslt == resultCode__success; })
+#define IS_SUCCESS_RSLT(r) (r == resultCode__success)
+#define IS_SUCCESS__RSLT(r) ({ _rslt = r; _rslt == resultCode__success; })
+
 #define IS_NOTSUCCESS(r)  (r != resultCode__success)
-#define IS_NOTSUCCESS_RSLT(r) ({ _rslt = r; _rslt != resultCode__success; })
+#define IS_NOTSUCCESS_RSLT(r)  (r != resultCode__success)
+#define IS_NOTSUCCESS__RSLT(r) ({ _rslt = r; _rslt != resultCode__success; })
 
 #define DO_ONCE (0)
 #define DO_FOREVER (1)
