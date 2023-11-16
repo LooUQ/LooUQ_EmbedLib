@@ -87,6 +87,7 @@ enum lqTypes__resultCodes
     resultCode__conflict = 409,
     resultCode__gone = 410,
     resultCode__preConditionFailed = 412,
+    resultCode__locked = 423,
     resultCode__tooManyRequests = 429,
     resultCode__cancelled = 498,
     resultCode__cmError = 499,
