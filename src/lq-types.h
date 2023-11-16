@@ -102,8 +102,7 @@ enum lqTypes__resultCodes
     resultCode__pending = 0,                    /// Value returned from response parsers indicating a pattern match has not yet been detected
     resultCode__unknown = 0,
     resultCode__anyError = 400,
-    resultCode__successMax = 299,
-    resultCode__bgxErrorsBase = 500
+    resultCode__successMax = 299
 };
 #endif
 
