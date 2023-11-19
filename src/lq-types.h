@@ -94,12 +94,12 @@ enum lqTypes__resultCodes
 
     resultCode__internalError = 500,
     resultCode__unavailable = 503,
-    resultCode__gtwyTimeout = 504,              /// signals for a background (doWork) process timeout
+    resultCode__gtwyTimeout = 504,              // signals for a background (doWork) process timeout
 
     resultCode__extendedBase = 1000,
 
     // convenience values for processing result values
-    resultCode__pending = 0,                    /// Value returned from response parsers indicating a pattern match has not yet been detected
+    resultCode__pending = 0,                    // Value returned from response parsers indicating a pattern match has not yet been detected
     resultCode__unknown = 0,
     resultCode__anyError = 400,
     resultCode__successMax = 299
@@ -185,14 +185,14 @@ typedef enum appEvent_tag
     /*  Warnings/Faults
      --------------------------------------------------- */
     appEvent__WARNINGS = 240,
-    appEvent_warn_wassertFailed = 240,  /// code warnings failed (like an assertion, but your call on recovery)
+    appEvent_warn_wassertFailed = 240,  // code warnings failed (like an assertion, but your call on recovery)
 
-    appEvent__FAULTS = 248,             /// serious problems: recommended that only simple diagnostic logging be attempted, system is likely unstable
-    appEvent_fault_softLogic,           /// soft logical state failure, possible recovery via subsystem initialization
-    appEvent_fault_hardLogic,           /// hard/hardware state failure, possible recovery via hardware reset/power
-    appEvent_fault_assertFailed,        /// code assertion failed, automatically initiated by LooUQ lq_diagnostics subsystem
-    appEvent_fault_codeFault,           /// unrecoverable code fault detected
-    appEvent_fault_hardFault = 255      /// potential IRQ hardFault signal redirect to UNR handler for logging
+    appEvent__FAULTS = 248,             // serious problems: recommended that only simple diagnostic logging be attempted, system is likely unstable
+    appEvent_fault_softLogic,           // soft logical state failure, possible recovery via subsystem initialization
+    appEvent_fault_hardLogic,           // hard/hardware state failure, possible recovery via hardware reset/power
+    appEvent_fault_assertFailed,        // code assertion failed, automatically initiated by LooUQ lq_diagnostics subsystem
+    appEvent_fault_codeFault,           // unrecoverable code fault detected
+    appEvent_fault_hardFault = 255      // potential IRQ hardFault signal redirect to UNR handler for logging
 } appEvent_t;
 
 
