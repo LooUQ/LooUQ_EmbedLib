@@ -1,5 +1,5 @@
 /******************************************************************************
- *  \file ltemc-cbuf.h
+ *  \file lq-cbuf.h
  *  \author Greg Terrell
  *  \license MIT License
  *
@@ -23,10 +23,10 @@
  *
  *****************************************************************************/
 
-#ifndef __LTEMC_CBUFFER_H__
-#define __LTEMC_CBUFFER_H__
+#ifndef __LQ_CBUFFER_H__
+#define __LQ_CBUFFER_H__
 
-#include "ltemc-types.h"
+#include <stdint.h>
 
 /** 
  *  @brief Circular buffer for use in the transmit functions.
@@ -68,4 +68,4 @@ uint8_t cbffr_pop(cbuffer_t *c, uint8_t *data);
 }
 #endif // !__cplusplus
 
-#endif  /* !__LTEMC_CBUFFER_H__ */
+#endif  /* !__LQ_CBUFFER_H__ */

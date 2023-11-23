@@ -23,7 +23,7 @@
  *
  *****************************************************************************/
 
-#include "ltemc-cbuffer.h"
+#include "lq-cbuffer.h"
 
 /**
  *  @brief Pushes a character on to stack buffer.
