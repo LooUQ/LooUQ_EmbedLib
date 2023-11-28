@@ -42,6 +42,7 @@ extern "C" {
   * @return A pointer to the null character of the base64 null-terminated string. */
 char* binToB64( char* dest, void const* src, size_t size );
 
+
 /** Convert a base64 string to binary format.
   * @param dest Destination memory block.
   * @param src Source base64 string.
@@ -49,12 +50,13 @@ char* binToB64( char* dest, void const* src, size_t size );
   *         Null if string has a bad format.  */
 void* b64ToBin( void* dest, char const* src );
 
+
 /** Convert a base64 string to binary format.
   * @param p Source base64 string and destination memory block.
   * @return If success a pointer to the next byte in memory block.
   *         Null if string has a bad format.  */
 static inline void* b64decode( void* p ) {
-    return b64tobin( p, (char*)p );
+    return b64ToBin( p, (char*)p );
 }
 
 /** @ } */

@@ -32,7 +32,7 @@
 /**
  *  \brief Constrained string search, only check haystack for length characters. Allows for deterministic searching non-NULL terminated char sequences.
 */
-char *lq_strnstr(const char *haystack, const char *needle, size_t maxSearch)
+const char * lq_strnstr(const char *haystack, const char *needle, size_t maxSearch)
 {
     size_t needleSz = strlen(needle);
     if (needleSz > maxSearch)
@@ -132,7 +132,7 @@ char *lq_strGrabToken(char *source, int delimiter, char *tokenBuf, uint8_t token
 }
 
 
-char* lq_strFindField(char fldType, char* source)
+const char* lq_strFindField(char fldType, char* source)
 {
     char *responsePtr = source;
 
@@ -209,7 +209,7 @@ char* lq_strFindField(char fldType, char* source)
     }
     
     else 
-        ASSERT(0);
+        return "";
 
     return responsePtr;
 }

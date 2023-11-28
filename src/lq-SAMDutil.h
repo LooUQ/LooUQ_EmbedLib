@@ -36,13 +36,13 @@ extern "C"
 
 uint8_t lqSAMD_getResetCause();
 
-uint16_t lqSAMD_wdEnable(uint16_t maxPeriodMS);
-void lqSAMD_wdDisable();
-void lqSAMD_wdReset();
+uint16_t lqSAMD_enableWD(uint16_t maxPeriodMS);
+void lqSAMD_disableWD(void);
+void lqSAMD_resetWD(void);
 
 uint16_t lqSAMD_sleep(uint16_t maxPeriodMS);
 
-uint32_t lqSAMD_getMemAvailable();
+uint32_t lqSAMD_getMemAvailable(void);
 
 
 #ifdef __cplusplus

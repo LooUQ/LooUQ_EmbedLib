@@ -41,11 +41,11 @@ bool isSleeping = false;
 
 /* Static local functions
 ------------------------------------------------------------------------------------------------ */
-static void S_initialize_wdt();
+static void S_initialize_wdt(void);
 
 
 
-uint8_t lqSAMD_getResetCause()
+uint8_t lqSAMD_getResetCause(void)
 {
     #if defined(__SAMD51__)
     return RSTC->RCAUSE.reg;
@@ -185,7 +185,7 @@ uint16_t lqSAMD_wdEnable(uint16_t maxPeriodMS)
         while (WDT->STATUS.bit.SYNCBUSY);   // Sync CTRL write
     }
 
-    lqSAMD_wdReset();                       // Clear watchdog interval
+    lqSAMD_resetWD();                       // Clear watchdog interval
     WDT->CTRL.bit.ENABLE = 1;               // Start watchdog now!
     while (WDT->STATUS.bit.SYNCBUSY);
     #endif
@@ -194,7 +194,7 @@ uint16_t lqSAMD_wdEnable(uint16_t maxPeriodMS)
 }
 
 
-void lqSAMD_wdDisable()
+void lqSAMD_disableWD(void)
 {
     #if defined(__SAMD51__)
     WDT->CTRLA.bit.ENABLE = 0;
@@ -206,7 +206,7 @@ void lqSAMD_wdDisable()
 }
 
 
-void lqSAMD_wdReset()
+void lqSAMD_reset(void)
 {
     // Write the watchdog clear key value (0xA5) to the watchdog
     // clear register to clear the watchdog timer and reset it.
@@ -222,7 +222,7 @@ void lqSAMD_wdReset()
 uint16_t lqSAMD_sleep(uint16_t maxPeriodMS)
 {
     isSleeping = true;
-    int actualPeriodMS = lqSamdWD_enable(maxPeriodMS); // true = for sleep
+    int actualPeriodMS = lqSAMD_enableWD(maxPeriodMS); // true = for sleep
 
     // Enable standby sleep mode (deepest sleep) and activate.
     // Insights from Atmel ASF library.
@@ -275,11 +275,11 @@ void WDT_Handler(void)
     WDT->CTRL.bit.ENABLE = 0;               // Disable watchdog
     while (WDT->STATUS.bit.SYNCBUSY);       // Sync CTRL write
     #endif
-    WDT->INTFLAG.bit.EW = 1;                // Clear interrupt flag
+    // WDT->INTFLAG.bit.EW = 1;                // Clear early warning interrupt flag
 }
 
 
-static void S_initialize_wdt()
+static void S_initialize_wdt(void)
 {
     // One-time initialization of watchdog timer.
     // Insights from rickrlh and rbrucemtl in Arduino forum!

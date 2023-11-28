@@ -30,6 +30,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 
 #ifdef __cplusplus
@@ -46,7 +47,7 @@ extern "C"
  *  @param [in] maxSearch Maximum number of chars to search for needle 
  *  @return Pointer to the location of needle, NULL=no find.
 */
-char *lq_strnstr(const char *haystack, const char *needle, size_t length);
+const char *lq_strnstr(const char *haystack, const char *needle, size_t length);
 
 
 /**
@@ -83,7 +84,7 @@ uint16_t lq_strUriDecode(char *src, int len);
  *  @param src [in] - The type of field to search for, see list above.
  *  @return pointer to the start of the specified field, NULL if not found
 */
-char* lq_strFindField(char fldType, char* source);
+const char* lq_strFindField(char fldType, char* source);
 
 
 /**

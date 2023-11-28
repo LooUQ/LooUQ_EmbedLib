@@ -31,6 +31,7 @@
 #define ENABLE_ASSERT
 #include <lqdiag.h>
 
+#include <string.h>                                             // add explicit declaration of memchr, memset, etc.
 #include "lq-collections.h"
 
 

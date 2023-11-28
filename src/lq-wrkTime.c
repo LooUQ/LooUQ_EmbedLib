@@ -39,7 +39,7 @@
 #define PRINTF(c_, f_, ...) ;
 #endif
 
-
+#include <Arduino.h>
 #include "lq-wrkTime.h"
 
 

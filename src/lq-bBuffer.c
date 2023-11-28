@@ -25,13 +25,16 @@
  * LooUQ circular buffer implementation for device streaming
  *****************************************************************************/
 
-#define SRCFILE "BBF"                       // create SRCFILE (3 char) MACRO for lq-diagnostics ASSERT
-#define ENABLE_DIAGPRINT                    // expand DPRINT into debug output
-//#define ENABLE_DIAGPRINT_VERBOSE            // expand DPRINT and DPRINT_V into debug output
+#define SRCFILE "BBF"                                       // create SRCFILE (3 char) MACRO for lq-diagnostics ASSERT
+#define ENABLE_DIAGPRINT                                    // expand DPRINT into debug output
+//#define ENABLE_DIAGPRINT_VERBOSE                          // expand DPRINT and DPRINT_V into debug output
 #define ENABLE_ASSERT
 #include <lqdiag.h>
 
+#include <string.h>                                         // remove warnings for implicit mem* functions
+#include <stdio.h>
 #include "lq-bBuffer.h"
+
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -39,16 +42,11 @@
 #define BBFFR_WRAPPED (bbffr->head < bbffr->tail)
 #define BBFFR_RIGHTEDGE ((BBFFR_WRAPPED) ? bbffr->bufferEnd : bbffr->head)
 #define BBFFR_SIZE (bbffr->bufferEnd - bbffr->buffer)
-#define BBFFR_OCCUPIED ((bbffr->head >= bbffr->tail) ? bbffr->head - bbffr->tail : BBFFR_SIZE - (bbffr->tail - bbffr->head)) 
+#define BBFFR_OCCUPIED ((bbffr->head >= bbffr->tail) ? bbffr->head - bbffr->tail : BBFFR_SIZE - (bbffr->tail - bbffr->head))
 #define BBFFR_VACANT  (BBFFR_SIZE - BBFFR_OCCUPIED)
 
 
-
-
-#define SRCFILE "CBF"                   // create SRCFILE (3 char) MACRO for lq-diagnostics ASSERT
-
-
-void bbffr_init(bBuffer_t *bbffr, char *rawBuffer, uint16_t bufferSz)
+void bbffr_init(bBuffer_t *bbffr, char * rawBuffer, uint16_t bufferSz)
 {
     bbffr->buffer = rawBuffer;
     bbffr->bufferEnd = rawBuffer + bufferSz;
@@ -66,11 +64,13 @@ void bbffr_reset(bBuffer_t *bbffr)
     bbffr->rbHead = NULL;
     bbffr->pTail = NULL;
     // temporary, not technically required just makes diag a little easier
-    memset(bbffr->buffer, 0, BBFFR_SIZE);
+    memset((void*)bbffr->buffer, 0, BBFFR_SIZE);
 }
 
-
-void bbffr_GETMACROS(bBuffer_t *bbffr, char *macros)
+/**
+ * @brief Diagnostic to get internal block-buffer status.
+ */
+void bbffr_GETMACROS(bBuffer_t *bbffr, char *macrosRpt, uint8_t macrosRptSz)
 {
     /*
         #define BBFFR_WRAPPED (bbffr->head < bbffr->tail)
@@ -83,13 +83,14 @@ void bbffr_GETMACROS(bBuffer_t *bbffr, char *macros)
         #define BBFFR_OCCUPIED ((bbffr->head >= BBFFR_VTAIL) ? bbffr->head - BBFFR_VTAIL : BBFFR_SIZE - (BBFFR_VTAIL - bbffr->head)) 
         #define BBFFR_VACANT  ((bbffr->head >= BBFFR_VTAIL) ? BBFFR_SIZE - (bbffr->head - BBFFR_VTAIL) - 1 : BBFFR_VTAIL - bbffr->head - 1) 
     */
-    snprintf(macros, "CBFFR MACROS: size=%d, isWrap=%d, right=%p, occpd=%d, vacnt=%d\r\r", BBFFR_SIZE, BBFFR_WRAPPED, BBFFR_RIGHTEDGE, BBFFR_OCCUPIED, BBFFR_VACANT);
+    snprintf(macrosRpt, macrosRptSz, "CBFFR MACROS: size=%d, isWrap=%d, right=%p, occpd=%d, vacnt=%d\r\r", BBFFR_SIZE, BBFFR_WRAPPED, BBFFR_RIGHTEDGE, BBFFR_OCCUPIED, BBFFR_VACANT);
 }
+
 
 /**
  * @brief Get total capacity of buffer.
  * @param [in] bbffr pointer to buffer to report on.
- * @return Buffer capacity in bytes/chars.
+ * @return Buffer capacity in bytes (uint8_t type).
  */
 uint16_t bbffr_getCapacity(bBuffer_t *bbffr)
 {
@@ -193,7 +194,7 @@ void bbffr_pushBlockFinalize(bBuffer_t *bbffr, bool commit)
 
 
 /**
- * @brief Pop a number of chars from buffer at buffer-tail. Number of characters "popped" will be the lesser of available and requestSz.
+ * @brief Pop a number of uint8_ts from buffer at buffer-tail. Number of characters "popped" will be the lesser of available and requestSz.
  */
 uint16_t bbffr_pop(bBuffer_t *bbffr, char *dest, uint16_t requestSz)
 {

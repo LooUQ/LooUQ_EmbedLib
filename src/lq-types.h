@@ -76,7 +76,6 @@ enum lqTypes__resultCodes
     resultCode__success = 200,
     resultCode__accepted = 202,
     resultCode__noContent = 204,
-    // resultCode__previouslyOpened = 208,
 
     resultCode__badRequest = 400,
     resultCode__unauthorized = 401,
@@ -101,6 +100,7 @@ enum lqTypes__resultCodes
     // convenience values for processing result values
     resultCode__pending = 0,                    // Value returned from response parsers indicating a pattern match has not yet been detected
     resultCode__unknown = 0,
+    resultCode__invoked = 100,                  // returned by tryInvoke on success, cleared to pending on awaitResult()
     resultCode__anyError = 400,
     resultCode__successMax = 299
 };
@@ -115,8 +115,8 @@ typedef uint16_t resultCode_t;
 #define LQC_PROVISIONING_MAGICFLAG "LQCP"
 #define LQC_DEVICECONFIG_PACKAGEID "LQCC"
 
-#define SEC_TO_MS(period) (period * 1000)
-#define MIN_TO_MS(period) (period * 1000 * 60)
+#define SEC_TO_MS(period) ((uint16_t)period * 1000)
+#define MIN_TO_MS(period) ((uint16_t)period * 1000 * 60)
 #define IS_ELAPSED(start, timeout) ((start == 0) ? 0 : pMillis() - start > timeout)
 #define ELAPSED_DURATION(start) ((start == 0) ? 0 : pMillis() - start)
 #define IS_CYCLE(i,c)  (i % c == 0 && i >= c)

@@ -34,12 +34,13 @@
 
 typedef struct bBuffer_tag
 {
-    volatile char *buffer;
-    volatile char *bufferEnd;
-    volatile char *head;
-    volatile char *tail;
-    volatile char *rbHead;                  /// pushBlock: rollback head pointer
-    volatile char *pTail;                   /// popBlock: pending tail pointer
+    char *buffer;
+    char *bufferEnd;
+
+    char * volatile head;
+    char * volatile tail;
+    char * volatile rbHead;                  /// pushBlock: rollback head pointer
+    char * volatile pTail;                   /// popBlock: pending tail pointer
 } bBuffer_t;
 
 
@@ -103,9 +104,10 @@ uint16_t bbffr_getVacant(bBuffer_t *cbffr);
  * @note macros char buffer should be at least 128 chars in length
  * 
  * @param cbffr The buffer to report on.
- * @param macros Pointer to character buffer to fill with internal MACRO values info.
+ * @param macrosRpt Pointer to character buffer to fill with internal MACRO values info.
+ * @param macrosRptSz Size of the result reporting buffer.
  */
-void bbffr_GETMACROS(bBuffer_t *cbffr, char *macros);
+void bbffr_GETMACROS(bBuffer_t *cbffr, char *macrosRpt, uint8_t macrosRptSz);
 
 
 /* Operate on Buffer 
