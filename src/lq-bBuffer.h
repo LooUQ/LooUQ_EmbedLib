@@ -107,7 +107,7 @@ uint16_t bbffr_getVacant(bBuffer_t *cbffr);
  * @param macrosRpt Pointer to character buffer to fill with internal MACRO values info.
  * @param macrosRptSz Size of the result reporting buffer.
  */
-void bbffr_GETMACROS(bBuffer_t *cbffr, char *macrosRpt, uint8_t macrosRptSz);
+void bbffr_GETMACROS(bBuffer_t *bbffr, char *macrosRpt, uint8_t macrosRptSz);
 
 
 /* Operate on Buffer 
