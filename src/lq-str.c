@@ -25,6 +25,9 @@
  * C-string functions from LooUQ-DeviceCommon.
  *****************************************************************************/
 
+#include <string.h>
+
+#include "lqdiag.h"
 #include "lq-str.h"
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))

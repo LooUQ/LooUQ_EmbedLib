@@ -47,7 +47,7 @@ extern "C"
  *  @param [in] maxSearch Maximum number of chars to search for needle 
  *  @return Pointer to the location of needle, NULL=no find.
 */
-const char *lq_strnstr(const char *haystack, const char *needle, size_t length);
+const char * lq_strnstr(const char *haystack, const char *needle, size_t length);
 
 
 /**

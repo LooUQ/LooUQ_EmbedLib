@@ -73,9 +73,12 @@
 #define RESULTCODE_T
 enum lqTypes__resultCodes
 {
+    resultCode__invoked = 100,      // HTTP Continue
+
     resultCode__success = 200,
     resultCode__accepted = 202,
     resultCode__noContent = 204,
+    resultCode__partialContent = 206,
 
     resultCode__badRequest = 400,
     resultCode__unauthorized = 401,
@@ -121,6 +124,8 @@ typedef uint16_t resultCode_t;
 #define ELAPSED_DURATION(start) ((start == 0) ? 0 : pMillis() - start)
 #define IS_CYCLE(i,c)  (i % c == 0 && i >= c)
 
+#define COMPARES(exp)  (exp == 0)
+
 #define IS_SUCCESS(r)  (r == resultCode__success)
 #define IS_SUCCESS_RSLT(r) (r == resultCode__success)
 #define IS_SUCCESS__RSLT(r) ({ _rslt = r; _rslt == resultCode__success; })
@@ -136,6 +141,7 @@ typedef uint16_t resultCode_t;
 #define STREMPTY(charvar)  (charvar == NULL || charvar[0] == 0 )
 #define STRCMP(X, Y) (strcmp(X, Y) == 0)
 #define STRNCMP(X, Y, N) (strncmp(X, Y, N) == 0)
+
 
 // obsolete - delete when reference fully removed
 #define PERIOD_FROM_SECONDS(period)  (period * 1000)

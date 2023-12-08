@@ -42,8 +42,11 @@
 #include <Arduino.h>
 #include "lq-wrkTime.h"
 
+#ifdef ARDUINO 
+    #include <Arduino.h>
+    #define MILLIS() millis()
+#endif
 
-#define MILLIS() millis()
 
 /**
  *	\brief Initialize a workSchedule object (struct) to track periodic events at regular intervals.
