@@ -30,10 +30,14 @@
 
 #ifdef ARDUINO_ARCH_SAMD
 
+#include <lq-embed.h>
+#define LOG_LEVEL LOGLEVEL_DBG
+//#define DISABLE_ASSERTS                                   // ASSERT/ASSERT_W enabled by default, can be disabled 
+
 #include <sam.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "lq-SAMDutil.h"
+#include "platform\lq-arduinoSAMD_util.h"
 
 
 bool wdInitialized = false;
@@ -43,6 +47,25 @@ bool isSleeping = false;
 ------------------------------------------------------------------------------------------------ */
 static void S_initialize_wdt(void);
 
+
+void lqStop()
+{
+    while(1) {}
+}
+
+void lqRestart()
+{
+    NVIC_SystemReset();      // processor software reset
+}
+
+uint16_t lqGetResetCause()
+{
+    #if defined(__SAMD51__)
+    return RSTC->RCAUSE.reg;
+    #else
+    return PM->RCAUSE.reg;
+    #endif
+}
 
 
 uint8_t lqSAMD_getResetCause(void)

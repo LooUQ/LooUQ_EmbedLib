@@ -1,11 +1,9 @@
 /******************************************************************************
- *  \file lqSAMD-core.h
+ *  \file lq-embed.h
  *  \author Greg Terrell
  *  \license MIT License
  *
- *  Thanks to Adafruit Industries for making their SleepyDog library available.
- *
- *  Copyright (c) 2020,2021 LooUQ Incorporated.
+ *  Copyright (c) 2023 LooUQ Incorporated.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -22,31 +20,45 @@
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- ******************************************************************************
- * SAMD chip function support 
+ *
  *****************************************************************************/
 
-#ifndef __LQSAMD_CORE_H__
-#define __LQSAMD_CORE_H__
 
-#ifdef __cplusplus
-extern "C"
-{
+#define LOGLEVEL_ERR 	(4)
+#define LOGLEVEL_WARN	(3)
+#define LOGLEVEL_INFO	(2)
+#define LOGLEVEL_DBG	(1)
+#define LOGLEVEL_OFF	(0)
+
+#ifndef LOGBUFFER_SZ
+     #define LOGBUFFER_SZ 180
+#endif
+#ifndef DBGBUFFER_SZ
+     #define DBGBUFFER_SZ 180
 #endif
 
-uint8_t lqSAMD_getResetCause();
 
-uint16_t lqSAMD_enableWD(uint16_t maxPeriodMS);
-void lqSAMD_disableWD(void);
-void lqSAMD_resetWD(void);
+// #ifndef PRNT_DEFAULT
+//     #define PRNT_DEFAULT 13
+//     #define PRNT_INFO 12
+//     #define PRNT_WARN 17
+//     #define PRNT_ERROR 16
 
-uint16_t lqSAMD_sleep(uint16_t maxPeriodMS);
+//     #define PRNT_CYAN 10
+//     #define PRNT_MAGENTA 11
+//     #define PRNT_WHITE 12
+//     #define PRNT_GRAY 13
+//     #define PRNT_BLUE 14
+//     #define PRNT_GREEN 15
+//     #define PRNT_RED 16
+//     #define PRNT_YELLOW 17
 
-uint32_t lqSAMD_getMemAvailable(void);
+//     #define PRNT_dCYAN 20
+//     #define PRNT_dMAGENTA 21
+//     #define PRNT_dBLUE 24
+//     #define PRNT_dGREEN 25
+//     #define PRNT_dRED 26
+//     #define PRNT_dYELLOW 27
+// #endif
 
 
-#ifdef __cplusplus
-}
-#endif // !__cplusplus
-
-#endif  /* !__LQSAMD_CORE_H__ */

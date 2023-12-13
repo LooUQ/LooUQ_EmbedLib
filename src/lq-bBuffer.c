@@ -25,15 +25,21 @@
  * LooUQ circular buffer implementation for device streaming
  *****************************************************************************/
 
+#include <lq-embed.h>
+#define LOG_LEVEL LOGLEVEL_DBG
+//#define DISABLE_ASSERTS                                   // ASSERT/ASSERT_W enabled by default, can be disabled 
 #define SRCFILE "BBF"                                       // create SRCFILE (3 char) MACRO for lq-diagnostics ASSERT
+
+
 #define ENABLE_DIAGPRINT                                    // expand DPRINT into debug output
 //#define ENABLE_DIAGPRINT_VERBOSE                          // expand DPRINT and DPRINT_V into debug output
 #define ENABLE_ASSERT
-#include <lqdiag.h>
+//#include <lqdiag.h>
 
 #include <string.h>                                         // remove warnings for implicit mem* functions
 #include <stdio.h>
 #include "lq-bBuffer.h"
+#include "lq-diagnostics.h"
 
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))

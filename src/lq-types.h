@@ -73,7 +73,7 @@
 #define RESULTCODE_T
 enum lqTypes__resultCodes
 {
-    resultCode__invoked = 100,      // HTTP Continue
+    resultCode__invoked = 100,              // HTTP Continue (returned by tryInvoke on success, cleared to pending on awaitResult())
 
     resultCode__success = 200,
     resultCode__accepted = 202,
@@ -92,18 +92,17 @@ enum lqTypes__resultCodes
     resultCode__locked = 423,
     resultCode__tooManyRequests = 429,
     resultCode__cancelled = 498,
-    resultCode__cmError = 499,
+    //resultCode__cmError = 499,
 
     resultCode__internalError = 500,
     resultCode__unavailable = 503,
-    resultCode__gtwyTimeout = 504,              // signals for a background (doWork) process timeout
+    resultCode__gtwyTimeout = 504,          // signals for a background (doWork) process timeout
 
-    resultCode__extendedBase = 1000,
+    resultCode__extendedCodesBase = 1000,
 
     // convenience values for processing result values
     resultCode__pending = 0,                    // Value returned from response parsers indicating a pattern match has not yet been detected
     resultCode__unknown = 0,
-    resultCode__invoked = 100,                  // returned by tryInvoke on success, cleared to pending on awaitResult()
     resultCode__anyError = 400,
     resultCode__successMax = 299
 };

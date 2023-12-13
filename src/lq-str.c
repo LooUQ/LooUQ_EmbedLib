@@ -25,9 +25,13 @@
  * C-string functions from LooUQ-DeviceCommon.
  *****************************************************************************/
 
+
+#include <lq-embed.h>
+#define LOG_LEVEL LOGLEVEL_DBG
+//#define DISABLE_ASSERTS                                   // ASSERT/ASSERT_W enabled by default, can be disabled 
+
 #include <string.h>
 
-#include "lqdiag.h"
 #include "lq-str.h"
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
