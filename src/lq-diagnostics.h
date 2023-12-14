@@ -115,7 +115,7 @@ enum
                 if (!(exp)) {                                                           \
                     void *pc = 0;                                                       \
                     const void *lr = 0;                                                 \
-                    GRAB_MCU_STATE(pc)                                                  \
+                    GRAB_MCU_STATE(pc);                                                 \
                     assert_invoke(SRCFILE_TAG, __LINE__, pc, lr);                       \
                 }                                                                       \
             } while (0)

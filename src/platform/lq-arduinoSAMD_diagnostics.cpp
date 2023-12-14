@@ -196,7 +196,7 @@ void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
  * @param line 
  * @param faultTxt 
  */
-void assertW_invoke(const char *fileTag, uint16_t line, const char *faultTxt)
+void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt)
 {
     if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCBChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
     {
