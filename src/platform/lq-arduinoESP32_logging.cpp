@@ -7,7 +7,7 @@
 #include <lq-embed.h>
 #include <lq-logging.h>
 
-void log_print(uint8_t color,  const char *msg, ...)
+__attribute__((weak)) void log_printf(uint8_t color,  const char *msg, ...)
 {
     // asm(".global _printf_float");
 

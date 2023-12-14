@@ -24,10 +24,10 @@
  *****************************************************************************/
 
 
-#define LOGLEVEL_ERR 	(4)
-#define LOGLEVEL_WARN	(3)
-#define LOGLEVEL_INFO	(2)
-#define LOGLEVEL_DBG	(1)
+#define LOGLEVEL_DBG	(4)
+#define LOGLEVEL_INFO	(3)
+#define LOGLEVEL_WARN	(2)
+#define LOGLEVEL_ERROR 	(1)
 #define LOGLEVEL_OFF	(0)
 
 #ifndef LOGBUFFER_SZ
@@ -38,27 +38,27 @@
 #endif
 
 
-// #ifndef PRNT_DEFAULT
-//     #define PRNT_DEFAULT 13
-//     #define PRNT_INFO 12
-//     #define PRNT_WARN 17
-//     #define PRNT_ERROR 16
+// #ifndef LOG_DEFAULT
+//     #define LOG_DEFAULT 13
+//     #define LOG_INFO 12
+//     #define LOG_WARN 17
+//     #define LOG_ERROR 16
 
-//     #define PRNT_CYAN 10
-//     #define PRNT_MAGENTA 11
-//     #define PRNT_WHITE 12
-//     #define PRNT_GRAY 13
-//     #define PRNT_BLUE 14
-//     #define PRNT_GREEN 15
-//     #define PRNT_RED 16
-//     #define PRNT_YELLOW 17
+//     #define LOG_CYAN 10
+//     #define LOG_MAGENTA 11
+//     #define LOG_WHITE 12
+//     #define LOG_GRAY 13
+//     #define LOG_BLUE 14
+//     #define LOG_GREEN 15
+//     #define LOG_RED 16
+//     #define LOG_YELLOW 17
 
-//     #define PRNT_dCYAN 20
-//     #define PRNT_dMAGENTA 21
-//     #define PRNT_dBLUE 24
-//     #define PRNT_dGREEN 25
-//     #define PRNT_dRED 26
-//     #define PRNT_dYELLOW 27
+//     #define LOG_dCYAN 20
+//     #define LOG_dMAGENTA 21
+//     #define LOG_dBLUE 24
+//     #define LOG_dGREEN 25
+//     #define LOG_dRED 26
+//     #define LOG_dYELLOW 27
 // #endif
 
 

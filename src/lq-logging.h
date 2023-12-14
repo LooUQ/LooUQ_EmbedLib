@@ -52,10 +52,10 @@ OFF Intrinsict, if LOG_LEVEL not set in source
 
 LOG_LEVEL
 -------------------------------------------------
-LOGLEVEL_ERR 	4	RED
-LOGLEVEL_WARN	3	YELLOW
-LOGLEVEL_INFO	2	WHITE
-LOGLEVEL_DBG	1	<specified>
+LOGLEVEL_DBG	4	<specified>
+LOGLEVEL_INFO	3	WHITE
+LOGLEVEL_WARN	2	YELLOW
+LOGLEVEL_ERR 	1	RED
 LOGLEVEL_OFF	0
 
 Capture/Log Prototype Statements
@@ -73,16 +73,37 @@ LOG_DBG(color, msg_format, variadicParams);
 #endif
 
 #ifdef ENABLE_JLINKRTT
-    #include <jlinkRtt.h>               // will set _TERMINAL and define macro expansion for DPRINT()
+    #undef _LOGGER
+    #define _LOGGER 1
+    #define LOG_RTT
+    #define DIAGPRINT_RTT                                           // LEGACY: remove in future version
+    #include <jlinkRtt.h>                                           // will set _LOGGER and define macro expansion for DPRINT()
 #endif
 
-// default logging level (when not specified in source)
 #ifndef LOG_LEVEL                               
-    #define LOG_LEVEL LOGLEVEL_OFF
+    #define LOG_LEVEL LOGLEVEL_OFF                                  // default is no logging (when not specified in source)
+#endif
+
+#ifndef _LOGGER                                                     // if NO _LOGGER defined yet, default to platform serial ouput
+    #define _LOGGER 0
+    #define LOG_SERIAL
+    #define DIAGPRINT_SERIAL                                        // LEGACY: remove in future version
 #endif
 
 
-#ifndef PRNT_DEFAULT
+#ifdef __cplusplus
+extern "C"
+{
+#endif // __cplusplus
+
+void log_printf(uint8_t color, const char *msg, ...);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+
+#ifndef PRNT_DEFAULT                // PRNT_ constants will be deprecated when DPRINT() and DPRINT_V() macros are eliminated
     #define PRNT_DEFAULT 13
     #define PRNT_INFO 12
     #define PRNT_WARN 17
@@ -105,6 +126,29 @@ LOG_DBG(color, msg_format, variadicParams);
     #define PRNT_dYELLOW 27
 #endif
 
+#ifndef logDEFAULT
+    #define logDEFAULT 13
+    #define logINFO 12
+    #define logWARN 17
+    #define logERROR 16
+
+    #define logCYAN 10
+    #define logMAGENTA 11
+    #define logWHITE 12
+    #define logGRAY 13
+    #define logBLUE 14
+    #define logGREEN 15
+    #define logRED 16
+    #define logYELLOW 17
+
+    #define logDARKCYAN 20
+    #define logDARKMAGENTA 21
+    #define logDARKBLUE 24
+    #define logDARKGREEN 25
+    #define logDARKRED 26
+    #define logDARKYELLOW 27
+#endif
+
 
 /* Define LOG_x support
  * ============================================================================================= */
@@ -121,7 +165,12 @@ LOG_DBG(color, msg_format, variadicParams);
     #undef LOG_DBG
 #endif
 
-// forces build to link in float support for printf
+// #if LOG_LEVEL == LOGLEVEL_OFF                                // potentially add back once DIAGPRINT is gone
+// #pragma message ("LooUQ embedLib logging is diabled.")
+// #endif 
+
+
+// force build to link in float support for printf
 #if (defined(LOG_LEVEL) && LOG_LEVEL > LOGLEVEL_OFF) || defined(ENABLE_DIAGPRINT) || defined(ENABLE_DIAGPRINT_VERBOSE)
     asm(".global _printf_float");
 #endif
@@ -129,35 +178,38 @@ LOG_DBG(color, msg_format, variadicParams);
 #if defined(LOG_LEVEL) && LOG_LEVEL > LOGLEVEL_OFF
 
     // dbg_print is the serial port output, color info from macro is dropped
-    #if LOG_LEVEL > LOG_DBG
-        #define LOG_DBG(c_, f_, ...) log_printf((f_), ##__VA_ARGS__)
+    #if LOG_LEVEL >= LOGLEVEL_DBG
+        #define LOG_DBG(c_, f_, ...) log_printf(c_, f_, ##__VA_ARGS__)
     #else
         #define LOG_DBG(c_, f_, ...)
     #endif
 
-    #if LOG_LEVEL > LOG_INFO
-        #define LOG_INFO(f_, ...) log_print(PRNT_INFO, (f_), ##__VA_ARGS__)
+    #if LOG_LEVEL >= LOGLEVEL_INFO
+        #define LOG_INFO(f_, ...) log_printf(logINFO, f_, ##__VA_ARGS__)
     #else
         #define LOG_INFO(f_, ...)
     #endif
 
-    #if LOG_LEVEL > LOG_WARN
-        #define LOG_WARN(f_, ...) log_print(PRNT_WARN, (f_), ##__VA_ARGS__)
+    #if LOG_LEVEL >= LOGLEVEL_WARN
+        #define LOG_WARN(f_, ...) log_printf(logWARN, f_, ##__VA_ARGS__)
     #else
         #define LOG_WARN(f_, ...)
     #endif
 
-    #if LOG_LEVEL > LOG_ERR
-        #define LOG_ERR(f_, ...) log_print(PRNT_ERROR, (f_), ##__VA_ARGS__)
+    #if LOG_LEVEL >= LOGLEVEL_ERROR
+        #define LOG_ERROR(f_, ...) log_printf(logERROR, f_, ##__VA_ARGS__)
+        #define LOG_NOTICE(f_, ...) log_printf(logERROR, f_, ##__VA_ARGS__)
     #else
-        #define LOG_ERR(f_, ...)
+        #define LOG_ERROR(f_, ...)
+        #define LOG_NOTICE(f_, ...)
     #endif
 
 #else  // No logging, empty macro expansion
     #define LOG_DBG(c_, f_, ...)
     #define LOG_INFO(f_, ...)
     #define LOG_WARN(f_, ...)
-    #define LOG_ERR(f_, ...)
+    #define LOG_ERROR(f_, ...)
+    #define LOG_NOTICE(f_, ...)
 #endif 
 
 
@@ -174,10 +226,10 @@ LOG_DBG(color, msg_format, variadicParams);
         #undef DPRINT_V
     #endif
 
-    #define DPRINT(c_, f_, ...) log_print(c_, (f_), ##__VA_ARGS__)          // log_print is the serial port output, color info from macro is dropped
+    #define DPRINT(c_, f_, ...) log_printf(c_, f_, ##__VA_ARGS__)            // log_print is the serial port output, color info from macro is dropped
 
     #if defined(ENABLE_DIAGPRINT_VERBOSE)
-        #define DPRINT_V(c_, f_, ...) log_print(c_, (f_), ##__VA_ARGS__)
+        #define DPRINT_V(c_, f_, ...) log_printf(c_, f_, ##__VA_ARGS__)
     #else
         #define DPRINT_V(c_, f_, ...)
     #endif
@@ -189,26 +241,4 @@ LOG_DBG(color, msg_format, variadicParams);
     #define DPRINT_V(c_, f_, ...)
 #endif
 
-
-#ifndef _TERMINAL                                                       // if NO _TERMINAL defined yet, default to platform serial ouput
-    #define _TERMINAL
-    #define _TERMINAL_SERIAL
-    #define LOG_SERIAL
-    #define DIAGPRINT_SERIAL                                            // LEGACY: remove in future version
-#endif
-
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
-
-void log_print(uint8_t color, const char *msg, ...);
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
-
 #endif // __LQLOGGING_H__
-

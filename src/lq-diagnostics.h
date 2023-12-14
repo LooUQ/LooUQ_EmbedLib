@@ -69,7 +69,8 @@ enum
 
 // #define DISABLE_ASSERTS
 // #define ASSERT_ACTION_STOP 
-#define LOG_LEVEL LOGLEVEL_INFO
+
+// #define LOG_LEVEL LOGLEVEL_ERR
 
 #ifdef ARDUINO_ARCH_SAMD 
     #define GRAB_MCU_STATE(_a)  do { __asm volatile ("mov %0, pc" : "=r" (_a)); lr = __builtin_return_address(0); }while(0)
@@ -84,19 +85,12 @@ enum
 #endif
 
 
-
-
-
-
-
-
-
-#ifndef DISABLE_ASSERTS
+#ifndef DISABLE_ASSERT
     #ifdef ASSERT_ACTION_STOP 
         #define ASSERT(exp)                                                             \
             do {                                                                        \
                 if (!(exp)) {                                                           \
-                    LOG_ERR("ASSERT(stop) at %s, ln=%d\r\n", SRCFILE_TAG, __LINE__);    \
+                    LOG_ERROR("ASSERT(stop) at %s, ln=%d\r\n", SRCFILE_TAG, __LINE__);  \
                     while(1){}                                                          \
                 }                                                                       \
             } while(0)
@@ -128,8 +122,8 @@ enum
             } while (0);    
     #endif
 #else
-    #define ASSERT(exp)  (0)
-    #define ASSERT_W(exp, faultTxt)  (0)
+    #define ASSERT(exp)
+    #define ASSERT_W(exp, faultTxt)
 #endif
 
 

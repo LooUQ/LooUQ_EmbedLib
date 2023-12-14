@@ -51,12 +51,13 @@ Also add information on how to contact you by electronic and paper mail.
 void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
 {
     LOG_ERR("*** ASSERT in %s at line %d\r\n", fileTag, line);
-    abort();
+    vTaskDelay(2000); 
+    assert_brk();
 }
 
 
 /**
- * @brief ASSERT warning function; non-fatal asserts that suggest a problem in the running firmware
+ * @brief ASSERT warning function; non-fatal asserts that suggest the likelihood of a problem in the running firmware
  * 
  * @param fileTag 
  * @param line 
@@ -67,5 +68,18 @@ void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt)
     LOG_WARN("*** ASSERT Warning in %s at line %d\r\n", fileTag, line, faultTxt);
     vTaskDelay(2000); 
 }
+
+
+
+inline void assert_brk()                                // future debug breakpoint destination possible
+{
+    #ifdef ASSERT_ACTION_STOP
+        LOG_ERR("*** ASSERT_ACTION_STOP Specified in Source - HALTED.\r\n");
+        while(1){}                                      // stop here
+    #else
+    abort();
+    #endif
+}
+
 
 #endif // #ifdef ARDUINO_ARCH_ESP32
