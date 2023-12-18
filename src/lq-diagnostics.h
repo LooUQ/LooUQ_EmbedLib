@@ -54,17 +54,17 @@ enum
 
 
 // default product and source file macro values if the parent did not define them
-#ifndef PRODUCT
-    #define PRODUCT "LQ"
+#ifndef LQ_PRODUCT
+    #define LQ_PRODUCT "LQ"
 #endif
-#ifndef SRCFILE
-    #define SRCFILE "APP"
+#ifndef LQ_SRCFILE
+    #define LQ_SRCFILE "APP"
 #endif 
 
 /* Combine product and source file values into composite SRCFILE_TAG.  
  * SRCFILE_TAG is used for ASSERT location specification
  * --------------------------------------------------------------------------------------------- */
-#define SRCFILE_TAG PRODUCT SRCFILE
+#define SRCFILE_TAG LQ_PRODUCT LQ_SRCFILE
 
 
 // #define DISABLE_ASSERTS
@@ -116,7 +116,7 @@ enum
 
         #define ASSERT_W(exp, faultTxt)                                                 \
             do {                                                                        \
-                if (!(exp)) {                                                           \ 
+                if (!(exp)) {                                                           \
                     assert_warning(SRCFILE_TAG, __LINE__, faultTxt);                    \
                 }                                                                       \
             } while (0);    
