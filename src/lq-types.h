@@ -103,7 +103,6 @@ enum lqTypes__resultCodes
     // convenience values for processing result values
     resultCode__pending = 0,                    // Value returned from response parsers indicating a pattern match has not yet been detected
     resultCode__unknown = 0,
-    resultCode__invoked = 100,                  // returned by tryInvoke on success, cleared to pending on awaitResult()
     resultCode__anyError = 400,
     resultCode__successMax = 299
 };
