@@ -96,7 +96,7 @@ extern "C"
 {
 #endif // __cplusplus
 
-void log_printf(uint8_t color, const char *msg, ...);
+void emLog_printf(uint8_t color, const char *msg, ...);
 
 #ifdef __cplusplus
 }
@@ -179,26 +179,26 @@ void log_printf(uint8_t color, const char *msg, ...);
 
     // dbg_print is the serial port output, color info from macro is dropped
     #if LOG_LEVEL >= LOGLEVEL_DBG
-        #define LOG_DBG(c_, f_, ...) log_printf(c_, f_, ##__VA_ARGS__)
+        #define LOG_DBG(c_, f_, ...) emLog_printf(c_, f_, ##__VA_ARGS__)
     #else
         #define LOG_DBG(c_, f_, ...)
     #endif
 
     #if LOG_LEVEL >= LOGLEVEL_INFO
-        #define LOG_INFO(f_, ...) log_printf(logINFO, f_, ##__VA_ARGS__)
+        #define LOG_INFO(f_, ...) emLog_printf(logINFO, f_, ##__VA_ARGS__)
     #else
         #define LOG_INFO(f_, ...)
     #endif
 
     #if LOG_LEVEL >= LOGLEVEL_WARN
-        #define LOG_WARN(f_, ...) log_printf(logWARN, f_, ##__VA_ARGS__)
+        #define LOG_WARN(f_, ...) emLog_printf(logWARN, f_, ##__VA_ARGS__)
     #else
         #define LOG_WARN(f_, ...)
     #endif
 
     #if LOG_LEVEL >= LOGLEVEL_ERROR
-        #define LOG_ERROR(f_, ...) log_printf(logERROR, f_, ##__VA_ARGS__)
-        #define LOG_NOTICE(f_, ...) log_printf(logERROR, f_, ##__VA_ARGS__)
+        #define LOG_ERROR(f_, ...) emLog_printf(logERROR, f_, ##__VA_ARGS__)
+        #define LOG_NOTICE(f_, ...) emLog_printf(logERROR, f_, ##__VA_ARGS__)
     #else
         #define LOG_ERROR(f_, ...)
         #define LOG_NOTICE(f_, ...)
@@ -226,10 +226,10 @@ void log_printf(uint8_t color, const char *msg, ...);
         #undef DPRINT_V
     #endif
 
-    #define DPRINT(c_, f_, ...) log_printf(c_, f_, ##__VA_ARGS__)            // log_print is the serial port output, color info from macro is dropped
+    #define DPRINT(c_, f_, ...) emLog_printf(c_, f_, ##__VA_ARGS__)            // log_print is the serial port output, color info from macro is dropped
 
     #if defined(ENABLE_DIAGPRINT_VERBOSE)
-        #define DPRINT_V(c_, f_, ...) log_printf(c_, f_, ##__VA_ARGS__)
+        #define DPRINT_V(c_, f_, ...) emLog_printf(c_, f_, ##__VA_ARGS__)
     #else
         #define DPRINT_V(c_, f_, ...)
     #endif

@@ -50,8 +50,8 @@ Also add information on how to contact you by electronic and paper mail.
  */
 void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
 {
-    LOG_ERR("*** ASSERT in %s at line %d\r\n", fileTag, line);
-    vTaskDelay(2000); 
+    LOG_ERROR("*** ASSERT in %s at line %d\r\n", fileTag, line);
+    vTaskDelay(SEC_TO_MS(10)); 
     assert_brk();
 }
 
@@ -66,7 +66,7 @@ void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
 void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt)
 {
     LOG_WARN("*** ASSERT Warning in %s at line %d\r\n", fileTag, line, faultTxt);
-    vTaskDelay(2000); 
+    vTaskDelay(SEC_TO_MS(10)); 
 }
 
 
