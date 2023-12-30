@@ -110,14 +110,14 @@ enum
                     void *pc = 0;                                                       \
                     const void *lr = 0;                                                 \
                     GRAB_MCU_STATE(pc);                                                 \
-                    assert_invoke(SRCFILE_TAG, __LINE__, pc, lr);                       \
+                    lqASSERT_invoke(SRCFILE_TAG, __LINE__, pc, lr);                     \
                 }                                                                       \
             } while (0)
 
         #define ASSERT_W(exp, faultTxt)                                                 \
             do {                                                                        \
                 if (!(exp)) {                                                           \
-                    assert_warning(SRCFILE_TAG, __LINE__, faultTxt);                    \
+                    lqASSERT_warning(SRCFILE_TAG, __LINE__, faultTxt);                  \
                 }                                                                       \
             } while (0);    
     #endif
@@ -193,7 +193,7 @@ extern "C"
  * 
  * @param [in] notifCallback Function pointer for the application callback.
  */
-void diag_setNotifyCallback(appEvntNotify_func notifCallback);
+void lqDiag_setNotifyCallback(appEvntNotify_func notifCallback);
 
 
 /* Create/update diagnostic info object
@@ -205,24 +205,24 @@ void diag_setNotifyCallback(appEvntNotify_func notifCallback);
  * @param [in] core The MCU core the cause is applicable to. Single core MCU should be 0.
  * @param [in] resetcause The cause (gathered elsewhere) of the last reset
  */
-void diag_setResetCause(uint8_t core, uint32_t resetcause);
+void lqDiag_setResetCause(uint8_t core, uint32_t resetcause);
 
 
-diagnosticInfo_t *diag_getDiagnosticsBlock();
+diagnosticInfo_t *lqDiag_getDiagnosticsBlock();
 
-void diag_setApplicationMessage(uint8_t notifCode, const char *notifMsg);
+void lqDiag_setApplicationMessage(uint8_t notifCode, const char *notifMsg);
 
-void diag_setProtoState(int16_t pstate);
+void lqDiag_setProtoState(int16_t pstate);
 
-void diag_setNtwkState(int16_t pstate);
+void lqDiag_setNtwkState(int16_t pstate);
 
-void diag_setSignalState(int16_t pstate);
+void lqDiag_setSignalState(int16_t pstate);
 
-const char *diag_setHwVersion(const char *hwVersion);
+const char *lqDiag_setHwVersion(const char *hwVersion);
 
-const char *diag_setSwVersion(const char *swVersion);
+const char *lqDiag_setSwVersion(const char *swVersion);
 
-void diag_setBootSafe();
+void lqDiag_setBootSafe();
 
 
 /* ASSERT/ASSERT_W implementation functions
@@ -235,7 +235,7 @@ void diag_setBootSafe();
  * @param [in] pc Program counter register value
  * @param [in] lr Link register value
  */
-void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr);
+void lqASSERT_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr);
 
 /**
  * @brief ASSERT warning function; non-fatal asserts that suggest a problem in the running firmware
@@ -244,13 +244,13 @@ void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
  * @param [in] line Line number where ASSERT (warning) failed.
  * @param [in] faultTxt Description from source of warning concern.
  */
-void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt); 
+void lqASSERT_warning(const char *fileTag, uint16_t line, const char *faultTxt); 
 
 
 /**
  * @brief ASSERT destination function, allows for customization 
  */
-void assert_brk();
+void lqASSERT_brk();
 
 
 #ifdef __cplusplus

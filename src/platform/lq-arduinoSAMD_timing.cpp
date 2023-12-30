@@ -35,7 +35,35 @@ Also add information on how to contact you by electronic and paper mail.
 #include <Arduino.h>
 #include "platform/lq-platform_timing.h"
 
-platform_yieldCB_func_t platform_yieldCB_func;
+static platform_yieldCB_func_t platform_yieldCB_func;
+
+
+uint32_t lqMillis()
+{
+    return millis();
+}
+
+
+void lqYield()
+{
+    if (platform_yieldCB_func)          // allow for device application yield processing
+        platform_yieldCB_func();
+    else
+        yield();                        // allow for platform yield processing (ex: Arduino scheduler, ESPx, etc.)
+}
+
+
+void lqDelay(uint32_t delay_ms)
+{
+    for (size_t i = 0; i < delay_ms; i++)
+    {
+        lqYield();
+        delay(1);
+    }
+}
+
+
+
 
 
 uint32_t pMillis()

@@ -71,7 +71,7 @@ diagnosticControl_t g_diagControl  __attribute__ ((section (".noinit")));
 */
 
 
-uint8_t S_calcNotifyCbChk(appEvntNotify_func notifCbAddr)
+static uint8_t S__calcNotifyCbChk(appEvntNotify_func notifCbAddr)
 {
     uint32_t validator = (uint32_t)notifCbAddr;
 
@@ -92,11 +92,11 @@ void lqDiag_setNotifyCallback(appEvntNotify_func applNotifyCallback)
 {
     //g_diagControl.assertMagic = assert__assertControlMagic;
     g_diagControl.notifyCB = applNotifyCallback;
-    g_diagControl.notifyCBChk = S_calcNotifyCbChk(applNotifyCallback);      // since this is in a non-initialized block, calculate a validation check
+    g_diagControl.notifyCBChk = S__calcNotifyCbChk(applNotifyCallback);      // since this is in a non-initialized block, calculate a validation check
 }
 
 
-void diag_setResetCause(uint8_t core, uint32_t resetcause)
+void lqDiag_setResetCause(uint8_t core, uint32_t resetcause)
 {
     g_diagControl.diagnosticInfo.rcause[core] = resetcause;
     
@@ -171,7 +171,7 @@ void lqDiag_clearDiagnosticInfo()
 /**
  * @brief ASSERT function; FATAL asserts that suggest a problem in the running firmware.
  */
-void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
+void lqASSERT_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
 {
     g_diagControl.diagnosticInfo.diagMagic = assert__diagnosticsMagic;
     g_diagControl.diagnosticInfo.pc = (uint32_t)pc;
@@ -196,7 +196,7 @@ void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
  * @param line 
  * @param faultTxt 
  */
-void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt)
+void lqASSERT_warning(const char *fileTag, uint16_t line, const char *faultTxt)
 {
     if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCBChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
     {
@@ -207,7 +207,7 @@ void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt)
     }
 }
 
-inline void assert_brk()
+inline void lqASSERT_brk()
 {
     if (WDT->CTRL.bit.ENABLE == 1)
         while (true) {}

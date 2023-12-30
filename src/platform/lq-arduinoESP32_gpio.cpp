@@ -36,6 +36,66 @@ Also add information on how to contact you by electronic and paper mail.
 #include "lq-platform_gpio.h"
 #include <Arduino.h>
 
+void lq_openPin(uint8_t pNum, uint8_t pMode)
+{
+    // Arduino sets pinMode to input/output with option pull up/down
+    pinMode(pNum, pMode);
+}
+
+
+void lq_closePin(uint8_t pNum)
+{
+    // Arduino does not require close
+}
+
+
+uint8_t lq_readPin(uint8_t pNum)
+{
+    return digitalRead(pNum);
+}
+
+
+void lq_writePin(uint8_t pNum, uint8_t val)
+{
+    digitalWrite(pNum, val);
+}
+
+
+/* The attachIsr function requires that no interrupt be pending for the IOP modules (from the LTEmX SPI\UART chip).
+ * failure to assure that constraint will likely result in the LTEmC driver locking up in the IOP interrupt service
+ * routine. */
+void lq_attachIsr(uint8_t pinNum, bool enabled, uint8_t triggerMode, platformGpioPinIrqCallback isrCallback)
+{
+    attachInterrupt(pinNum, isrCallback, triggerMode);
+}
+
+
+uint32_t lq_getIntFlags()
+{
+    return 0;
+}
+
+
+uint32_t lq_getPinInterrupt(uint32_t pin)
+{
+    return 0;
+}
+
+
+void lq_detachIsr(uint8_t pinNum)
+{
+    detachInterrupt(pinNum);
+}
+
+
+
+
+
+
+
+
+
+
 
 void platform_openPin(uint8_t pNum, uint8_t pMode)
 {

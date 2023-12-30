@@ -69,7 +69,15 @@ extern "C"
 // bool lTimerExpired(uint32_t timerBase, uint32_t timerTimeout);
 */
 
+uint32_t lqMillis();
+void lqYield();
 
+// platform implementation should support task switching here
+void lqDelay(uint32_t delay_ms);
+
+
+/* DEPRECATED - To be removed in embedLib v2.1.0 
+ ------------------------------------------------------- */
 uint32_t pMillis();
 void pYield();
 
@@ -77,7 +85,8 @@ void pYield();
 void pDelay(uint32_t delay_ms);
 
 bool pElapsed(uint32_t timerBase, uint32_t timerTimeout);
-
+/* --------------------------------------------------------
+ */
 
 #ifdef __cplusplus
 }

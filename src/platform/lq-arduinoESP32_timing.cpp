@@ -36,7 +36,34 @@ Also add information on how to contact you by electronic and paper mail.
 #include "lq-platform_timing.h"
 #include <Arduino.h>
 
-platform_yieldCB_func_t platform_yieldCB_func;
+static platform_yieldCB_func_t platform_yieldCB_func;
+
+
+uint32_t lqMillis()
+{
+    return millis();
+}
+
+
+void lqYield()
+{
+    if (platform_yieldCB_func)          // allow for device application yield processing
+        platform_yieldCB_func();
+    else
+        vTaskDelay(1);                  // ESP32: give core to next task
+}
+
+
+void lqDelay(uint32_t delay_ms)
+{
+    vTaskDelay(delay_ms);
+}
+
+
+
+
+
+
 
 uint32_t pMillis()
 {

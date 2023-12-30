@@ -48,7 +48,7 @@ Also add information on how to contact you by electronic and paper mail.
 /**
  * @brief ASSERT function; FATAL asserts that suggest a problem in the running firmware.
  */
-void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
+void lqASSERT_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
 {
     LOG_ERROR("*** ASSERT in %s at line %d\r\n", fileTag, line);
     vTaskDelay(SEC_TO_MS(10)); 
@@ -63,7 +63,7 @@ void assert_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
  * @param line 
  * @param faultTxt 
  */
-void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt)
+void lqASSERT_warning(const char *fileTag, uint16_t line, const char *faultTxt)
 {
     LOG_WARN("*** ASSERT Warning in %s at line %d\r\n", fileTag, line, faultTxt);
     vTaskDelay(SEC_TO_MS(10)); 
@@ -71,7 +71,7 @@ void assert_warning(const char *fileTag, uint16_t line, const char *faultTxt)
 
 
 
-inline void assert_brk()                                // future debug breakpoint destination possible
+inline void lqASSERT_brk()                              // future debug breakpoint destination possible
 {
     #ifdef ASSERT_ACTION_STOP
         LOG_ERR("*** ASSERT_ACTION_STOP Specified in Source - HALTED.\r\n");

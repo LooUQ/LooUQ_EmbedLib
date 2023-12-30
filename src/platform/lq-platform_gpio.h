@@ -42,8 +42,10 @@ Also add information on how to contact you by electronic and paper mail.
 #include <stdint.h>
 #include <stdbool.h>
 
-#define LOW                 0x0
-#define HIGH                0x1
+#ifndef LOW
+#define LOW                     0x0
+#define HIGH                    0x1
+#endif
 
 //GPIO FUNCTIONS
 #ifndef INPUT
@@ -107,7 +109,23 @@ extern "C"
 {
 #endif // __cplusplus
 
+void lq_openPin(uint8_t pinNum, uint8_t pinMode);
+void lq_closePin(uint8_t pinNum);
 
+uint8_t lq_readPin(uint8_t pinNum);
+void lq_writePin(uint8_t pinNum, uint8_t val);
+
+void lq_attachIsr(uint8_t pinNum, bool enabled, uint8_t triggerMode, platformGpioPinIrqCallback isrCallback);
+void lq_detachIsr(uint8_t pinNum);
+
+/* The functions below are optional
+ * They are intended to be used during development to help create your attach\detach ISR functions. */
+uint32_t lq_getIntFlags();
+uint32_t lq_getPinInterrupt(uint32_t pin);
+
+
+/* DEPRECATED - To be removed in embedLib v2.1.0 
+ ------------------------------------------------------- */
 void platform_openPin(uint8_t pinNum, uint8_t pinMode);
 void platform_closePin(uint8_t pinNum);
 
@@ -121,6 +139,10 @@ void platform_detachIsr(uint8_t pinNum);
  * They are intended to be used during development to help create your attach\detach ISR functions. */
 uint32_t platform_getIntFlags();
 uint32_t platform_getPinInterrupt(uint32_t pin);
+/* --------------------------------------------------------
+ */
+
+
 
 #ifdef __cplusplus
 }

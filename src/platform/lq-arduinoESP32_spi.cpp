@@ -1,6 +1,8 @@
 
 #ifdef ARDUINO_ARCH_ESP32
 
+#include "esp32-hal-spi.h"
+
 #include "lq-platform_spi.h"
 #include <Arduino.h>
 #include <SPI.h>
@@ -134,29 +136,34 @@ uint16_t spi_transferWord(platformSpi_t* platformSpi, uint16_t data)
  *  @param buf [in/out] - The character pointer to the buffer to transfer to/from.
  *  @param xfer_len [in] - The number of characters to transfer.
  */
-void spi_transferBuffer(platformSpi_t* platformSpi, uint8_t addressByte, void* buf, uint16_t xfer_len)
+void spi_transferBuffer(platformSpi_t* platformSpi, uint8_t addressByte, const uint8_t * txData, uint8_t * rxData, uint32_t size)
 {
     digitalWrite(platformSpi->csPin, LOW);
     ((SPIClass*)platformSpi->spi)->beginTransaction(SPISettings(platformSpi->dataRate, platformSpi->bitOrder, platformSpi->dataMode));
 
     ((SPIClass*)platformSpi->spi)->transfer(addressByte);
-    ((SPIClass*)platformSpi->spi)->transfer(buf, xfer_len);
+    //((SPIClass*)platformSpi->spi)->transfer(buf, xfer_len);
+
+    // void SPIClass::transferBytes(const uint8_t * txData, uint8_t * rxData, uint32_t size)
+    ((SPIClass*)platformSpi->spi)->transferBytes(txData, rxData, size);
 
     digitalWrite(platformSpi->csPin, HIGH);
     ((SPIClass*)platformSpi->spi)->endTransaction();
 }
 
 
-void spi_writeBuffer(platformSpi_t* platformSpi, uint8_t addressByte, void* buf, uint16_t xfer_len)
+void spi_writeBuffer(platformSpi_t* platformSpi, uint8_t addressByte, uint8_t * txData, uint32_t size)
 {
     digitalWrite(platformSpi->csPin, LOW);
     ((SPIClass*)platformSpi->spi)->beginTransaction(SPISettings(platformSpi->dataRate, platformSpi->bitOrder, platformSpi->dataMode));
 
     ((SPIClass*)platformSpi->spi)->transfer(addressByte);
-    for (uint16_t i = 0; i < xfer_len; i++)
-    {
-        ((SPIClass*)platformSpi->spi)->transfer(*((uint8_t*)buf + i));
-    }
+
+    // for (uint16_t i = 0; i < size; i++)
+    // {
+    //     ((SPIClass*)platformSpi->spi)->transferBytes(*(txData + i));
+    // }
+    ((SPIClass*)platformSpi->spi)->transferBytes(txData, NULL, size);
 
     digitalWrite(platformSpi->csPin, HIGH);
     ((SPIClass*)platformSpi->spi)->endTransaction();

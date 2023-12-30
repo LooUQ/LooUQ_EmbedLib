@@ -62,6 +62,19 @@ typedef enum
 } spiDataMode_t;
 
 
+typedef struct lqSpi_tag
+{
+    uint32_t dataRate;
+    spiDataMode_t dataMode;
+    spiBitOrder_t bitOrder;
+    uint8_t clkPin;
+    uint8_t misoPin;
+    uint8_t mosiPin;
+    uint8_t csPin;
+    void* spi;
+} lqSpi_t;
+
+
 typedef struct platformSpi_tag
 {
     uint32_t dataRate;
@@ -80,6 +93,28 @@ extern "C"
 {
 #endif
 
+
+lqSpi_t* lqSpi_createFromPins(uint8_t clkPin, uint8_t misoPin, uint8_t mosiPin, uint8_t csPin);
+lqSpi_t* lqSpi_createFromIndex(uint8_t indx, uint8_t csPin);
+
+void lqSpi_start(lqSpi_t* lqSpi);
+void lqSpi_stop(lqSpi_t* lqSpi);
+
+void lqSpi_usingInterrupt(lqSpi_t* lqSpi, int8_t irqNumber);
+void lqSpi_notUsingInterrupt(lqSpi_t* lqSpi, int8_t irqNumber);
+
+uint8_t lqSpi_transferByte(lqSpi_t* lqSpi, uint8_t writeVal);
+uint16_t lqSpi_transferWord(lqSpi_t* lqSpi, uint16_t writeVal);
+
+// void SPIClass::transferBytes(const uint8_t * txData, uint8_t * rxData, uint32_t size)
+void lqSpi_transferBuffer(lqSpi_t* lqSpi, uint8_t addressByte, const uint8_t * txData,  uint8_t * rxData, uint32_t size);
+
+void lqSpi_writeBuffer(lqSpi_t* lqSpi, uint8_t addressByte, void* buf, uint32_t size);
+void* lqSpi_readBuffer(lqSpi_t* lqSpi, uint8_t addressByte, uint32_t size);
+
+
+/* DEPRECATED - To be removed in embedLib v2.1.0 
+ ------------------------------------------------------- */
 platformSpi_t* spi_createFromPins(uint8_t clkPin, uint8_t misoPin, uint8_t mosiPin, uint8_t csPin);
 platformSpi_t* spi_createFromIndex(uint8_t indx, uint8_t csPin);
 
@@ -92,10 +127,13 @@ void spi_notUsingInterrupt(platformSpi_t* platformSpi, int8_t irqNumber);
 uint8_t spi_transferByte(platformSpi_t* platformSpi, uint8_t writeVal);
 uint16_t spi_transferWord(platformSpi_t* platformSpi, uint16_t writeVal);
 
-void spi_transferBuffer(platformSpi_t* platformSpi, uint8_t addressByte, void* buf, uint16_t xfer_len);
+// void SPIClass::transferBytes(const uint8_t * txData, uint8_t * rxData, uint32_t size)
+void spi_transferBuffer(platformSpi_t* platformSpi, uint8_t addressByte, const uint8_t * txData,  uint8_t * rxData, uint32_t size);
 
-void spi_writeBuffer(platformSpi_t* platformSpi, uint8_t addressByte, void* buf, uint16_t xfer_len);
-void* spi_readBuffer(platformSpi_t* platformSpi, uint8_t addressByte, uint16_t xfer_len);
+void spi_writeBuffer(platformSpi_t* platformSpi, uint8_t addressByte, void* buf, uint32_t size);
+void* spi_readBuffer(platformSpi_t* platformSpi, uint8_t addressByte, uint32_t size);
+/* --------------------------------------------------------
+ */
 
 #ifdef __cplusplus
 }
