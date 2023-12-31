@@ -52,7 +52,7 @@ void lqASSERT_invoke(const char *fileTag, uint16_t line, void *pc, const void *l
 {
     LOG_ERROR("*** ASSERT in %s at line %d\r\n", fileTag, line);
     vTaskDelay(SEC_TO_MS(10)); 
-    assert_brk();
+    lqASSERT_brk();
 }
 
 

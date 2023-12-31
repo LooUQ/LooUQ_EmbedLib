@@ -35,7 +35,7 @@ Also add information on how to contact you by electronic and paper mail.
 #include <Arduino.h>
 #include "platform/lq-platform_timing.h"
 
-static platform_yieldCB_func_t platform_yieldCB_func;
+platform_yieldCB_func_t platform_yieldCB_func;
 
 
 uint32_t lqMillis()

@@ -179,13 +179,13 @@ void lqASSERT_invoke(const char *fileTag, uint16_t line, void *pc, const void *l
     g_diagControl.diagnosticInfo.line = line;
     memcpy(g_diagControl.diagnosticInfo.fileTag, fileTag, assert__fileTagSz);
 
-    if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCBChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
+    if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCBChk == S__calcNotifyCbChk(g_diagControl.notifyCB))
     {
         char notifyMsg[40];
         snprintf(notifyMsg, sizeof(notifyMsg), "ASSERT f:%s,l:%d,pc=%d,lr=%d", fileTag, line, pc, lr);
         g_diagControl.notifyCB(appEvent_fault_assertFailed, notifyMsg);
     }
-    assert_brk();                                                               // stop here if notify callback returned
+    lqASSERT_brk();                                                               // stop here if notify callback returned
 }
 
 
@@ -198,7 +198,7 @@ void lqASSERT_invoke(const char *fileTag, uint16_t line, void *pc, const void *l
  */
 void lqASSERT_warning(const char *fileTag, uint16_t line, const char *faultTxt)
 {
-    if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCBChk == S_calcNotifyCbChk(g_diagControl.notifyCB))
+    if (g_diagControl.notifyCB != NULL && g_diagControl.notifyCBChk == S__calcNotifyCbChk(g_diagControl.notifyCB))
     {
         char notifyMsg[80];
         snprintf(notifyMsg, sizeof(notifyMsg), "f:%s,l:%d -%s\r", fileTag, line, faultTxt);
