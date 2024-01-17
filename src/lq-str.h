@@ -99,6 +99,9 @@ const char* lq_strFindField(char fldType, char* source);
 char *lq_strToken(char *source, int delimiter, char *tokenBffr, uint8_t tokenBffrSz);
 
 
+int16_t lq_strToInt(const char *__restrict__ source, char **__restrict__ next, int base);
+
+
 #ifdef __cplusplus
 }
 #endif // !__cplusplus

@@ -125,13 +125,16 @@ typedef uint16_t resultCode_t;
 
 #define COMPARES(exp)  (exp == 0)
 
-#define IS_SUCCESS(r)  (r == resultCode__success)
-#define IS_SUCCESS_RSLT(r) ({ _rslt = r; _rslt == resultCode__success; })
-#define IS_SUCCESS_EXTENT(r) (r >= resultCode__success && r <= resultCode__successMax)
+#define IS_SUCCESS(r)               (r == resultCode__success)
+#define IS_SUCCESSRANGE(r)          (r >= resultCode__success && r <= resultCode__successMax)
+#define IS_NOTSUCCESS(r)            (r != resultCode__success)
+#define IS_NOTSUCCESSRANGE(r)       (r >= resultCode__success && r <= resultCode__successMax)
 
-#define IS_NOTSUCCESS(r)  (r != resultCode__success)
-#define IS_NOTSUCCESS_RSLT(r) ({ _rslt = r; _rslt != resultCode__success; })
-#define IS_NOTSUCCESS_EXTENT(r) (r >= resultCode__anyError)
+#define RSLT resultCode_t rslt 
+#define IS_SUCCESS_RSLT(r)          ({ rslt = r; rslt == resultCode__success; })
+#define IS_SUCCESSRANGE_RSLT(r)     ({ rslt = r; rslt >= resultCode__success && rslt <= resultCode__successMax; })
+#define IS_NOTSUCCESS_RSLT(r)       ({ rslt = r; rslt != resultCode__success; })
+#define IS_NOTSUCCESSRANGE_RSLT(r)  ({ rslt = r; rslt >= resultCode__anyError })
 
 #define DO_ONCE (0)
 #define DO_FOREVER (1)
@@ -146,7 +149,6 @@ typedef uint16_t resultCode_t;
 #define PERIOD_FROM_SECONDS(period)  (period * 1000)
 #define PERIOD_FROM_MINUTES(period)  (period * 1000 * 60)
 #define SET_PROPLEN(SZ) (SZ + 1)
-
 
 
 enum LooUQ_constants

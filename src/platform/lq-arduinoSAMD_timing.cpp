@@ -49,17 +49,14 @@ void lqYield()
     if (platform_yieldCB_func)          // allow for device application yield processing
         platform_yieldCB_func();
     else
-        yield();                        // allow for platform yield processing (ex: Arduino scheduler, ESPx, etc.)
+        yield();                        // default to platform yield processing (ex: Arduino scheduler, ESPx, etc.)
 }
 
 
 void lqDelay(uint32_t delay_ms)
 {
-    for (size_t i = 0; i < delay_ms; i++)
-    {
-        lqYield();
-        delay(1);
-    }
+    lqYield();                          // perform yield to allow for application processing       
+    delay(delay_ms);
 }
 
 

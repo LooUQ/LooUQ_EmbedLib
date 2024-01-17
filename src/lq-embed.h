@@ -23,42 +23,23 @@
  *
  *****************************************************************************/
 
+#ifndef __LQ_EMBED_H__
+#define __LQ_EMBED_H__
 
-#define LOGLEVEL_DBG	(4)
-#define LOGLEVEL_INFO	(3)
-#define LOGLEVEL_WARN	(2)
-#define LOGLEVEL_ERROR 	(1)
-#define LOGLEVEL_OFF	(0)
 
-#ifndef LOGBUFFER_SZ
-     #define LOGBUFFER_SZ 180
+#define lqLOGLEVEL_VRBS	    (5)
+#define lqLOGLEVEL_DBG	    (4)
+#define lqLOGLEVEL_INFO	    (3)
+#define lqLOGLEVEL_WARN	    (2)
+#define lqLOGLEVEL_ERROR 	(1)
+#define lqLOGLEVEL_OFF	    (0)
+
+#ifndef lqLOGBUFFER_SZ
+     #define LOGBUFFER_SZ 256
 #endif
 #ifndef DBGBUFFER_SZ
      #define DBGBUFFER_SZ 180
 #endif
 
-
-// #ifndef LOG_DEFAULT
-//     #define LOG_DEFAULT 13
-//     #define LOG_INFO 12
-//     #define LOG_WARN 17
-//     #define LOG_ERROR 16
-
-//     #define LOG_CYAN 10
-//     #define LOG_MAGENTA 11
-//     #define LOG_WHITE 12
-//     #define LOG_GRAY 13
-//     #define LOG_BLUE 14
-//     #define LOG_GREEN 15
-//     #define LOG_RED 16
-//     #define LOG_YELLOW 17
-
-//     #define LOG_dCYAN 20
-//     #define LOG_dMAGENTA 21
-//     #define LOG_dBLUE 24
-//     #define LOG_dGREEN 25
-//     #define LOG_dRED 26
-//     #define LOG_dYELLOW 27
-// #endif
-
+#endif // __LQ_EMBED_H__
 

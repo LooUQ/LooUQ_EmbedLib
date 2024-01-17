@@ -56,6 +56,7 @@ void lqYield()
 
 void lqDelay(uint32_t delay_ms)
 {
+    lqYield();                          // perform yield to allow for application processing       
     vTaskDelay(delay_ms);
 }
 

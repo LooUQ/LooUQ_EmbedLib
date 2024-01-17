@@ -7,7 +7,7 @@
 #include <lq-embed.h>
 #include <lq-logging.h>
 
-__attribute__((weak)) void emLog_printf(uint8_t color, const char *msg, ...)
+__attribute__((weak)) void lqLog_printf(uint8_t color, const char *msg, ...)
 {
     char buf[DBGBUFFER_SZ] = {0};
     va_list args;

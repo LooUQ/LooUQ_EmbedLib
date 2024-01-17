@@ -220,3 +220,17 @@ const char* lq_strFindField(char fldType, char* source)
 
     return responsePtr;
 }
+
+
+int16_t lq_strToInt(const char *__restrict__ source, char **__restrict__ next, int base)
+{
+    if (source == NULL)
+    {
+        while(1){}
+    }
+
+    long retVal = strtol(source, next, base);
+    retVal = retVal > INT16_MAX ? INT16_MAX : retVal;
+    retVal = retVal < INT16_MIN ? INT16_MIN : retVal;
+    return (int16_t)retVal;
+}

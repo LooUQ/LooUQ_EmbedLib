@@ -7,7 +7,7 @@
 #include <lq-embed.h>
 #include <lq-logging.h>
 
-__attribute__((weak)) void emLog_printf(uint8_t color,  const char *msg, ...)
+__attribute__((weak)) void lqLog_printf(uint8_t color,  const char *msg, ...)
 {
     // asm(".global _printf_float");
 
@@ -18,6 +18,7 @@ __attribute__((weak)) void emLog_printf(uint8_t color,  const char *msg, ...)
     va_end(args);
 
     Serial.print(buf);
+    vTaskDelay(10);                             // increase chances print completes to monitor
 }
 
 #endif

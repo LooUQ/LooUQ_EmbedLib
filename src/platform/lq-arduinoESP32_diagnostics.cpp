@@ -50,7 +50,7 @@ Also add information on how to contact you by electronic and paper mail.
  */
 void lqASSERT_invoke(const char *fileTag, uint16_t line, void *pc, const void *lr)
 {
-    LOG_ERROR("*** ASSERT in %s at line %d\r\n", fileTag, line);
+    lqLOG_ERROR("*** ASSERT in %s at line %d\r\n", fileTag, line);
     vTaskDelay(SEC_TO_MS(10)); 
     lqASSERT_brk();
 }
@@ -65,7 +65,7 @@ void lqASSERT_invoke(const char *fileTag, uint16_t line, void *pc, const void *l
  */
 void lqASSERT_warning(const char *fileTag, uint16_t line, const char *faultTxt)
 {
-    LOG_WARN("*** ASSERT Warning in %s at line %d\r\n", fileTag, line, faultTxt);
+    lqLOG_WARN("*** ASSERT Warning in %s at line %d\r\n", fileTag, line, faultTxt);
     vTaskDelay(SEC_TO_MS(10)); 
 }
 
