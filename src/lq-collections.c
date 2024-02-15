@@ -45,17 +45,16 @@ static uint16_t findJsonBlockLength(const char *blockStart, const char *jsonEnd,
 
 
 /**
- *  \brief Parses a HTTP style query string (key\value pairs) and creates a dictionary overlay for the keys and values. 
+ *  @brief Parses a HTTP style query string (key\value pairs) and creates a dictionary overlay for the keys and values. 
+ *  @warning the source is mutated in the process, keys\values are NULL term'd.
  * 
- *  \param dictSrc [in] - Char pointer to the c-string containing key value pairs to identify. NOTE: the source is mutated in the process, keys\values are NULL term'd.
- *  \param qsSize [in] - Lenght of the incoming query string. 
- * 
- *  \return Struct with map (pointers) to the keys and values (within the source array)
+ *  @param [in] dictSrc Char pointer to the c-string containing key value pairs to identify.
+ *  @param [in] qsSize Length of the incoming query string. 
+ *  @return Struct with map (pointers) to the keys and values (within the source array)
 */
 keyValueDict_t lq_createQryStrDictionary(char *dictSrc, size_t qsSize)
 {
     keyValueDict_t result = {0};
-    //keyValueDict_t result = {0, 0, {0}, {0}};
 
     if (qsSize == 0)
         return result;
@@ -96,12 +95,11 @@ keyValueDict_t lq_createQryStrDictionary(char *dictSrc, size_t qsSize)
 
 
 /**
- *  \brief Scans the qryProps struct for the a prop and returns the value from the underlying char array.
+ *  @brief Scans the qryProps struct for the a prop and returns the value from the underlying char array.
  * 
- *  \param [in] propsName - Char pointer to the c-string containing message properties passed in topic 
- *  \param dict [in] - Dictionary
- * 
- *  \return Struct with pointer arrays to the properties (name/value)
+ *  @param [in] propsName Char pointer to the c-string containing message properties passed in topic 
+ *  @param [in] dict Dictionary
+ *  @return Struct with pointer arrays to the properties (name/value)
 */
 void lq_getQryStrDictionaryValue(const char *key, keyValueDict_t dict, char *value, uint8_t valSz)
 {
@@ -120,12 +118,12 @@ void lq_getQryStrDictionaryValue(const char *key, keyValueDict_t dict, char *val
 
 
 /**
- *  \brief Scans a JSON formatted C-String (char array) for a property, once found a descriptive struct is populated with info to allow for property value consumption.
+ *  @brief Scans a JSON formatted C-String (char array) for a property, once found a descriptive struct is populated with info to allow for property value consumption.
  * 
- *  \param [in] jsonSrc - Char array containing the JSON document.
- *  \param [in] propName - The name of the property you are searching for.
+ *  @param [in] jsonSrc - Char array containing the JSON document.
+ *  @param [in] propName - The name of the property you are searching for.
  * 
- *  \return Struct with a pointer to property value, a property type (enum) and the len of property value.
+ *  @return Struct with a pointer to property value, a property type (enum) and the len of property value.
 */
 lqJsonPropValue_t lq_getJsonPropValue(const char *jsonSrc, const char *propName)
 {
@@ -206,14 +204,14 @@ lqJsonPropValue_t lq_getJsonPropValue(const char *jsonSrc, const char *propName)
 #pragma region Static Local Functions
 
 /**
- *  \brief STATIC Scope: Local function to determine the length of a JSON object or array. Used by lqc_getJsonPropValue().
+ *  @brief STATIC Scope: Local function to determine the length of a JSON object or array. Used by lqc_getJsonPropValue().
  * 
- *  \param [in] blockStart - Pointer to the starting point for the scan.
- *  \param [in] jsonEnd - End of the original JSON formatted char array.
- *  \param [in] blockOpen - Character marking the start of the block being sized, used to identify nested blocks.
- *  \param [in] blockClose - Character marking the end of the block being sized (including nested).
+ *  @param [in] blockStart - Pointer to the starting point for the scan.
+ *  @param [in] jsonEnd - End of the original JSON formatted char array.
+ *  @param [in] blockOpen - Character marking the start of the block being sized, used to identify nested blocks.
+ *  @param [in] blockClose - Character marking the end of the block being sized (including nested).
  * 
- *  \return The size of the block (object\array) including the opening and closing marking chars.
+ *  @return The size of the block (object\array) including the opening and closing marking chars.
 */
 static uint16_t findJsonBlockLength(const char *blockStart, const char *jsonEnd, char blockOpen, char blockClose)
 {

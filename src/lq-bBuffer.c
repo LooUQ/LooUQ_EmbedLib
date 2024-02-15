@@ -463,14 +463,17 @@ void bbffr_skipTail(bBuffer_t *bbffr, uint16_t skipCnt)
 {
     uint16_t skipped;
 
-    if (!BBFFR_WRAPPED)                                                         // ** linear
+    if (BBFFR_WRAPPED)                                                          // ** wrapped (head < tail)
+    {
+        skipped = MIN(skipCnt, bbffr->bufferEnd - bbffr->tail);                         // right-side
+        if (skipped < skipCnt)                                                          // right side did not satisfy request
+        {
+            bbffr->tail = MIN(bbffr->buffer + (skipCnt - skipped), bbffr->head);    // consume remaining to skip, up to buffer-head
+        }
+    }
+    else                                                                        // ** linear (tail < head)
     {
             bbffr->tail = MIN(bbffr->tail + skipCnt, bbffr->head);
-    }
-    else                                                                        // ** wrapped
-    {
-            skipped = MIN(skipCnt, bbffr->bufferEnd - bbffr->tail);                 // right-side
-            bbffr->tail = MIN(bbffr->buffer + (skipCnt - skipped), bbffr->head);    // consume remaining to skip, up to buffer-head
     }
 }
 

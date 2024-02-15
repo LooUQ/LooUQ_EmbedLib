@@ -72,10 +72,9 @@ lqLOG_DBG(color, msg_format, variadicParams);
 #endif
 
 #ifdef ENABLE_JLINKRTT
-    #undef _LOGGER
-    #define _LOGGER 1
+    #undef _lqLOGGER
+    #define _lqLOGGER 1
     #define lqLOG_RTT
-    #define DIAGPRINT_RTT                                          // LEGACY: remove in future version
     #include <jlinkRtt.h>                                          // will set _LOGGER and define macro expansion for DPRINT()
 #endif
 
@@ -147,6 +146,29 @@ void lqLog_printf(uint8_t color, const char *msg, ...);
     #define lqINFO lqGRAY
     #define lqWARN lqYELLOW
     #define lqERROR lqRED
+
+
+    #define lqcCYAN 10
+    #define lqcMAGENTA 11
+    #define lqcWHITE 12
+    #define lqcGRAY 13
+    #define lqcBLUE 14
+    #define lqcGREEN 15
+    #define lqcRED 16
+    #define lqcYELLOW 17
+
+    #define lqcDARKCYAN 20
+    #define lqcDARKMAGENTA 21
+    #define lqcDARKBLUE 24
+    #define lqcDARKGREEN 25
+    #define lqcDARKRED 26
+    #define lqcDARKYELLOW 27
+
+    #define lqcDEFAULT lqcGRAY
+    #define lqcVRBS lqcWHITE
+    #define lqcINFO lqcGRAY
+    #define lqcWARN lqcYELLOW
+    #define lqcERROR lqcRED
 #endif
 
 
@@ -170,7 +192,7 @@ void lqLog_printf(uint8_t color, const char *msg, ...);
 
 
 // #if lqLOG_LEVEL == LOGLEVEL_OFF                                // potentially add back once DIAGPRINT is gone
-// #pragma message ("LooUQ embedLib logging is diabled.")
+// #pragma message ("LooUQ embedLib logging is disbled.")
 // #endif 
 
 
@@ -182,7 +204,7 @@ void lqLog_printf(uint8_t color, const char *msg, ...);
 #if defined(lqLOG_LEVEL) && lqLOG_LEVEL > lqLOGLEVEL_OFF
 
     #if lqLOG_LEVEL >= lqLOGLEVEL_VRBS
-        #define lqLOG_VRBS(f_, ...) lqLog_printf(lqVRBS, f_, ##__VA_ARGS__)
+        #define lqLOG_VRBS(f_, ...) lqLog_printf(lqcVRBS, f_, ##__VA_ARGS__)
     #else
         #define lqLOG_VRBS(f_, ...)
     #endif
@@ -194,20 +216,20 @@ void lqLog_printf(uint8_t color, const char *msg, ...);
     #endif
 
     #if lqLOG_LEVEL >= lqLOGLEVEL_INFO
-        #define lqLOG_INFO(f_, ...) lqLog_printf(lqINFO, f_, ##__VA_ARGS__)
+        #define lqLOG_INFO(f_, ...) lqLog_printf(lqcINFO, f_, ##__VA_ARGS__)
     #else
         #define lqLOG_INFO(f_, ...)
     #endif
 
     #if lqLOG_LEVEL >= lqLOGLEVEL_WARN
-        #define lqLOG_WARN(f_, ...) lqLog_printf(lqWARN, f_, ##__VA_ARGS__)
+        #define lqLOG_WARN(f_, ...) lqLog_printf(lqcWARN, f_, ##__VA_ARGS__)
     #else
         #define lqLOG_WARN(f_, ...)
     #endif
 
     #if lqLOG_LEVEL >= lqLOGLEVEL_ERROR
-        #define lqLOG_ERROR(f_, ...) lqLog_printf(lqERROR, f_, ##__VA_ARGS__)
-        #define lqLOG_NOTICE(f_, ...) lqLog_printf(lqERROR, f_, ##__VA_ARGS__)
+        #define lqLOG_ERROR(f_, ...) lqLog_printf(lqcERROR, f_, ##__VA_ARGS__)
+        #define lqLOG_NOTICE(f_, ...) lqLog_printf(lqcERROR, f_, ##__VA_ARGS__)
     #else
         #define lqLOG_ERROR(f_, ...)
         #define lqLOG_NOTICE(f_, ...)
