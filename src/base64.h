@@ -32,9 +32,6 @@ extern "C" {
 
 #include <stddef.h>
 
-/** @defgroup base64 Base64 Converter.
-  * @{ */
-
 /** Convert a binary memory block in a base64 null-terminated string.
   * @param dest Destination memory wher to put the base64 null-terminated string.
   * @param src Source binary memory block.
@@ -58,8 +55,6 @@ void* b64ToBin( void* dest, char const* src );
 static inline void* b64decode( void* p ) {
     return b64ToBin( p, (char*)p );
 }
-
-/** @ } */
 
 #ifdef __cplusplus
 }

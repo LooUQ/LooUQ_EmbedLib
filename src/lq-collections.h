@@ -36,9 +36,9 @@ enum {
 };
 
 /** 
- *  \brief Struct exposing action's parameters collection (names and values as c-strings).
+ *  @brief Struct exposing action's parameters collection (names and values as c-strings).
  * 
- *  NOTE: This struct maps key\value pairs in an existing HTTP query string formated char array. The array is parsed
+ *  NOTE: This struct maps key/value pairs in an existing HTTP query string formated char array. The array is parsed
  *  using the lqc_parseQueryStringDict() function. Parsing MUTATES the original char array. The original char array
  *  must stay in scope as it contains the keys and the values. The keyValueDict struct only provides a higher level
  *  map of the data stored in the char array and a utility function lqc_getDictValue(key) to access the value.
@@ -67,16 +67,21 @@ typedef enum lqJsonPropType_tag
 } lqJsonPropType_t;
 
 
+/**
+ * @brief Structure representing a property/value pair in a collection.
+ */
 typedef struct lqJsonPropValue_tag
 {
-    char *value;
-    uint16_t len;
-    lqJsonPropType_t type;
+    char *value;                                            ///< Pointer to char representation of the value
+    uint16_t len;                                           ///< Value's length
+    lqJsonPropType_t type;                                  ///< Value's type
 } lqJsonPropValue_t;
 
 
+/**
+ * @brief Alias for action/parameters type.
+ */
 typedef keyValueDict_t actnParams_t;
-
 
 
 #ifdef __cplusplus
@@ -86,11 +91,36 @@ extern "C"
 
 
 // Query String Dictionary
+
+/**
+ * @brief Converts a character array holding a URL-style key/value collection into a LooUQ keyValueDict_t
+ * 
+ * @param [in] dictSrc Sournce character array
+ * @param [in] qsSize 
+ * @return keyValueDict_t 
+ */
 keyValueDict_t lq_createQryStrDictionary(char *dictSrc, size_t qsSize);
+
+/**
+ * @brief Get a value from a dictionary
+ * 
+ * @param key 
+ * @param dict 
+ * @param value 
+ * @param valSz 
+ */
 void lq_getQryStrDictionaryValue(const char *key, keyValueDict_t dict, char *value, uint8_t valSz);
 
-// JSON (body) Documents
+
+/**
+ * @brief JSON (body) Documents
+ * 
+ * @param jsonSrc 
+ * @param propName 
+ * @return lqJsonPropValue_t 
+ */
 lqJsonPropValue_t lq_getJsonPropValue(const char *jsonSrc, const char *propName);
+
 
 // MOVED to LQ-DeviceCommon
 // char *lqc_getActionParamValue(const char *paramName, keyValueDict_t actnParams);

@@ -35,11 +35,14 @@ Also add information on how to contact you by electronic and paper mail.
 #define __PLATFORM_TIMING_H__
 
 
-
-// yield callback allows host application to be signalled when the LTEm1 is awaiting network events
-
+/**
+ * @brief yield callback allows host application to be signalled when the LTEm1 is awaiting network events
+ */
 typedef void (*platform_yieldCB_func_t)();
 
+/**
+ * @brief External reference to yield callback
+ */
 extern platform_yieldCB_func_t platform_yieldCB_func;
 
 
@@ -69,22 +72,38 @@ extern "C"
 // bool lTimerExpired(uint32_t timerBase, uint32_t timerTimeout);
 */
 
+/**
+ * @brief (LooUQ) millis function like Arduino and other frameworks. 
+ * 
+ * @return uint32_t Framework "tick" counters, usually reset at device start.
+ */
 uint32_t lqMillis();
+
+
+/**
+ * @brief (LooUQ) yield function to give program flow to system scheduler/dispatcher
+ */
 void lqYield();
 
-// platform implementation should support task switching here
+// 
+
+/**
+ * @brief Platform implementation should support task switching here
+ * 
+ * @param delay_ms Period in milliseconds to pause/delay
+ */
 void lqDelay(uint32_t delay_ms);
 
 
 /* DEPRECATED - To be removed in embedLib v2.1.0 
  ------------------------------------------------------- */
-uint32_t pMillis();
-void pYield();
+// uint32_t pMillis();
+// void pYield();
 
-// platform implementation should support task switching here
-void pDelay(uint32_t delay_ms);
+// // platform implementation should support task switching here
+// void pDelay(uint32_t delay_ms);
 
-bool pElapsed(uint32_t timerBase, uint32_t timerTimeout);
+// bool pElapsed(uint32_t timerBase, uint32_t timerTimeout);
 /* --------------------------------------------------------
  */
 

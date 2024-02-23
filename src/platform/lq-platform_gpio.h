@@ -43,46 +43,53 @@ Also add information on how to contact you by electronic and paper mail.
 #include <stdbool.h>
 
 #ifndef LOW
-#define LOW                     0x0
-#define HIGH                    0x1
+#define LOW                     0x0                         ///< GPIO low/0 value
+#define HIGH                    0x1                         ///< GPIO high/1 value
 #endif
 
 //GPIO FUNCTIONS
 #ifndef INPUT
-    #define INPUT               0x01
+    #define INPUT               0x01                        ///< Digital GPIO pin behavior: input
+
     // Changed OUTPUT from 0x02 to behave the same as Arduino pinMode(pin,OUTPUT) 
     // where you can read the state of pin even when it is set as OUTPUT
-    #define OUTPUT              0x03 
-    #define PULLUP              0x04
-    #define INPUT_PULLUP        0x05
-    #define PULLDOWN            0x08
-    #define INPUT_PULLDOWN      0x09
-    #define OPEN_DRAIN          0x10
-    #define OUTPUT_OPEN_DRAIN   0x13
-    #define ANALOG              0xC0
+
+    #define OUTPUT              0x03                        ///< Digital GPIO pin behavior: output 
+    #define PULLUP              0x04                        ///< Digital GPIO pin behavior: output pullup
+    #define INPUT_PULLUP        0x05                        ///< Digital GPIO pin behavior: input pullup
+    #define PULLDOWN            0x08                        ///< Digital GPIO pin behavior: output pulldown
+    #define INPUT_PULLDOWN      0x09                        ///< Digital GPIO pin behavior: input pulldown
+    #define OPEN_DRAIN          0x10                        ///< Digital GPIO pin behavior: input open-drain
+    #define OUTPUT_OPEN_DRAIN   0x13                        ///< Digital GPIO pin behavior: output open-drain
+    #define ANALOG              0xC0                        ///< Digital GPIO pin behavior: analog input
 #endif
 
 
 //Interrupt Modes
 #ifndef RISING
-    #define DISABLED            0x00
-    #define RISING              0x01
-    #define FALLING             0x02
-    #define CHANGE              0x03
-    #define ONLOW               0x04
-    #define ONHIGH              0x05
-    #define ONLOW_WE            0x0C
-    #define ONHIGH_WE           0x0D
+    #define DISABLED            0x00                        ///< Interrup pin event: none/disabled
+    #define RISING              0x01                        ///< Interrup pin event: rising 0>1
+    #define FALLING             0x02                        ///< Interrup pin event: falling 1>0
+    #define CHANGE              0x03                        ///< Interrup pin event: any change
+    #define ONLOW               0x04                        ///< Interrup pin event: on LOW
+    #define ONHIGH              0x05                        ///< Interrup pin event: on HIGH
+    #define ONLOW_WE            0x0C                        ///< Interrup pin event: on LOW (WE)
+    #define ONHIGH_WE           0x0D                        ///< Interrup pin event: on HIGH (WE)
 #endif
 
-// #ifdef ARDUINO
-// #include <Arduino.h>
 
+/**
+ * @brief GPIO pin (I/O) values
+ */
 typedef enum {
     gpioValue_low = LOW,
     gpioValue_high = HIGH
 } gpioPinValue_t;
 
+
+/**
+ * @brief GPIO pin modes
+ */
 typedef enum {
     gpioMode_input = INPUT,
     gpioMode_output = OUTPUT,
@@ -90,6 +97,10 @@ typedef enum {
     gpioMode_inputPullDown = INPUT_PULLDOWN
 } gpioPinMode_t;
 
+
+/**
+ * @brief IRQ trigger conditions
+ */
 typedef enum {
     gpioIrqTriggerOn_low = LOW,
     gpioIrqTriggerOn_high = HIGH,
@@ -98,9 +109,11 @@ typedef enum {
     gpioIrqTriggerOn_rising = RISING
 } gpioIrqTrigger_t;
 
-//#endif 
 
-// typedef uint8_t platformGpioPin;
+/**
+ * @brief Prototype IRQ callback (ISR)
+ * 
+ */
 typedef void(*platformGpioPinIrqCallback)(void);
 
 
@@ -109,39 +122,92 @@ extern "C"
 {
 #endif // __cplusplus
 
+/**
+ * @brief 
+ * 
+ * @param pinNum 
+ * @param pinMode 
+ */
 void lq_openPin(uint8_t pinNum, uint8_t pinMode);
+
+/**
+ * @brief 
+ * 
+ * @param pinNum 
+ */
 void lq_closePin(uint8_t pinNum);
 
+
+/**
+ * @brief 
+ * 
+ * @param pinNum 
+ * @return uint8_t 
+ */
 uint8_t lq_readPin(uint8_t pinNum);
+
+/**
+ * @brief 
+ * 
+ * @param pinNum 
+ * @param val 
+ */
 void lq_writePin(uint8_t pinNum, uint8_t val);
 
+/**
+ * @brief 
+ * 
+ * @param pinNum 
+ * @param enabled 
+ * @param triggerMode 
+ * @param isrCallback 
+ */
 void lq_attachIsr(uint8_t pinNum, bool enabled, uint8_t triggerMode, platformGpioPinIrqCallback isrCallback);
+
+/**
+ * @brief 
+ * 
+ * @param pinNum 
+ */
 void lq_detachIsr(uint8_t pinNum);
+
 
 /* The functions below are optional
  * They are intended to be used during development to help create your attach\detach ISR functions. */
+
+/**
+ * @brief 
+ * 
+ * @return uint32_t 
+ */
 uint32_t lq_getIntFlags();
+
+/**
+ * @brief 
+ * 
+ * @param pin 
+ * @return uint32_t 
+ */
 uint32_t lq_getPinInterrupt(uint32_t pin);
 
 
 /* DEPRECATED - To be removed in embedLib v2.1.0 
  ------------------------------------------------------- */
-void platform_openPin(uint8_t pinNum, uint8_t pinMode);
-void platform_closePin(uint8_t pinNum);
+// void platform_openPin(uint8_t pinNum, uint8_t pinMode);
+// void platform_closePin(uint8_t pinNum);
 
-uint8_t platform_readPin(uint8_t pinNum);
-void platform_writePin(uint8_t pinNum, uint8_t val);
+// uint8_t platform_readPin(uint8_t pinNum);
+// void platform_writePin(uint8_t pinNum, uint8_t val);
 
-void platform_attachIsr(uint8_t pinNum, bool enabled, uint8_t triggerMode, platformGpioPinIrqCallback isrCallback);
-void platform_detachIsr(uint8_t pinNum);
+// void platform_attachIsr(uint8_t pinNum, bool enabled, uint8_t triggerMode, platformGpioPinIrqCallback isrCallback);
+// void platform_detachIsr(uint8_t pinNum);
 
-/* The functions below are optional
- * They are intended to be used during development to help create your attach\detach ISR functions. */
-uint32_t platform_getIntFlags();
-uint32_t platform_getPinInterrupt(uint32_t pin);
+// /* The functions below are optional
+//  * They are intended to be used during development to help create your attach\detach ISR functions. */
+// uint32_t platform_getIntFlags();
+// uint32_t platform_getPinInterrupt(uint32_t pin);
 /* --------------------------------------------------------
  */
-
 
 
 #ifdef __cplusplus

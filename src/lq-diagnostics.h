@@ -141,46 +141,51 @@ typedef enum diagRcause_tag
 } diagRcause_t;
 
 
+/**
+ * @brief Diagnostic capture structure for an event.
+ */
 typedef struct diagnosticInfo_tag
 {
-    uint16_t diagMagic;
-    uint32_t rcause[4];                 // cause of last reset 
-    uint8_t boots;                      // boot-loop detection
-    uint8_t notifCode;                  // code from application notification callback
-    char notifMsg[20];                  // message from application notification callback
-    char hwVersion[40];                 // device HW version that may\may not be recorded
-    char swVersion[12];                 // embedded app version that may\may not be recorded
+    uint16_t diagMagic;                                     ///< Magic value to signal this is a valid diagnostics struct
+    uint32_t rcause[4];                                     ///< cause of last reset 
+    uint8_t boots;                                          ///< boot-loop detection
+    uint8_t notifCode;                                      ///< code from application notification callback
+    char notifMsg[20];                                      ///< message from application notification callback
+    char hwVersion[40];                                     ///< device HW version that may/may not be recorded
+    char swVersion[12];                                     ///< embedded app version that may/may not be recorded
 
     /* ASSERT capture info */
-    uint32_t pc;
-    uint32_t lr;
-    uint32_t line;
-    char fileTag[assert__fileTagSz];    // NOTE: not /0 terminated
+    uint32_t pc;                                            ///< Program counter register at event
+    uint32_t lr;                                            ///< Link register at event
+    uint32_t line;                                          ///< Line number from source
+    char fileTag[assert__fileTagSz];                        ///< file tag (NOTE: not /0 terminated)
  
     /* Application communications state info */
-    int16_t commState;                  // indications: TCP/UDP/SSL connected, MQTT state, etc.
-    int16_t ntwkState;                  // indications: LTE PDP, etc.
-    int16_t signalState;                // indications: rssi, etc.
+    int16_t commState;                                      ///< indications: TCP/UDP/SSL connected, MQTT state, etc.
+    int16_t ntwkState;                                      ///< indications: LTE PDP, etc.
+    int16_t signalState;                                    ///< indications: rssi, etc.
 
     /* Hardfault capture */
-    uint16_t ufsr;
-    uint32_t r0;
-    uint32_t r1;
-    uint32_t r2;
-    uint32_t r3;
-    uint32_t r12;
-    uint32_t return_address;
-    uint32_t xpsr;
+    uint16_t ufsr;                                          ///< registers: UFSR
+    uint32_t r0;                                            ///< registers: R0
+    uint32_t r1;                                            ///< registers: R1
+    uint32_t r2;                                            ///< registers: R2
+    uint32_t r3;                                            ///< registers: R3
+    uint32_t r12;                                           ///< registers: R12
+    uint32_t return_address;                                ///< registers: return address
+    uint32_t xpsr;                                          ///< registers: XPSR
 } diagnosticInfo_t;
 
 
+/**
+ * @brief Control structure for reporting a diagnostics event 
+ */
 typedef struct diagnosticControl_tag 
 {
-    appEvntNotify_func notifyCB;
-    uint8_t notifyCBChk;
-    diagnosticInfo_t diagnosticInfo;
+    appEvntNotify_func notifyCB;                            ///< Address of a registered notify callback handler
+    uint8_t notifyCBChk;                                    ///< Check digit for callback registered correctly
+    diagnosticInfo_t diagnosticInfo;                        ///< Diagnostics collection to report to application
 } diagnosticControl_t;
-
 
 
 #ifdef __cplusplus

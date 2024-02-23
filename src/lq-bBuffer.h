@@ -32,21 +32,24 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/**
+ * @brief Internal control structure for a block buffer.
+ */
 typedef struct bBuffer_tag
 {
-    char *buffer;
-    char *bufferEnd;
+    char *buffer;                                           ///< Raw character buffer
+    char *bufferEnd;                                        ///< End of character buffer, points to the last position + 1
 
-    char * volatile head;
-    char * volatile tail;
-    char * volatile rbHead;                  /// pushBlock: rollback head pointer
-    char * volatile pTail;                   /// popBlock: pending tail pointer
+    char * volatile head;                                   ///< Pointer to the head position, where new char are logically ADDED to the buffer (pushed to)
+    char * volatile tail;                                   ///< Pointer to the tail position, where char are logically REMOVED from the buffer (popped from)
+    char * volatile rbHead;                                 ///< Pointer stash for possible rollback of head from a pushBlock operation
+    char * volatile pTail;                                  ///< Pointer stash for possible rollback of tail from a popBlock operation
 } bBuffer_t;
 
 
-#define BBFFR_NOTFOUND 0xFFFF
-#define BBFFR_ISFOUND(x) (x != BBFFR_NOTFOUND)
-#define BBFFR_ISNOTFOUND(x) (x == BBFFR_NOTFOUND)
+#define BBFFR_NOTFOUND 0xFFFF                               ///< Value returned from a buffer find operation signalling NOT FOUND
+#define BBFFR_ISFOUND(x) (x != BBFFR_NOTFOUND)              ///< Convenience macro, returns True if search target is FOUND
+#define BBFFR_ISNOTFOUND(x) (x == BBFFR_NOTFOUND)           ///< Convenience macro, returns True if search target is NOT FOUND
 
 
 #ifdef __cplusplus
@@ -179,18 +182,6 @@ uint16_t bbffr_popBlock(bBuffer_t *cbffr, char **copyFrom, uint16_t requestSz);
 void bbffr_popBlockFinalize(bBuffer_t *cbffr, bool commit);
 
 
-// /**
-//  * @brief Pop a number of chars from buffer at buffer-tail. Number of characters "popped" will be the lesser of available and requestSz.
-//  * 
-//  * @param cbffr The buffer sourcing the characters.
-//  * @param dest Pointer to memory location where popped chars are copied.
-//  * @param requestSz Number of chars requested from the buffer.
-//  * @param leaveSz Number of chars to leave in buffer after pop, if buffer has less than leaveSz no chars are popped.
-//  * @return Number of characters "popped"; the lesser of (available - leaveSz) and requestSz.
-//  */
-// uint16_t bbffr_popLeave(bBuffer_t *cbffr, char *dest, uint16_t requestSz, uint16_t leaveSz);
-
-
 /**
  * @brief Peeks a number of chars ahead in the buffer starting at buffer-tail. Number of characters "peeked" will be the lesser of available and requestSz.
  * 
@@ -237,34 +228,6 @@ void bbffr_skipTail(bBuffer_t *cbffr, uint16_t skipCnt);
  */
 void bbffr_skipHead(bBuffer_t *cbffr, uint16_t skipCnt);
 
-
-// /**
-//  * @brief Get length of contiguous block of chars from tail (outgoing). Distance to head or buffer-wrap.
-//  * 
-//  * @param cbffr [in] The buffer to be operated on.
-//  * @param tail [in/out] Pointer to buffer-tail.
-//  * @param length [in/out] Pointer to integer length variable with the contiguous length of buffer between tail and head/buffer-end (wrap).
-//  * @param popTail [in] Bool directing the call to act like a pop: advancing tail (true) or a idempotent get (false).
-//  */
-// void bbffr_getTailBlock(bBuffer_t *cbffr, char **tail, uint16_t *length, bool popTail);
-
-
-// /**
-//  * @brief Get length of contiguous block of chars from head (incoming). Distance to tail or buffer-wrap.
-//  * 
-//  * @param cbffr [in] The buffer to be operated on.
-//  * @param tail [in/out] Pointer to buffer-head.
-//  * @param length [in/out] Pointer to integer length variable with the contiguous length of buffer between tail and head/buffer-end (wrap).
-//  * @param pushHead [in] Bool directing the call to act like a push: advancing head (true) or a idempotent get (false).
-//  */
-// void bbffr_getHeadBlock(bBuffer_t *cbffr, char **head, uint16_t *length);
-
-
-// bool bbffr_startTransaction(bBuffer_t *cbffr);
-
-// void bbffr_commitTransaction(bBuffer_t *cbffr);
-
-// void bbffr_rollbackTransaction(bBuffer_t *cbffr);
 
 #ifdef __cplusplus
 }

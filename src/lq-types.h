@@ -71,6 +71,10 @@
 
 #ifndef RESULTCODE_T
 #define RESULTCODE_T
+
+/**
+ * @brief Result codes (return values) used universally across LooUQ embedded applications.
+ */
 enum lqTypes__resultCodes
 {
     resultCode__invoked = 100,              // HTTP Continue (returned by tryInvoke on success, cleared to pending on awaitResult())
@@ -203,6 +207,9 @@ typedef enum appEvent_tag
 } appEvent_t;
 
 
+/**
+ * @brief Type of reset being requested for the targetted device.
+ */
 typedef enum resetAction_tag
 {
     resetAction_skipIfOn,
@@ -212,20 +219,25 @@ typedef enum resetAction_tag
 } resetAction_t;
 
 
-typedef struct appEventResponse_tag
-{
-    uint8_t requestCode;
-    uint16_t resultCode;
-    char message[APPEVENT_MESSAGE_SZ];
-} appEventResponse_t;
+// /**
+//  * @brief 
+//  * 
+//  */
+// typedef struct appEventResponse_tag
+// {
+//     uint8_t requestCode;
+//     uint16_t resultCode;
+//     char message[APPEVENT_MESSAGE_SZ];
+// } appEventResponse_t;
 
 
 
 /*  Callbacks into application
  =============================================================================================== */
 
-/* yield callback allows host application to be signalled when the LTEm1 is awaiting network events
- * --------------------------------------------------------------------------------------------- */
+/**
+ * @brief yield callback allows host application to be signalled when the LTEm1 is awaiting network events
+ */
 typedef void (*yield_func)();
 
 
