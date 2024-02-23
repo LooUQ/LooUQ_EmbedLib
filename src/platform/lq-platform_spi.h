@@ -84,20 +84,20 @@ typedef struct lqSpi_tag
 } lqSpi_t;
 
 
-/**
- * @brief (deprecated: replaced by lqSpi) Structure describing an abstracted SPI interface, this is the object LooUQ devices reference for SPI communications.
- */
-typedef struct platformSpi_tag
-{
-    uint32_t dataRate;                                      ///< bit data rate of SPI bus
-    spiDataMode_t dataMode;                                 ///< SPI data mode for port
-    spiBitOrder_t bitOrder;                                 ///< SPI bit ordering for port
-    uint8_t clkPin;                                         ///< Host clock pin for port
-    uint8_t misoPin;                                        ///< Host MISO pin for port
-    uint8_t mosiPin;                                        ///< Host MOSI pin for port
-    uint8_t csPin;                                          ///< Chip select pin for port (CS/SS)
-    void* spi;                                              ///< Pointer to framework SPI interface (if required)
-} platformSpi_t;
+// /**
+//  * @brief (deprecated: replaced by lqSpi) Structure describing an abstracted SPI interface, this is the object LooUQ devices reference for SPI communications.
+//  */
+// typedef struct platformSpi_tag
+// {
+//     uint32_t dataRate;                                      ///< bit data rate of SPI bus
+//     spiDataMode_t dataMode;                                 ///< SPI data mode for port
+//     spiBitOrder_t bitOrder;                                 ///< SPI bit ordering for port
+//     uint8_t clkPin;                                         ///< Host clock pin for port
+//     uint8_t misoPin;                                        ///< Host MISO pin for port
+//     uint8_t mosiPin;                                        ///< Host MOSI pin for port
+//     uint8_t csPin;                                          ///< Chip select pin for port (CS/SS)
+//     void* spi;                                              ///< Pointer to framework SPI interface (if required)
+// } platformSpi_t;
 
 
 #ifdef __cplusplus

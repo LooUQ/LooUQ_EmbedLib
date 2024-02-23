@@ -123,8 +123,8 @@ typedef uint16_t resultCode_t;
 
 #define SEC_TO_MS(period) ((uint16_t)period * 1000)
 #define MIN_TO_MS(period) ((uint16_t)period * 1000 * 60)
-#define IS_ELAPSED(start, timeout) ((start == 0) ? 0 : pMillis() - start > timeout)
-#define ELAPSED_DURATION(start) ((start == 0) ? 0 : pMillis() - start)
+#define IS_ELAPSED(start, timeout) ((start == 0) ? 0 : lqMillis() - start > timeout)
+#define ELAPSED_DURATION(start) ((start == 0) ? 0 : lqMillis() - start)
 #define IS_CYCLE(i,c)  (i % c == 0 && i >= c)
 
 #define COMPARES(exp)  (exp == 0)

@@ -128,14 +128,14 @@ extern "C"
  * @param pinNum 
  * @param pinMode 
  */
-void lq_openPin(uint8_t pinNum, uint8_t pinMode);
+void lqGpio_openPin(uint8_t pinNum, uint8_t pinMode);
 
 /**
  * @brief 
  * 
  * @param pinNum 
  */
-void lq_closePin(uint8_t pinNum);
+void lqGpio_closePin(uint8_t pinNum);
 
 
 /**
@@ -144,7 +144,7 @@ void lq_closePin(uint8_t pinNum);
  * @param pinNum 
  * @return uint8_t 
  */
-uint8_t lq_readPin(uint8_t pinNum);
+uint8_t lqGpio_readPin(uint8_t pinNum);
 
 /**
  * @brief 
@@ -152,7 +152,7 @@ uint8_t lq_readPin(uint8_t pinNum);
  * @param pinNum 
  * @param val 
  */
-void lq_writePin(uint8_t pinNum, uint8_t val);
+void lqGpio_writePin(uint8_t pinNum, uint8_t val);
 
 /**
  * @brief 
@@ -162,14 +162,14 @@ void lq_writePin(uint8_t pinNum, uint8_t val);
  * @param triggerMode 
  * @param isrCallback 
  */
-void lq_attachIsr(uint8_t pinNum, bool enabled, uint8_t triggerMode, platformGpioPinIrqCallback isrCallback);
+void lqGpio_attachIsr(uint8_t pinNum, bool enabled, uint8_t triggerMode, platformGpioPinIrqCallback isrCallback);
 
 /**
  * @brief 
  * 
  * @param pinNum 
  */
-void lq_detachIsr(uint8_t pinNum);
+void lqGpio_detachIsr(uint8_t pinNum);
 
 
 /* The functions below are optional
@@ -180,7 +180,7 @@ void lq_detachIsr(uint8_t pinNum);
  * 
  * @return uint32_t 
  */
-uint32_t lq_getIntFlags();
+uint32_t lqGpio_getIntFlags();
 
 /**
  * @brief 
@@ -188,7 +188,7 @@ uint32_t lq_getIntFlags();
  * @param pin 
  * @return uint32_t 
  */
-uint32_t lq_getPinInterrupt(uint32_t pin);
+uint32_t lqGpio_getPinInterrupt(uint32_t pin);
 
 
 /* DEPRECATED - To be removed in embedLib v2.1.0 
