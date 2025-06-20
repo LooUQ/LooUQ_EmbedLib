@@ -71,7 +71,7 @@ typedef enum
 /**
  * @brief Structure describing an abstracted SPI interface, this is the object LooUQ devices reference for SPI communications.
  */
-typedef struct lqSpi_tag
+typedef struct lq-spi_tag
 {
     uint32_t dataRate;                                      ///< bit data rate of SPI bus
     spiDataMode_t dataMode;                                 ///< SPI data mode for SPI bus
@@ -81,23 +81,7 @@ typedef struct lqSpi_tag
     uint8_t mosiPin;                                        ///< Host MOSI pin for SPI bus
     uint8_t csPin;                                          ///< Chip select pin for peripheral (CS/SS)
     void* spi;                                              ///< Pointer to framework SPI interface (if required)
-} lqSpi_t;
-
-
-// /**
-//  * @brief (deprecated: replaced by lqSpi) Structure describing an abstracted SPI interface, this is the object LooUQ devices reference for SPI communications.
-//  */
-// typedef struct platformSpi_tag
-// {
-//     uint32_t dataRate;                                      ///< bit data rate of SPI bus
-//     spiDataMode_t dataMode;                                 ///< SPI data mode for port
-//     spiBitOrder_t bitOrder;                                 ///< SPI bit ordering for port
-//     uint8_t clkPin;                                         ///< Host clock pin for port
-//     uint8_t misoPin;                                        ///< Host MISO pin for port
-//     uint8_t mosiPin;                                        ///< Host MOSI pin for port
-//     uint8_t csPin;                                          ///< Chip select pin for port (CS/SS)
-//     void* spi;                                              ///< Pointer to framework SPI interface (if required)
-// } platformSpi_t;
+} lq_spi_t;
 
 
 #ifdef __cplusplus
@@ -112,100 +96,100 @@ extern "C"
  * @param misoPin 
  * @param mosiPin 
  * @param csPin 
- * @return lqSpi_t* 
+ * @return lq_spi_t* 
  */
-lqSpi_t* lqSpi_createFromPins(uint8_t clkPin, uint8_t misoPin, uint8_t mosiPin, uint8_t csPin);
+lq_spi_t* lq_spi_createFromPins(uint8_t clkPin, uint8_t misoPin, uint8_t mosiPin, uint8_t csPin);
 
 /**
  * @brief 
  * 
  * @param indx 
  * @param csPin 
- * @return lqSpi_t* 
+ * @return lq_spi_t* 
  */
-lqSpi_t* lqSpi_createFromIndex(uint8_t indx, uint8_t csPin);
+lq_spi_t* lq_spi_createFromIndex(uint8_t indx, uint8_t csPin);
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  */
-void lqSpi_start(lqSpi_t* lqSpi);
+void lq_spi_start(lq_spi_t* lq_spi);
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  */
-void lqSpi_stop(lqSpi_t* lqSpi);
+void lq_spi_stop(lq_spi_t* lq_spi);
 
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  * @param irqNumber 
  */
-void lqSpi_usingInterrupt(lqSpi_t* lqSpi, int8_t irqNumber);
+void lq_spi_usingInterrupt(lq_spi_t* lq_spi, int8_t irqNumber);
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  * @param irqNumber 
  */
-void lqSpi_notUsingInterrupt(lqSpi_t* lqSpi, int8_t irqNumber);
+void lq_spi_notUsingInterrupt(lq_spi_t* lq_spi, int8_t irqNumber);
 
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  * @param writeVal 
  * @return uint8_t 
  */
-uint8_t lqSpi_transferByte(lqSpi_t* lqSpi, uint8_t writeVal);
+uint8_t lq_spi_transferByte(lq_spi_t* lq_spi, uint8_t writeVal);
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  * @param writeVal 
  * @return uint16_t 
  */
-uint16_t lqSpi_transferWord(lqSpi_t* lqSpi, uint16_t writeVal);
+uint16_t lq_spi_transferWord(lq_spi_t* lq_spi, uint16_t writeVal);
 
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  * @param addressByte 
  * @param txData 
  * @param rxData 
  * @param size 
  */
-void lqSpi_transferBuffer(lqSpi_t* lqSpi, uint8_t addressByte, const uint8_t * txData,  uint8_t * rxData, uint32_t size);
+void lq_spi_transferBuffer(lq_spi_t* lq_spi, uint8_t addressByte, const uint8_t * txData,  uint8_t * rxData, uint32_t size);
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  * @param addressByte 
  * @param buf 
  * @param size 
  */
-void lqSpi_writeBuffer(lqSpi_t* lqSpi, uint8_t addressByte, void* buf, uint32_t size);
+void lq_spi_writeBuffer(lq_spi_t* lq_spi, uint8_t addressByte, void* buf, uint32_t size);
 
 /**
  * @brief 
  * 
- * @param lqSpi 
+ * @param lq_spi 
  * @param addressByte 
  * @param size 
  * @return void* 
  */
-void* lqSpi_readBuffer(lqSpi_t* lqSpi, uint8_t addressByte, uint32_t size);
+void* lq_spi_readBuffer(lq_spi_t* lq_spi, uint8_t addressByte, uint32_t size);
 
 
 /* DEPRECATED - To be removed in embedLib v2.1.0 

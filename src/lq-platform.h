@@ -23,14 +23,15 @@
  *
  *****************************************************************************/
 
-#ifndef __LTEMC_LQPLATFORM_H__
-#define __LTEMC_LQPLATFORM_H__
+#ifndef __LQ_PLATFORM_H__
+#define __LQ_PLATFORM_H__
 
+#define LQ_EMBEDLIB_VERSION "3.0.2"
 
-#include "platform/lqPlatform-pins.h"
+#include "lq-types.h"
 #include "platform/lq-platform_gpio.h"
-#include "platform/lqPlatform-timing.h"
-#include "platform/lqPlatform-spi.h"
+#include "platform/lq-platform-timing.h"
+#include "platform/lq-platform-spi.h"
 
 
-#endif  /* !__LTEMC_LQPLATFORM_H__ */
+#endif  /* !__LQ_PLATFORM_H__ */

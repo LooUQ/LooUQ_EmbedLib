@@ -1,5 +1,5 @@
 /******************************************************************************
- *  \file lq-bBuffer.c
+ *  \file lq-bbuffer.c
  *  \author Greg Terrell
  *  \license MIT License
  *
@@ -38,7 +38,7 @@
 
 #include <string.h>                                         // remove warnings for implicit mem* functions
 #include <stdio.h>
-#include "lq-bBuffer.h"
+#include "lq-bbuffer.h"
 #include "lq-diagnostics.h"
 
 
@@ -52,7 +52,7 @@
 #define BBFFR_VACANT  (BBFFR_SIZE - BBFFR_OCCUPIED)
 
 
-void bbffr_init(bBuffer_t *bbffr, char * rawBuffer, uint16_t bufferSz)
+void bbffr_init(bbuffer_t *bbffr, char * rawBuffer, uint16_t bufferSz)
 {
     bbffr->buffer = rawBuffer;
     bbffr->bufferEnd = rawBuffer + bufferSz;
@@ -63,7 +63,7 @@ void bbffr_init(bBuffer_t *bbffr, char * rawBuffer, uint16_t bufferSz)
 }
 
 
-void bbffr_reset(bBuffer_t *bbffr)
+void bbffr_reset(bbuffer_t *bbffr)
 {
     bbffr->head = bbffr->buffer;
     bbffr->tail = bbffr->buffer;
@@ -76,7 +76,7 @@ void bbffr_reset(bBuffer_t *bbffr)
 /**
  * @brief Diagnostic to get internal block-buffer status.
  */
-void bbffr_GETMACROS(bBuffer_t *bbffr, char *macrosRpt, uint8_t macrosRptSz)
+void bbffr_GETMACROS(bbuffer_t *bbffr, char *macrosRpt, uint8_t macrosRptSz)
 {
     /*
         #define BBFFR_WRAPPED (bbffr->head < bbffr->tail)
@@ -98,7 +98,7 @@ void bbffr_GETMACROS(bBuffer_t *bbffr, char *macrosRpt, uint8_t macrosRptSz)
  * @param [in] bbffr pointer to buffer to report on.
  * @return Buffer capacity in bytes (uint8_t type).
  */
-uint16_t bbffr_getCapacity(bBuffer_t *bbffr)
+uint16_t bbffr_getCapacity(bbuffer_t *bbffr)
 {
     return BBFFR_SIZE - 1;
 }
@@ -107,7 +107,7 @@ uint16_t bbffr_getCapacity(bBuffer_t *bbffr)
 /**
  * @brief Get count of characters occupying the buffer.
  */
-uint16_t bbffr_getOccupied(bBuffer_t *bbffr)
+uint16_t bbffr_getOccupied(bbuffer_t *bbffr)
 {
     return BBFFR_OCCUPIED;
 }
@@ -116,7 +116,7 @@ uint16_t bbffr_getOccupied(bBuffer_t *bbffr)
 /**
  * @brief Get count of available space in the buffer.
  */
-uint16_t bbffr_getVacant(bBuffer_t *bbffr)
+uint16_t bbffr_getVacant(bbuffer_t *bbffr)
 {
     return BBFFR_VACANT;
 }
@@ -125,7 +125,7 @@ uint16_t bbffr_getVacant(bBuffer_t *bbffr)
 /* Basic push/pop/find/grab
  ----------------------------------------------------------------------------------------------- */
 
-uint16_t bbffr_push(bBuffer_t *bbffr, const char *src, uint16_t srcSz)
+uint16_t bbffr_push(bbuffer_t *bbffr, const char *src, uint16_t srcSz)
 {
     ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
     ASSERT(bbffr->buffer <= bbffr->tail && bbffr->tail < bbffr->bufferEnd);
@@ -159,7 +159,7 @@ uint16_t bbffr_push(bBuffer_t *bbffr, const char *src, uint16_t srcSz)
 /**
  * @brief Get address/length of contiguous block of chars from head (incoming). Distance to tail or buffer-wrap.
  */
-uint16_t bbffr_pushBlock(bBuffer_t *bbffr, char **copyTo, uint16_t requestSz)
+uint16_t bbffr_pushBlock(bbuffer_t *bbffr, char **copyTo, uint16_t requestSz)
 {
     ASSERT(bbffr->rbHead == 0);
     ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
@@ -191,7 +191,7 @@ uint16_t bbffr_pushBlock(bBuffer_t *bbffr, char **copyTo, uint16_t requestSz)
 /**
  * @brief Get commit or rollback pending allocation from pushBlock().
  */
-void bbffr_pushBlockFinalize(bBuffer_t *bbffr, bool commit)
+void bbffr_pushBlockFinalize(bbuffer_t *bbffr, bool commit)
 {
     if (!commit && bbffr->rbHead != NULL)
         bbffr->head = bbffr->rbHead;
@@ -202,7 +202,7 @@ void bbffr_pushBlockFinalize(bBuffer_t *bbffr, bool commit)
 /**
  * @brief Pop a number of uint8_ts from buffer at buffer-tail. Number of characters "popped" will be the lesser of available and requestSz.
  */
-uint16_t bbffr_pop(bBuffer_t *bbffr, char *dest, uint16_t requestSz)
+uint16_t bbffr_pop(bbuffer_t *bbffr, char *dest, uint16_t requestSz)
 {
     ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
     ASSERT(bbffr->buffer <= bbffr->tail && bbffr->tail < bbffr->bufferEnd);
@@ -241,7 +241,7 @@ uint16_t bbffr_pop(bBuffer_t *bbffr, char *dest, uint16_t requestSz)
 /**
  * @brief Allocate a POP of chars from buffer at buffer-tail. Number of chars accounted for will be the lesser of available and requestSz.
  */
-uint16_t bbffr_popBlock(bBuffer_t *bbffr, char **copyFrom, uint16_t requestSz)
+uint16_t bbffr_popBlock(bbuffer_t *bbffr, char **copyFrom, uint16_t requestSz)
 {
     ASSERT(bbffr->pTail == 0);                                                  // pending popBlock already, no nesting popBlock()
     ASSERT(bbffr->buffer <= bbffr->head && bbffr->head < bbffr->bufferEnd);
@@ -279,7 +279,7 @@ uint16_t bbffr_popBlock(bBuffer_t *bbffr, char **copyFrom, uint16_t requestSz)
  * @brief Commit or rollback pending allocation from popBlock().
  * @details popBlock() rollback is opposite of pushBlock(), the block operators protect the existing and uncommitted space in the buffer.
  */
-void bbffr_popBlockFinalize(bBuffer_t *bbffr, bool commit)
+void bbffr_popBlockFinalize(bbuffer_t *bbffr, bool commit)
 {
     if (commit && bbffr->pTail != NULL)
         bbffr->tail = bbffr->pTail;         // move tail ahead (unprotecting popBlock() copy out space)
@@ -291,7 +291,7 @@ void bbffr_popBlockFinalize(bBuffer_t *bbffr, bool commit)
  * @brief Pop a number of chars from buffer at buffer-tail, leaving the leaveSz number of chars in buffer.
  * @details This allows for simplified trailer parsing. Number of characters "popped" will be the lesser of available and requestSz - leaveSz.
  */
-uint16_t bbffr_popLeave(bBuffer_t *bbffr, char *dest, uint16_t requestSz, uint16_t leaveSz)
+uint16_t bbffr_popLeave(bbuffer_t *bbffr, char *dest, uint16_t requestSz, uint16_t leaveSz)
 {
     if (BBFFR_OCCUPIED <= leaveSz)
         return 0;
@@ -308,7 +308,7 @@ uint16_t bbffr_popLeave(bBuffer_t *bbffr, char *dest, uint16_t requestSz, uint16
  * @brief Peeks a number of chars ahead in the buffer starting at buffer-tail. 
  * @details Number of characters "peeked" will be the lesser of available and requestSz.
  */
-uint16_t bbffr_peek(bBuffer_t *bbffr, char *dest, uint16_t requestSz)
+uint16_t bbffr_peek(bbuffer_t *bbffr, char *dest, uint16_t requestSz)
 {
     uint16_t available = BBFFR_OCCUPIED;
     uint16_t peeked;
@@ -337,7 +337,7 @@ uint16_t bbffr_peek(bBuffer_t *bbffr, char *dest, uint16_t requestSz)
 /**
  * @brief Find needle in the buffer, searching forward from the buffer-tail to buffer-head.
  */
-uint16_t bbffr_find(bBuffer_t *bbffr, const char *pNeedle, int16_t searchOffset, uint16_t searchWindowSz, bool setTail)
+uint16_t bbffr_find(bbuffer_t *bbffr, const char *pNeedle, int16_t searchOffset, uint16_t searchWindowSz, bool setTail)
 {
     uint8_t needleLen = strlen(pNeedle);
     uint8_t matchedCnt = 0;                                     // chars matched, 
@@ -437,7 +437,7 @@ uint16_t bbffr_find(bBuffer_t *bbffr, const char *pNeedle, int16_t searchOffset,
 /**
  * @brief Advances the buffer's head (incoming) by the requested number of chars.
  */
-void bbffr_skipHead(bBuffer_t *bbffr, uint16_t skipCnt)
+void bbffr_skipHead(bbuffer_t *bbffr, uint16_t skipCnt)
 {
     if (BBFFR_WRAPPED) {                                                        // ** wrapped
         bbffr->head = MIN(bbffr->head + skipCnt, bbffr->tail-1);
@@ -459,7 +459,7 @@ void bbffr_skipHead(bBuffer_t *bbffr, uint16_t skipCnt)
 /**
  * @brief Advances the buffer's tail (outgoing) by the requested number of chars.
  */
-void bbffr_skipTail(bBuffer_t *bbffr, uint16_t skipCnt)
+void bbffr_skipTail(bbuffer_t *bbffr, uint16_t skipCnt)
 {
     uint16_t skipped;
 
@@ -481,7 +481,7 @@ void bbffr_skipTail(bBuffer_t *bbffr, uint16_t skipCnt)
 // /* Transaction
 //  ----------------------------------------------------------------------------------------------- */
 
-// bool bbffr_startTransaction(bBuffer_t *bbffr)
+// bool bbffr_startTransaction(bbuffer_t *bbffr)
 // {
 //     if (bbffr->bTail == NULL)
 //     {
@@ -492,14 +492,14 @@ void bbffr_skipTail(bBuffer_t *bbffr, uint16_t skipCnt)
 // }
 
 
-// void bbffr_commitTransaction(bBuffer_t *bbffr)
+// void bbffr_commitTransaction(bbuffer_t *bbffr)
 // {
 //     bbffr->tail = bbffr->bTail;
 //     bbffr->bTail = NULL;
 // }
 
 
-// void bbffr_rollbackTransaction(bBuffer_t *bbffr)
+// void bbffr_rollbackTransaction(bbuffer_t *bbffr)
 // {
 //     bbffr->bTail = NULL;
 // }

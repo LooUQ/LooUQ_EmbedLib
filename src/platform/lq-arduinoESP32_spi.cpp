@@ -14,9 +14,9 @@
  *  @param chipSelLine [in] - GPIO for CS 
  *  \return SPI device
  */
-platformSpi_t* spi_createFromPins(uint8_t clkPin, uint8_t misoPin, uint8_t mosiPin, uint8_t csPin)
+ lq_spi_t* lq_spi_createFromPins(uint8_t clkPin, uint8_t misoPin, uint8_t mosiPin, uint8_t csPin)
 {
-    platformSpi_t *platformSpi = (platformSpi_t*)malloc(sizeof(platformSpi_t));
+     lq_spi_t *platformSpi = ( lq_spi_t*)malloc(sizeof( lq_spi_t));
 	if (platformSpi == NULL)
 	{
 		return NULL;
@@ -35,7 +35,7 @@ platformSpi_t* spi_createFromPins(uint8_t clkPin, uint8_t misoPin, uint8_t mosiP
 /**
  *	@brief Start SPI facility.
  */
-void spi_start(platformSpi_t* platformSpi)
+void lq_spi_start( lq_spi_t* platformSpi)
 {
     digitalWrite(platformSpi->csPin, HIGH);
     pinMode(platformSpi->csPin, OUTPUT);
@@ -47,7 +47,7 @@ void spi_start(platformSpi_t* platformSpi)
 /**
  *	@brief Shutdown SPI facility.
  */
-void spi_stop(platformSpi_t* spi)
+void lq_spi_stop( lq_spi_t* spi)
 {
     SPI.end();
 }
@@ -56,7 +56,7 @@ void spi_stop(platformSpi_t* spi)
 /**
  *	@brief Gaurd SPI resource from recursive interrupts.
  */
-void spi_usingInterrupt(platformSpi_t* spi, int8_t irqNumber)
+void lq_spi_usingInterrupt( lq_spi_t* spi, int8_t irqNumber)
 {
     return;
 }
@@ -65,7 +65,7 @@ void spi_usingInterrupt(platformSpi_t* spi, int8_t irqNumber)
 /**
  *	@brief Gaurd SPI resource from recursive interrupts.
  */
-void spi_notUsingInterrupt(platformSpi_t* spi, int8_t irqNumber)
+void lq_spi_notUsingInterrupt( lq_spi_t* spi, int8_t irqNumber)
 {
     return;
 }
@@ -80,7 +80,7 @@ void spi_notUsingInterrupt(platformSpi_t* spi, int8_t irqNumber)
  * 
  *  \returns A 16-bit word received during the transfer.
  */
-uint8_t spi_transferByte(platformSpi_t* platformSpi, uint8_t data)
+uint8_t lq_spi_transferByte( lq_spi_t* platformSpi, uint8_t data)
 {
     digitalWrite(platformSpi->csPin, LOW);
     ((SPIClass*)platformSpi->spi)->beginTransaction(SPISettings(platformSpi->dataRate, platformSpi->bitOrder, platformSpi->dataMode));
@@ -102,7 +102,7 @@ uint8_t spi_transferByte(platformSpi_t* platformSpi, uint8_t data)
  * 
  *  \returns A 16-bit word received during the transfer.
  */
-uint16_t spi_transferWord(platformSpi_t* platformSpi, uint16_t data)
+uint16_t lq_spi_transferWord( lq_spi_t* platformSpi, uint16_t data)
 {
     union { uint16_t val; struct { uint8_t msb; uint8_t lsb; }; } tw;
 
@@ -136,7 +136,7 @@ uint16_t spi_transferWord(platformSpi_t* platformSpi, uint16_t data)
  *  @param buf [in/out] - The character pointer to the buffer to transfer to/from.
  *  @param xfer_len [in] - The number of characters to transfer.
  */
-void spi_transferBuffer(platformSpi_t* platformSpi, uint8_t addressByte, const uint8_t * txData, uint8_t * rxData, uint32_t size)
+void lq_spi_transferBuffer( lq_spi_t* platformSpi, uint8_t addressByte, const uint8_t * txData, uint8_t * rxData, uint32_t size)
 {
     digitalWrite(platformSpi->csPin, LOW);
     ((SPIClass*)platformSpi->spi)->beginTransaction(SPISettings(platformSpi->dataRate, platformSpi->bitOrder, platformSpi->dataMode));
@@ -152,7 +152,7 @@ void spi_transferBuffer(platformSpi_t* platformSpi, uint8_t addressByte, const u
 }
 
 
-void spi_writeBuffer(platformSpi_t* platformSpi, uint8_t addressByte, uint8_t * txData, uint32_t size)
+void lq_spi_writeBuffer( lq_spi_t* platformSpi, uint8_t addressByte, uint8_t * txData, uint32_t size)
 {
     digitalWrite(platformSpi->csPin, LOW);
     ((SPIClass*)platformSpi->spi)->beginTransaction(SPISettings(platformSpi->dataRate, platformSpi->bitOrder, platformSpi->dataMode));
@@ -170,7 +170,7 @@ void spi_writeBuffer(platformSpi_t* platformSpi, uint8_t addressByte, uint8_t * 
 }
 
 
-void spi_readBuffer(platformSpi_t* platformSpi, uint8_t addressByte, void* buf, uint16_t xfer_len)
+void lq_spi_readBuffer( lq_spi_t* platformSpi, uint8_t addressByte, void* buf, uint16_t xfer_len)
 {
     digitalWrite(platformSpi->csPin, LOW);
     ((SPIClass*)platformSpi->spi)->beginTransaction(SPISettings(platformSpi->dataRate, platformSpi->bitOrder, platformSpi->dataMode));

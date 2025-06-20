@@ -1,5 +1,5 @@
 /******************************************************************************
- *  \file lq-cBuffer.c
+ *  \file lq-time.c
  *  \author Greg Terrell
  *  \license MIT License
  *
@@ -22,7 +22,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  ******************************************************************************
- * LooUQ circular buffer implementation for device streaming
  *****************************************************************************/
 
 #include <lq-embed.h>

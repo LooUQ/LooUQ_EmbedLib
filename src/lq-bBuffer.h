@@ -1,5 +1,5 @@
 /******************************************************************************
- *  \file lq-cBffr.h
+ *  \file lq-bbffr.h
  *  \author Greg Terrell
  *  \license MIT License
  *
@@ -25,8 +25,8 @@
  * LooUQ circular buffer implementation for device streaming
  *****************************************************************************/
 
-#ifndef __LQ_CBFFR_H__
-#define __LQ_CBFFR_H__
+#ifndef __LQ_BBFFR_H__
+#define __LQ_BBFFR_H__
 
 #include <stddef.h>
 #include <stdint.h>
@@ -35,7 +35,7 @@
 /**
  * @brief Internal control structure for a block buffer.
  */
-typedef struct bBuffer_tag
+typedef struct bbuffer_tag
 {
     char *buffer;                                           ///< Raw character buffer
     char *bufferEnd;                                        ///< End of character buffer, points to the last position + 1
@@ -44,7 +44,7 @@ typedef struct bBuffer_tag
     char * volatile tail;                                   ///< Pointer to the tail position, where char are logically REMOVED from the buffer (popped from)
     char * volatile rbHead;                                 ///< Pointer stash for possible rollback of head from a pushBlock operation
     char * volatile pTail;                                  ///< Pointer stash for possible rollback of tail from a popBlock operation
-} bBuffer_t;
+} bbuffer_t;
 
 
 #define BBFFR_NOTFOUND 0xFFFF                               ///< Value returned from a buffer find operation signalling NOT FOUND
@@ -64,7 +64,7 @@ extern "C"
  * @param rawBuffer 
  * @param bufferSz 
  */
-void bbffr_init(bBuffer_t *cbffr, char * rawBuffer, uint16_t bufferSz);
+void bbffr_init(bbuffer_t *cbffr, char * rawBuffer, uint16_t bufferSz);
 
 
 /**
@@ -72,7 +72,7 @@ void bbffr_init(bBuffer_t *cbffr, char * rawBuffer, uint16_t bufferSz);
  * 
  * @param cbffr The buffer to operate on.
  */
-void bbffr_reset(bBuffer_t *cbffr);
+void bbffr_reset(bbuffer_t *cbffr);
 
 
 /**
@@ -81,7 +81,7 @@ void bbffr_reset(bBuffer_t *cbffr);
  * @param cbffr The buffer to report on.
  * @return The number of characters in the buffer.
  */
-uint16_t bbffr_getCapacity(bBuffer_t *cbffr);
+uint16_t bbffr_getCapacity(bbuffer_t *cbffr);
 
 
 /**
@@ -90,7 +90,7 @@ uint16_t bbffr_getCapacity(bBuffer_t *cbffr);
  * @param cbffr The buffer to report on.
  * @return The number of characters in the buffer.
  */
-uint16_t bbffr_getOccupied(bBuffer_t *cbffr);
+uint16_t bbffr_getOccupied(bbuffer_t *cbffr);
 
 
 /**
@@ -99,7 +99,7 @@ uint16_t bbffr_getOccupied(bBuffer_t *cbffr);
  * @param cbffr The buffer to report on.
  * @return The number of free bytes in the buffer.
  */
-uint16_t bbffr_getVacant(bBuffer_t *cbffr);
+uint16_t bbffr_getVacant(bbuffer_t *cbffr);
 
 
 /**
@@ -110,7 +110,7 @@ uint16_t bbffr_getVacant(bBuffer_t *cbffr);
  * @param macrosRpt Pointer to character buffer to fill with internal MACRO values info.
  * @param macrosRptSz Size of the result reporting buffer.
  */
-void bbffr_GETMACROS(bBuffer_t *bbffr, char *macrosRpt, uint8_t macrosRptSz);
+void bbffr_GETMACROS(bbuffer_t *bbffr, char *macrosRpt, uint8_t macrosRptSz);
 
 
 /* Operate on Buffer 
@@ -125,7 +125,7 @@ void bbffr_GETMACROS(bBuffer_t *bbffr, char *macrosRpt, uint8_t macrosRptSz);
  * @return true Buffer was updated with src characters. Only returns true if the full size of src can be accepted.
  * @return Number of characters "pushed"; the lesser of available and requestSz.
  */
-uint16_t bbffr_push(bBuffer_t *cbffr, const char *src, uint16_t requestSz);
+uint16_t bbffr_push(bbuffer_t *cbffr, const char *src, uint16_t requestSz);
 
 
 /**
@@ -136,7 +136,7 @@ uint16_t bbffr_push(bBuffer_t *cbffr, const char *src, uint16_t requestSz);
  * @param requestSz [in] Requested (contiguous) space in buffer.
  * @return Number of characters available to be pushed; the lesser of contiguous vacant and requestSz.
  */
-uint16_t bbffr_pushBlock(bBuffer_t *cbffr, char **copyTo, uint16_t requestSz);
+uint16_t bbffr_pushBlock(bbuffer_t *cbffr, char **copyTo, uint16_t requestSz);
 
 
 /**
@@ -146,7 +146,7 @@ uint16_t bbffr_pushBlock(bBuffer_t *cbffr, char **copyTo, uint16_t requestSz);
  * @param cbffr [in] The buffer to be operated on.
  * @param commit [in] Commit pending push block (true) or roll-back pending push (false).
  */
-void bbffr_pushBlockFinalize(bBuffer_t *cbffr, bool commit);
+void bbffr_pushBlockFinalize(bbuffer_t *cbffr, bool commit);
 
 
 /**
@@ -157,7 +157,7 @@ void bbffr_pushBlockFinalize(bBuffer_t *cbffr, bool commit);
  * @param requestSz Number of chars requested from the buffer.
  * @return Number of characters "popped"; the lesser of available and requestSz.
  */
-uint16_t bbffr_pop(bBuffer_t *cbffr, char *dest, uint16_t requestSz);
+uint16_t bbffr_pop(bbuffer_t *cbffr, char *dest, uint16_t requestSz);
 
 
 /**
@@ -169,7 +169,7 @@ uint16_t bbffr_pop(bBuffer_t *cbffr, char *dest, uint16_t requestSz);
  * @param requestSz [in] Number of chars requested from the buffer.
  * @return Number of characters available to be popped; the lesser of occupied and requestSz.
  */
-uint16_t bbffr_popBlock(bBuffer_t *cbffr, char **copyFrom, uint16_t requestSz);
+uint16_t bbffr_popBlock(bbuffer_t *cbffr, char **copyFrom, uint16_t requestSz);
 
 
 /**
@@ -179,7 +179,7 @@ uint16_t bbffr_popBlock(bBuffer_t *cbffr, char **copyFrom, uint16_t requestSz);
  * @param cbffr [in] The buffer to be operated on.
  * @param commit [in] Commit pending pop block (true) or roll-back pending pop (false).
  */
-void bbffr_popBlockFinalize(bBuffer_t *cbffr, bool commit);
+void bbffr_popBlockFinalize(bbuffer_t *cbffr, bool commit);
 
 
 /**
@@ -190,7 +190,7 @@ void bbffr_popBlockFinalize(bBuffer_t *cbffr, bool commit);
  * @param requestSz Number of chars requested from the buffer.
  * @return uint16_t Number of characters "peeked" (the lesser of available and requestSz).
  */
-uint16_t bbffr_peek(bBuffer_t *cbffr, char *dest, uint16_t requestSz);
+uint16_t bbffr_peek(bbuffer_t *cbffr, char *dest, uint16_t requestSz);
 
 
 /**
@@ -205,7 +205,7 @@ uint16_t bbffr_peek(bBuffer_t *cbffr, char *dest, uint16_t requestSz);
  * @param setTail If true, the buffer tail is advanced to the first character of found needle.
  * @return Offset from buffer TAIL to the position of the needle within the buffer. If no find returns CBFFR_NOFIND (UINT16_MAX: 0xFFFF)
  */
-uint16_t bbffr_find(bBuffer_t *cbffr, const char *needle, int16_t searchOffset, uint16_t searchWindowSz, bool setTail);
+uint16_t bbffr_find(bbuffer_t *cbffr, const char *needle, int16_t searchOffset, uint16_t searchWindowSz, bool setTail);
 
 
 /**
@@ -216,7 +216,7 @@ uint16_t bbffr_find(bBuffer_t *cbffr, const char *needle, int16_t searchOffset, 
  * @param cbffr The buffer to be operated on.
  * @param skipCnt The number of chars to advance the tail.
  */
-void bbffr_skipTail(bBuffer_t *cbffr, uint16_t skipCnt);
+void bbffr_skipTail(bbuffer_t *cbffr, uint16_t skipCnt);
 
 
 /**
@@ -226,11 +226,11 @@ void bbffr_skipTail(bBuffer_t *cbffr, uint16_t skipCnt);
  * @param cbffr The buffer to be operated on.
  * @param skipCnt The number of chars to advance the head.
  */
-void bbffr_skipHead(bBuffer_t *cbffr, uint16_t skipCnt);
+void bbffr_skipHead(bbuffer_t *cbffr, uint16_t skipCnt);
 
 
 #ifdef __cplusplus
 }
 #endif // !__cplusplus
 
-#endif  /* !__LQ_CBFFR_H__ */
+#endif  /* !__LQ_BBFFR_H__ */
